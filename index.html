@@ -107,81 +107,57 @@
             <option>Event</option>
         </select>
 
-        <label for="trip" id="tripLabel">Trip Number:</label>
-        <input type="number" id="trip" min="1">
+        <!-- Time Out Field -->
+        <label for="timeout">Time Out (HH:MM):</label>
+        <input type="time" id="timeout" required>
 
-        <label for="hours">Number of Hours:</label>
-        <input type="number" id="hours" min="0" step="0.1" required>
+        <!-- Trip Number / Reason -->
+        <label for="trip" id="tripLabel">Trip Number / Reason for Late Call:</label>
+        <input type="text" id="trip">
 
         <input type="submit" value="Submit">
     </form>
 </div>
 
-<script type="module">
-  // Firebase imports
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+<script>
+const form = document.getElementById('lateCallForm');
+const hubSelect = document.getElementById('hub');
+const tripInput = document.getElementById('trip');
+const tripLabel = document.getElementById('tripLabel');
 
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDpbeGkKN3q0_rUTnBHUjT0133w1HuzHcI",
-    authDomain: "hmcas-late-call.firebaseapp.com",
-    projectId: "hmcas-late-call",
-    storageBucket: "hmcas-late-call.firebasestorage.app",
-    messagingSenderId: "88186358109",
-    appId: "1:88186358109:web:67981ae5cbbba348b700b4"
-  };
+// Hide Trip Number for Events/SAS
+hubSelect.addEventListener('change', () => {
+    if(hubSelect.value === "Events" || hubSelect.value === "SAS") {
+        tripInput.style.display = 'none';
+        tripLabel.style.display = 'none';
+        tripInput.value = "";
+    } else {
+        tripInput.style.display = 'block';
+        tripLabel.style.display = 'block';
+    }
+});
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const form = document.getElementById('lateCallForm');
-  const hubSelect = document.getElementById('hub');
-  const tripInput = document.getElementById('trip');
-  const tripLabel = document.getElementById('tripLabel');
-
-  // Hide Trip Number for Events/SAS
-  hubSelect.addEventListener('change', () => {
-      if(hubSelect.value === "Events" || hubSelect.value === "SAS") {
-          tripInput.style.display = 'none';
-          tripLabel.style.display = 'none';
-          tripInput.value = "";
-      } else {
-          tripInput.style.display = 'block';
-          tripLabel.style.display = 'block';
-      }
-  });
-
-  // Handle form submission
-  form.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      const submission = {
-          date: document.getElementById('date').value,
-          name: document.getElementById('name').value,
-          corp: document.getElementById('corp').value,
-          hub: hubSelect.value,
-          unit: document.getElementById('unit').value,
-          shift: document.getElementById('shift').value,
-          trip: tripInput.value || null,
-          hours: parseFloat(document.getElementById('hours').value),
-          status: "Pending",
-          processedBy: null,
-          timestamp: new Date()
-      };
-
-      try {
-          await addDoc(collection(db, "requests"), submission);
-          alert("Request submitted successfully!");
-          form.reset();
-          tripInput.style.display = 'block';
-          tripLabel.style.display = 'block';
-      } catch (error) {
-          console.error("Error submitting request:", error);
-          alert("Failed to submit request.");
-      }
-  });
+// Handle submission
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    const submission = {
+        date: document.getElementById('date').value,
+        name: document.getElementById('name').value,
+        corp: document.getElementById('corp').value,
+        hub: hubSelect.value,
+        unit: document.getElementById('unit').value,
+        shift: document.getElementById('shift').value,
+        timeout: document.getElementById('timeout').value,
+        trip: tripInput.value,
+        status: "Pending",
+        processedBy: null
+    };
+    let submissions = JSON.parse(localStorage.getItem('lateCallSubmissions')) || [];
+    submissions.push(submission);
+    localStorage.setItem('lateCallSubmissions', JSON.stringify(submissions));
+    alert("Request submitted successfully!");
+    form.reset();
+});
 </script>
 
 <!-- Footer -->
