@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Late Call Entry Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        
+        /* Header Styles */
+        .header h1 {
+            text-align: center;
+            margin-top: 10px; /* space between logos and title */
+        }
+
+        .logos {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .logos .logo {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 10px;
+            height: 60px;
+        }
+
+        label { font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin: 4px 0 12px 0; box-sizing: border-box; }
+        input[type="submit"] { background-color: #4CAF50; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        input[type="submit"]:hover { background-color: #45a049; }
+
+        /* Footer Styles */
+        footer { text-align: center; margin-top: 40px; font-size: 14px; color: #888; }
+
+        /* Form Container */
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Mobile specific styles */
+        @media (max-width: 600px) {
+            .logos .logo {
+                height: 50px; /* Adjust logo size for mobile */
+            }
+
+            h1 {
+                font-size: 20px; /* Adjust heading size for mobile */
+            }
+
+            .form-container {
+                width: 100%;
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header with Logos -->
+<div class="header">
+    <div class="logos">
+        <img src="logo1.png" alt="Logo 1" class="logo">
+        <img src="logo2.png" alt="Logo 2" class="logo">
+    </div>
+    <h1>Late Call Entry Form</h1>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+    <form id="lateCallForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" required>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="corp">Corp Number:</label>
+        <input type="text" id="corp" required>
+
+        <label for="hub">HUB:</label>
+        <select id="hub" required>
+            <option value="">-- Select HUB --</option>
+            <option>Hub 1</option>
+            <option>Hub 2</option>
+            <option>Hub 3</option>
+            <option>Hub 4</option>
+            <option>Hub 5</option>
+            <option>Hub 6</option>
+            <option>Hub 7</option>
+            <option>Hub 8</option>
+            <option>Events</option>
+            <option>SAS</option>
+            <option>Retrieval</option> <!-- New option added -->
+        </select>
+
+        <label for="unit">Unit:</label>
+        <input type="text" id="unit" required>
+
+        <label for="shift">Shift:</label>
+        <select id="shift" required>
+            <option value="">-- Select Shift --</option>
+            <option>Day</option>
+            <option>Peak</option>
+            <option>Night</option>
+            <option>Event</option> <!-- New option added -->
+        </select>
+
+        <label for="trip" id="tripLabel">Trip Number:</label>
+        <input type="number" id="trip" min="1">
+
+        <label for="hours">Number of Hours:</label>
+        <input type="number" id="hours" min="0" step="0.1" required>
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<script>
+const form = document.getElementById('lateCallForm');
+const hubSelect = document.getElementById('hub');
+const tripInput = document.getElementById('trip');
+const tripLabel = document.getElementById('tripLabel');
+
+// Hide Trip Number for Events/SAS
+hubSelect.addEventListener('change', () => {
+    if(hubSelect.value === "Events" || hubSelect.value === "SAS") {
+        tripInput.style.display = 'none';
+        tripLabel.style.display = 'none';
+        tripInput.value = "";
+    } else {
+        tripInput.style.display = 'block';
+        tripLabel.style.display = 'block';
+    }
+});
+
+// Handle submission
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    const submission = {
+        date: document.getElementById('date').value,
+        name: document.getElementById('name').value,
+        corp: document.getElementById('corp').value,
+        hub: hubSelect.value,
+        unit: document.getElementById('unit').value,
+        shift: document.getElementById('shift').value,
+        trip: tripInput.value,
+        hours: document.getElementById('hours').value,
+        status: "Pending",
+        processedBy: null
+    };
+    let submissions = JSON.parse(localStorage.getItem('lateCallSubmissions')) || [];
+    submissions.push(submission);
+    localStorage.setItem('lateCallSubmissions', JSON.stringify(submissions));
+    alert("Request submitted successfully!");
+    form.reset();
+});
+</script>
+
+<!-- Footer -->
+<footer>
+    © 2026 HMCAS Support Service Production. <br>
+    James Ross Camins. All rights reserved.
+</footer>
+
+</body>
+</html>
