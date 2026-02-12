@@ -1,3 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Supervisor Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Inter', sans-serif; margin: 0; background-color: #f4f6f8; color: #333; }
+button { cursor: pointer; border: none; border-radius: 5px; font-weight: 600; transition: 0.2s; }
+button:hover { opacity: 0.9; }
+.header-logos { display: flex; justify-content: space-between; align-items: center; padding: 10px 40px; background-color: #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+.header-logos img { height: 60px; }
+@media(max-width:600px){ .header-logos { padding:10px 20px; } .header-logos img { height:50px; } }
+#loginPage { display:flex; justify-content:center; align-items:center; height:calc(100vh - 80px); }
+.login-container { background:#fff; padding:40px 30px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.1); width:100%; max-width:400px; text-align:center; }
+.login-container h2 { margin-bottom:25px; color:#4CAF50; font-size:28px; }
+.login-container input { width:100%; padding:12px 15px; margin:10px 0; border:1px solid #ccc; border-radius:6px; font-size:16px; }
+.login-container button { width:100%; padding:12px; background-color:#4CAF50; color:white; margin-top:15px; font-size:16px; }
+#dashboardPage { display:none; padding:20px 40px; }
+.dashboard-card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 8px 20px rgba(0,0,0,0.1); margin-bottom:30px; }
+.dashboard-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.dashboard-header h1 { color:#4CAF50; font-size:28px; }
+.dashboard-header .manager-info { display:flex; align-items:center; gap:15px; }
+.dashboard-header .manager-info span { font-weight:600; }
+.dashboard-header .manager-info button { background-color:#f44336; color:white; padding:6px 12px; font-size:14px; }
+.top-bar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.top-bar label { font-weight:600; }
+.top-bar select, .top-bar button, .top-bar input { padding:6px 12px; font-size:14px; }
+.top-bar button { background-color:#4CAF50; color:white; }
+.table-container { overflow-x:auto; border-radius:10px; }
+table { width:100%; border-collapse:collapse; min-width:700px; }
+th, td { padding:10px 12px; text-align:left; }
+th { background-color:#f2f2f2; font-weight:600; }
+tr:nth-child(even) { background-color:#f9f9f9; }
+.status-select { padding:5px 8px; border-radius:5px; font-weight:600; }
+.status-pending { background-color:#FFD700; color:#000; }
+.status-completed { background-color:#4CAF50; color:white; }
+footer { text-align:center; margin-top:40px; font-size:14px; color:#888; }
+@media(max-width:900px){ #dashboardPage{padding:20px;} table{min-width:600px;} }
+@media(max-width:600px){ .top-bar{flex-direction:column; align-items:flex-start; gap:10px;} }
+</style>
+</head>
+<body>
+
+<div class="header-logos">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
+</div>
+
+<div id="loginPage">
+    <div class="login-container">
+        <h2>Manager Login</h2>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <div id="errorMessage" style="color:red; margin-top:10px;"></div>
+    </div>
+</div>
+
+<div id="dashboardPage">
+    <div class="dashboard-card">
+        <div class="dashboard-header">
+            <h1>Supervisor Dashboard</h1>
+            <div class="manager-info">
+                <span id="managerName"></span>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="top-bar">
+            <div>
+                <label for="hubFilter">Filter by HUB:</label>
+                <select id="hubFilter" onchange="loadManagerTable()">
+                    <option value="">All HUBs</option>
+                    <option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
+                    <option>Hub 4</option><option>Hub 5</option><option>Hub 6</option>
+                    <option>Hub 7</option><option>Hub 8</option>
+                    <option>Events</option><option>SAS</option><option>Retrieval</option>
+                </select>
+            </div>
+            <div>
+                <label for="dateFilter">Filter by Date:</label>
+                <input type="date" id="dateFilter" onchange="loadManagerTable()">
+            </div>
+            <div>
+                <label for="searchInput">Search (Name, Corp, Unit, Trip):</label>
+                <input type="text" id="searchInput" placeholder="Search..." oninput="loadManagerTable()">
+            </div>
+            <button onclick="exportToExcel()">Export CSV</button>
+        </div>
+
+        <div class="table-container">
+            <table id="requestsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th><th>Name</th><th>Corp</th><th>HUB</th>
+                        <th>Unit</th><th>Shift</th><th>Trip</th>
+                        <th>Hours</th><th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
 import { getFirestore, collection, query, orderBy, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
@@ -11,8 +117,6 @@ const firebaseConfig = {
     messagingSenderId: "88186358109",
     appId: "1:88186358109:web:67981ae5cbbba348b700b4"
 };
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -22,34 +126,28 @@ let managers = [
   { username: "hkerkeni", fullName: "Habib Kerkeni", corpNumber: "11748", password: "HMCAS1234" }
 ];
 
-// Live submissions array
+// Live submissions
 let submissions = [];
 
 // Auto logout
 let logoutTimer;
-function resetTimer(){
-    clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(()=>{ alert("Logged out due to inactivity."); logout(); },5*60*1000);
-}
-document.onmousemove = resetTimer;
-document.onkeydown = resetTimer;
+function resetTimer(){ clearTimeout(logoutTimer); logoutTimer = setTimeout(()=>{ alert("Logged out due to inactivity."); logout(); },5*60*1000); }
+document.onmousemove = resetTimer; document.onkeydown = resetTimer;
 
-// Login & Logout
+// Login/Logout
 function login(){
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const manager = managers.find(m=>m.username===username && m.password===password);
-    if(manager){
-        localStorage.setItem('currentManager', JSON.stringify(manager));
-        checkLogin();
-    } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
+    if(manager){ localStorage.setItem('currentManager', JSON.stringify(manager)); checkLogin(); }
+    else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
 function logout(){
     localStorage.removeItem('currentManager');
     document.getElementById('loginPage').style.display='flex';
     document.getElementById('dashboardPage').style.display='none';
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
+    document.getElementById('username').value='';
+    document.getElementById('password').value='';
 }
 
 // Check login
@@ -83,18 +181,18 @@ function loadFirebaseSubmissions(){
         submissions = [];
         snapshot.forEach(docSnap => {
             const data = docSnap.data();
-            submissions.push({ 
+            submissions.push({
                 id: docSnap.id,
-                date: data.date,
-                name: data.name,
-                corp: data.corp,
-                hub: data.hub,
-                unit: data.unit,
-                shift: data.shift,
-                trip: data.trip,
-                hours: data.hours,
-                status: data.status,
-                processedBy: data.processedBy,
+                date: data.date || new Date().toISOString(),
+                name: data.name || "",
+                corp: data.corp || "",
+                hub: data.hub || "",
+                unit: data.unit || "",
+                shift: data.shift || "",
+                trip: data.trip || "",
+                hours: data.hours || "",
+                status: data.status || "Pending",
+                processedBy: data.processedBy || "",
                 completedAt: data.completedAt ? data.completedAt.toDate() : null
             });
         });
@@ -102,7 +200,7 @@ function loadFirebaseSubmissions(){
     });
 }
 
-// Load table with filters
+// Load table
 function loadManagerTable(){
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML='';
@@ -120,7 +218,7 @@ function loadManagerTable(){
             (s.trip && s.trip.toLowerCase().includes(searchTerm)) ||
             (s.unit && s.unit.toLowerCase().includes(searchTerm));
         return matchHub && matchDate && matchSearch;
-    }).forEach((s,i)=>{
+    }).forEach((s)=>{
         let statusClass = s.status==='Pending'?'status-pending':'status-completed';
         let disabled = s.status==='Completed' ? 'disabled' : '';
         let statusHTML = `<select class="status-select ${statusClass}" onchange="updateStatusFirebase('${s.id}', this)" ${disabled}>
@@ -192,3 +290,10 @@ function exportToExcel(){
 // Init
 checkLogin();
 </script>
+
+<footer>
+    © 2026 HMCAS Support Service Production. <br>
+    James Ross Camins. All rights reserved.
+</footer>
+</body>
+</html>
