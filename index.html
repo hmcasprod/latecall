@@ -4,55 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request Form</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 50px;
-      background-color: #f7f7f7;
-    }
-    h1 {
-      text-align: center;
-    }
-    form {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+  <!-- Your existing CSS goes here -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Submit a Request</h1>
 
+  <!-- Your existing header/layout -->
+  <header>
+    <h1>Submit Your Request</h1>
+  </header>
+
+  <!-- Request Form -->
   <form id="requestForm">
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="email" name="email" placeholder="Your Email" required />
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
     <textarea name="request" placeholder="Your Request" required></textarea>
     <button type="submit">Submit</button>
   </form>
 
-  <!-- Firebase SDK -->
+  <!-- Any existing footer/layout -->
+  <footer>
+    <p>&copy; 2026 HMCAS</p>
+  </footer>
+
+  <!-- Firebase Integration -->
   <script type="module">
-    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
@@ -89,7 +65,7 @@
         alert("Request submitted successfully!");
         form.reset();
       } catch (error) {
-        console.error("Error adding document: ", error);
+        console.error("Error submitting request:", error);
         alert("Failed to submit request.");
       }
     });
