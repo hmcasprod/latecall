@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Late Call Entry Form</title>
 
-  <!-- Firebase SDK Modules -->
-  <script type="module">
-    // Import the functions you need from Firebase SDK
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
 
-    // Your Firebase config
+  <script>
+    // Firebase configuration (replace with your actual config from Firebase Console)
     const firebaseConfig = {
       apiKey: "AIzaSyC-RidAbJBCvoxT6aalA-lXA1u5ZT1PC4o",
       authDomain: "hmcas-latecall.firebaseapp.com",
@@ -22,195 +21,105 @@
     };
 
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+</head>
 
-    // Initialize Firestore
-    const db = getFirestore(app);
+<body>
 
-    // Handle form submission to Firestore
-    const form = document.getElementById('lateCallForm');
-    const hubSelect = document.getElementById('hub');
-    const otherHubInput = document.getElementById('otherHub');
+  <!-- Late Call Entry Form -->
+  <h1>Late Call Entry Form</h1>
+  
+  <form id="lateCallForm">
+    <label for="date">Date *</label>
+    <input type="date" id="date" required>
 
-    // Show the "Other" hub input if "Others" is selected
-    hubSelect.addEventListener('change', () => {
-      if (hubSelect.value === "Others") {
-        otherHubInput.style.display = 'block';
-        otherHubInput.required = true;
-      } else {
-        otherHubInput.style.display = 'none';
-        otherHubInput.required = false;
-        otherHubInput.value = "";
-      }
-    });
+    <label for="name">Name *</label>
+    <input type="text" id="name" required>
 
-    // Form submission logic
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Prevent default form submit
+    <label for="corp">Corp Number *</label>
+    <input type="text" id="corp" required>
 
-      // Capture form data
-      const submissionData = {
-        date: document.getElementById('date').value,
-        name: document.getElementById('name').value,
-        corp: document.getElementById('corp').value,
-        hub: hubSelect.value === "Others" ? otherHubInput.value : hubSelect.value,
-        unit: document.getElementById('unit').value,
-        shift: document.getElementById('shift').value,
-        timeOut: document.getElementById('timeout').value,
-        trip: document.getElementById('trip').value,
-        status: "Pending" // Set the initial status as "Pending"
-      };
+    <label for="hub">HUB *</label>
+    <select id="hub" required>
+      <option value="">-- Select HUB --</option>
+      <option>Hub 1</option>
+      <option>Hub 2</option>
+      <option>Hub 3</option>
+      <option>Hub 4</option>
+      <option>Hub 5</option>
+      <option>Hub 6</option>
+      <option>Hub 7</option>
+      <option>Hub 8</option>
+      <option>Events</option>
+      <option>SAS</option>
+      <option>Retrieval</option>
+      <option>Life Flight</option>
+      <option value="Others">Other/s : Please Specify</option>
+    </select>
 
+    <input type="text" id="otherHub" placeholder="Please specify" style="display:none;">
+
+    <label for="unit">Unit *</label>
+    <input type="text" id="unit" required>
+
+    <label for="shift">Shift *</label>
+    <select id="shift" required>
+      <option value="">-- Select Shift --</option>
+      <option>Day</option>
+      <option>Peak</option>
+      <option>Night</option>
+      <option>Event</option>
+    </select>
+
+    <label for="timeout">Time Out *</label>
+    <input type="time" id="timeout" required>
+
+    <label for="trip">Trip Number / Reason for Late Time Out *</label>
+    <input type="text" id="trip" required>
+
+    <input type="submit" value="Submit">
+  </form>
+
+  <!-- Form Submission Script -->
+  <script>
+    document.getElementById('lateCallForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      // Get form data
+      const date = document.getElementById('date').value;
+      const name = document.getElementById('name').value;
+      const corp = document.getElementById('corp').value;
+      const hub = document.getElementById('hub').value === "Others" 
+        ? document.getElementById('otherHub').value
+        : document.getElementById('hub').value;
+      const unit = document.getElementById('unit').value;
+      const shift = document.getElementById('shift').value;
+      const timeout = document.getElementById('timeout').value;
+      const trip = document.getElementById('trip').value;
+
+      // Submit data to Firestore
       try {
-        // Add submission data to Firestore
-        const docRef = await addDoc(collection(db, "requests"), submissionData);
-        console.log("Document written with ID: ", docRef.id);
-        alert("Request submitted successfully!");
-        
-        // Reset the form
-        form.reset();
-        otherHubInput.style.display = 'none';
-      } catch (e) {
-        console.error("Error adding document: ", e);
-        alert("Failed to submit request.");
+        await db.collection('requests').add({
+          date: date, 
+          name: name,
+          corp: corp,
+          hub: hub,
+          unit: unit,
+          shift: shift,
+          timeout: timeout,
+          trip: trip,
+          status: 'Pending',  // Default status
+        });
+        alert('Request submitted successfully!');
+        document.getElementById('lateCallForm').reset();  // Reset form after submission
+      } catch (error) {
+        console.error("Error submitting data: ", error);
+        alert('Failed to submit data.');
       }
     });
   </script>
-
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    
-    .header h1 {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .logos {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .logos .logo {
-      display: inline-block;
-      vertical-align: middle;
-      margin: 0 10px;
-      height: 60px;
-    }
-
-    label { font-weight: bold; }
-
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin: 4px 0 12px 0;
-      box-sizing: border-box;
-    }
-
-    input:required, select:required {
-      border-left: 4px solid #4CAF50;
-    }
-
-    input[type="submit"] {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    input[type="submit"]:hover {
-      background-color: #45a049;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 14px;
-      color: #888;
-    }
-
-    .form-container {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 600px) {
-      .logos .logo { height: 50px; }
-      h1 { font-size: 20px; }
-      .form-container { width: 100%; padding: 0 10px; }
-    }
-  </style>
-
-</head>
-<body>
-
-  <div class="header">
-    <div class="logos">
-      <img src="logo1.png" alt="Logo 1" class="logo">
-      <img src="logo2.png" alt="Logo 2" class="logo">
-    </div>
-    <h1>Late Call Entry Form</h1>
-  </div>
-
-  <div class="form-container">
-    <form id="lateCallForm">
-      
-      <label for="date">Date *</label>
-      <input type="date" id="date" required>
-
-      <label for="name">Name *</label>
-      <input type="text" id="name" required>
-
-      <label for="corp">Corp Number *</label>
-      <input type="text" id="corp" required>
-
-      <label for="hub">HUB *</label>
-      <select id="hub" required>
-        <option value="">-- Select HUB --</option>
-        <option>Hub 1</option>
-        <option>Hub 2</option>
-        <option>Hub 3</option>
-        <option>Hub 4</option>
-        <option>Hub 5</option>
-        <option>Hub 6</option>
-        <option>Hub 7</option>
-        <option>Hub 8</option>
-        <option>Events</option>
-        <option>SAS</option>
-        <option>Retrieval</option>
-        <option>Life Flight</option>
-        <option value="Others">Other/s : Please Specify</option>
-      </select>
-
-      <input type="text" id="otherHub" placeholder="Please specify" style="display:none;">
-
-      <label for="unit">Unit *</label>
-      <input type="text" id="unit" required>
-
-      <label for="shift">Shift *</label>
-      <select id="shift" required>
-        <option value="">-- Select Shift --</option>
-        <option>Day</option>
-        <option>Peak</option>
-        <option>Night</option>
-        <option>Event</option>
-      </select>
-
-      <label for="timeout">Time Out *</label>
-      <input type="time" id="timeout" required>
-
-      <label for="trip">Trip Number / Reason for Late Time Out *</label>
-      <input type="text" id="trip" required>
-
-      <input type="submit" value="Submit">
-    </form>
-  </div>
-
-  <footer>
-    © 2026 HMCAS Support Service Production. <br>
-    James Ross Camins. All rights reserved.
-  </footer>
 
 </body>
 </html>
