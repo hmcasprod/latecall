@@ -49,15 +49,14 @@
       </tr>
     </thead>
     <tbody>
-      <!-- Requests will be inserted here -->
+      <!-- Requests will appear here -->
     </tbody>
   </table>
 
   <!-- Firebase SDK -->
   <script type="module">
-    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -75,11 +74,11 @@
 
     const tableBody = document.querySelector("#requestsTable tbody");
 
-    async function loadRequests() {
-      const q = query(collection(db, "requests"), orderBy("timestamp", "desc"));
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
+    // Real-time listener for live submissions
+    const q = query(collection(db, "requests"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+      tableBody.innerHTML = ""; // Clear previous rows
+      snapshot.forEach((doc) => {
         const data = doc.data();
         const row = document.createElement("tr");
 
@@ -94,9 +93,7 @@
 
         tableBody.appendChild(row);
       });
-    }
-
-    loadRequests();
+    });
   </script>
 </body>
 </html>
