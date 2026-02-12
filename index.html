@@ -7,10 +7,9 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         
-        /* Header Styles */
         .header h1 {
             text-align: center;
-            margin-top: 10px; /* space between logos and title */
+            margin-top: 10px;
         }
 
         .logos {
@@ -26,39 +25,52 @@
         }
 
         label { font-weight: bold; }
-        input, select { width: 100%; padding: 8px; margin: 4px 0 12px 0; box-sizing: border-box; }
-        input[type="submit"] { background-color: #4CAF50; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; }
-        input[type="submit"]:hover { background-color: #45a049; }
 
-        /* Footer Styles */
-        footer { text-align: center; margin-top: 40px; font-size: 14px; color: #888; }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 4px 0 12px 0;
+            box-sizing: border-box;
+        }
 
-        /* Form Container */
+        input:required, select:required {
+            border-left: 4px solid #4CAF50;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #888;
+        }
+
         .form-container {
             max-width: 500px;
             margin: 0 auto;
         }
 
-        /* Mobile specific styles */
         @media (max-width: 600px) {
-            .logos .logo {
-                height: 50px; /* Adjust logo size for mobile */
-            }
-
-            h1 {
-                font-size: 20px; /* Adjust heading size for mobile */
-            }
-
-            .form-container {
-                width: 100%;
-                padding: 0 10px;
-            }
+            .logos .logo { height: 50px; }
+            h1 { font-size: 20px; }
+            .form-container { width: 100%; padding: 0 10px; }
         }
     </style>
 </head>
 <body>
 
-<!-- Header with Logos -->
 <div class="header">
     <div class="logos">
         <img src="logo1.png" alt="Logo 1" class="logo">
@@ -67,19 +79,19 @@
     <h1>Late Call Entry Form</h1>
 </div>
 
-<!-- Form Container -->
 <div class="form-container">
     <form id="lateCallForm">
-        <label for="date">Date:</label>
+        
+        <label for="date">Date *</label>
         <input type="date" id="date" required>
 
-        <label for="name">Name:</label>
+        <label for="name">Name *</label>
         <input type="text" id="name" required>
 
-        <label for="corp">Corp Number:</label>
+        <label for="corp">Corp Number *</label>
         <input type="text" id="corp" required>
 
-        <label for="hub">HUB:</label>
+        <label for="hub">HUB *</label>
         <select id="hub" required>
             <option value="">-- Select HUB --</option>
             <option>Hub 1</option>
@@ -93,12 +105,16 @@
             <option>Events</option>
             <option>SAS</option>
             <option>Retrieval</option>
+            <option>Life Flight</option>
+            <option value="Others">Other/s</option>
         </select>
 
-        <label for="unit">Unit:</label>
+        <input type="text" id="otherHub" placeholder="Please specify HUB" style="display:none;">
+
+        <label for="unit">Unit *</label>
         <input type="text" id="unit" required>
 
-        <label for="shift">Shift:</label>
+        <label for="shift">Shift *</label>
         <select id="shift" required>
             <option value="">-- Select Shift --</option>
             <option>Day</option>
@@ -107,13 +123,11 @@
             <option>Event</option>
         </select>
 
-        <!-- Time Out Field -->
-        <label for="timeout">Time Out (HH:MM):</label>
+        <label for="timeout">Time Out *</label>
         <input type="time" id="timeout" required>
 
-        <!-- Trip Number / Reason -->
-        <label for="trip" id="tripLabel">Trip Number / Reason for Late Call:</label>
-        <input type="text" id="trip">
+        <label for="trip">Trip Number / Reason for Late Time Out *</label>
+        <input type="text" id="trip" required>
 
         <input type="submit" value="Submit">
     </form>
@@ -122,45 +136,45 @@
 <script>
 const form = document.getElementById('lateCallForm');
 const hubSelect = document.getElementById('hub');
-const tripInput = document.getElementById('trip');
-const tripLabel = document.getElementById('tripLabel');
+const otherHubInput = document.getElementById('otherHub');
 
-// Hide Trip Number for Events/SAS
 hubSelect.addEventListener('change', () => {
-    if(hubSelect.value === "Events" || hubSelect.value === "SAS") {
-        tripInput.style.display = 'none';
-        tripLabel.style.display = 'none';
-        tripInput.value = "";
+    if (hubSelect.value === "Others") {
+        otherHubInput.style.display = 'block';
+        otherHubInput.required = true;
     } else {
-        tripInput.style.display = 'block';
-        tripLabel.style.display = 'block';
+        otherHubInput.style.display = 'none';
+        otherHubInput.required = false;
+        otherHubInput.value = "";
     }
 });
 
-// Handle submission
 form.addEventListener('submit', e => {
     e.preventDefault();
+
     const submission = {
         date: document.getElementById('date').value,
         name: document.getElementById('name').value,
         corp: document.getElementById('corp').value,
-        hub: hubSelect.value,
+        hub: hubSelect.value === "Others" ? otherHubInput.value : hubSelect.value,
         unit: document.getElementById('unit').value,
         shift: document.getElementById('shift').value,
-        timeout: document.getElementById('timeout').value,
-        trip: tripInput.value,
+        timeOut: document.getElementById('timeout').value,
+        tripOrReason: document.getElementById('trip').value,
         status: "Pending",
         processedBy: null
     };
+
     let submissions = JSON.parse(localStorage.getItem('lateCallSubmissions')) || [];
     submissions.push(submission);
     localStorage.setItem('lateCallSubmissions', JSON.stringify(submissions));
+
     alert("Request submitted successfully!");
     form.reset();
+    otherHubInput.style.display = 'none';
 });
 </script>
 
-<!-- Footer -->
 <footer>
     © 2026 HMCAS Support Service Production. <br>
     James Ross Camins. All rights reserved.
