@@ -39,13 +39,25 @@
       justify-content: center;
       align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap;  /* Allow wrapping of items for mobile view */
     }
 
     .logos img {
-      width: 250px;  /* Fixed width */
+      width: 150px;  /* Fixed width */
       height: 90px;  /* Fixed height */
       object-fit: contain;
       margin: 0 15px;
+    }
+
+    /* Media query for mobile view */
+    @media (max-width: 768px) {
+      .logos {
+        flex-direction: column;  /* Stack logos vertically */
+      }
+
+      .logos img {
+        margin: 10px 0;  /* Add space between logos when stacked vertically */
+      }
     }
 
     h1 {
