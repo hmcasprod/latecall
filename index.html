@@ -1,48 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Late Call Entry Form</title>
 
-  <!-- Basic Styles to Fix Layout Issues -->
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
+
+  <script>
+    // Firebase configuration (replace with your actual config from Firebase Console)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC-RidAbJBCvoxT6aalA-lXA1u5ZT1PC4o",
+      authDomain: "hmcas-latecall.firebaseapp.com",
+      projectId: "hmcas-latecall",
+      storageBucket: "hmcas-latecall.appspot.com",
+      messagingSenderId: "498700648548",
+      appId: "1:498700648548:web:393d1676210823f7f49f71"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- Style for form layout -->
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 20px;
+      padding: 10px;
       background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #333;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
     }
 
     form {
-      background-color: #fff;
+      max-width: 600px;
+      margin: 0 auto;
       padding: 20px;
+      background-color: #fff;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 500px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: bold;
     }
 
     input, select {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
+      padding: 8px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
       border-radius: 4px;
       border: 1px solid #ccc;
     }
@@ -58,114 +74,131 @@
       background-color: #45a049;
     }
 
-    .form-group {
-      margin-bottom: 15px;
+    input:required {
+      border-left: 4px solid #4CAF50;
     }
 
     #otherHub {
       display: none;
     }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
   </style>
+
 </head>
 
 <body>
 
   <!-- Late Call Entry Form -->
-  <div>
+  <div class="form-container">
     <h1>Late Call Entry Form</h1>
-    <form id="lateCallForm" action="https://script.google.com/macros/s/AKfycbwaXPM3lQl78sVcLSyea7qQZUM4ABeWST11bVUiTfAg2NzNONW9RKD2j_mWkK6PMgTMdg/exec" method="POST">
-      
-      <div class="form-group">
-        <label for="date">Date *</label>
-        <input type="date" id="date" name="date" required>
-      </div>
 
-      <div class="form-group">
-        <label for="name">Name *</label>
-        <input type="text" id="name" name="name" required>
-      </div>
+    <form id="lateCallForm">
+      <label for="date">Date *</label>
+      <input type="date" id="date" required>
 
-      <div class="form-group">
-        <label for="corp">Corp Number *</label>
-        <input type="text" id="corp" name="corp" required>
-      </div>
+      <label for="name">Name *</label>
+      <input type="text" id="name" required>
 
-      <div class="form-group">
-        <label for="dutyType">Type of Duty *</label>
-        <select id="dutyType" name="dutyType" required>
-          <option value="">-- Select Type of Duty --</option>
-          <option>Regular Shift</option>
-          <option>Overtime</option>
-        </select>
-      </div>
+      <label for="corp">Corp Number *</label>
+      <input type="text" id="corp" required>
 
-      <div class="form-group">
-        <label for="hub">HUB *</label>
-        <select id="hub" name="hub" required>
-          <option value="">-- Select HUB --</option>
-          <option>Hub 1</option>
-          <option>Hub 2</option>
-          <option>Hub 3</option>
-          <option>Hub 4</option>
-          <option>Hub 5</option>
-          <option>Hub 6</option>
-          <option>Hub 7</option>
-          <option>Hub 8</option>
-          <option>Events</option>
-          <option>SAS</option>
-          <option>Retrieval</option>
-          <option>Life Flight</option>
-          <option value="Others">Other/s : Please Specify</option>
-        </select>
+      <label for="hub">HUB *</label>
+      <select id="hub" required>
+        <option value="">-- Select HUB --</option>
+        <option>Hub 1</option>
+        <option>Hub 2</option>
+        <option>Hub 3</option>
+        <option>Hub 4</option>
+        <option>Hub 5</option>
+        <option>Hub 6</option>
+        <option>Hub 7</option>
+        <option>Hub 8</option>
+        <option>Events</option>
+        <option>SAS</option>
+        <option>Retrieval</option>
+        <option>Life Flight</option>
+        <option value="Others">Other/s : Please Specify</option>
+      </select>
 
-        <input type="text" id="otherHub" name="otherHub" placeholder="Please specify" style="display:none;">
-      </div>
+      <input type="text" id="otherHub" placeholder="Please specify">
 
-      <div class="form-group">
-        <label for="unit">Unit *</label>
-        <input type="text" id="unit" name="unit" required>
-      </div>
+      <label for="unit">Unit *</label>
+      <input type="text" id="unit" required>
 
-      <div class="form-group">
-        <label for="shift">Shift *</label>
-        <select id="shift" name="shift" required>
-          <option value="">-- Select Shift --</option>
-          <option>Day</option>
-          <option>Peak</option>
-          <option>Night</option>
-          <option>Event</option>
-        </select>
-      </div>
+      <label for="shift">Shift *</label>
+      <select id="shift" required>
+        <option value="">-- Select Shift --</option>
+        <option>Day</option>
+        <option>Peak</option>
+        <option>Night</option>
+        <option>Event</option>
+      </select>
 
-      <div class="form-group">
-        <label for="timeout">Time Out *</label>
-        <input type="time" id="timeout" name="timeout" required>
-      </div>
+      <label for="timeout">Time Out *</label>
+      <input type="time" id="timeout" required>
 
-      <div class="form-group">
-        <label for="trip">Trip Number / Reason for Late Time Out *</label>
-        <input type="text" id="trip" name="trip" required>
-      </div>
+      <label for="trip">Trip Number / Reason for Late Time Out *</label>
+      <input type="text" id="trip" required>
 
-      <div class="form-group">
-        <input type="submit" value="Submit">
-      </div>
-
+      <input type="submit" value="Submit">
     </form>
   </div>
 
   <!-- Form Submission Script -->
   <script>
-    // Show "Other/s" input when 'Others' is selected in the hub field
-    document.getElementById('hub').addEventListener('change', function() {
-      const otherHubField = document.getElementById('otherHub');
-      if (this.value === 'Others') {
-        otherHubField.style.display = 'block'; // Show "Please specify" input
+    // Show or hide the "Other Hub" input field based on selection
+    document.getElementById('hub').addEventListener('change', function () {
+      const otherHubInput = document.getElementById('otherHub');
+      if (this.value === "Others") {
+        otherHubInput.style.display = "block";
+        otherHubInput.required = true;
       } else {
-        otherHubField.style.display = 'none'; // Hide "Please specify" input
+        otherHubInput.style.display = "none";
+        otherHubInput.required = false;
+      }
+    });
+
+    // Form submission logic
+    document.getElementById('lateCallForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent form from submitting the traditional way
+
+      // Collect form data
+      const date = document.getElementById('date').value;
+      const name = document.getElementById('name').value;
+      const corp = document.getElementById('corp').value;
+      const hub = document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value;
+      const unit = document.getElementById('unit').value;
+      const shift = document.getElementById('shift').value;
+      const timeout = document.getElementById('timeout').value;
+      const trip = document.getElementById('trip').value;
+
+      // Send data to Firestore
+      try {
+        await db.collection('requests').add({
+          date: date,
+          name: name,
+          corp: corp,
+          hub: hub,
+          unit: unit,
+          shift: shift,
+          timeout: timeout,
+          trip: trip,
+          status: 'Pending',  // Default status
+        });
+        alert('Request submitted successfully!');
+        document.getElementById('lateCallForm').reset(); // Reset the form
+      } catch (error) {
+        console.error('Error submitting data:', error);
+        alert('Failed to submit data.');
       }
     });
   </script>
 
 </body>
+
 </html>
