@@ -2,10 +2,127 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supervisor Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Add your existing CSS styles here */
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        .header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-logos img {
+            height: 50px;
+        }
+
+        /* Login Page Styles */
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #e3f2fd;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .login-container input {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .login-container button {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        .login-container .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* Dashboard Page Styles */
+        #dashboardPage {
+            display: none;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #555;
+        }
+
+        td {
+            background-color: #fff;
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            .header-logos {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -23,19 +140,37 @@
         <input type="text" id="username" placeholder="Username" required>
         <input type="password" id="password" placeholder="Password" required>
         <button onclick="login()">Login</button>
-        <div id="errorMessage" style="color:red; margin-top:10px;"></div>
+        <div id="errorMessage" class="error-message"></div>
     </div>
 </div>
 
 <!-- Dashboard Page -->
 <div id="dashboardPage">
     <!-- Dashboard Content Here -->
+    <h2 id="managerName"></h2>
+    <table id="requestsTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Corp Number</th>
+                <th>Hub</th>
+                <th>Unit</th>
+                <th>Shift</th>
+                <th>Trip</th>
+                <th>Timeout</th>
+                <th>Type of Duty</th> <!-- New Column for Type of Duty -->
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic content will be injected here by JavaScript -->
+        </tbody>
+    </table>
 </div>
 
 <!-- Firebase SDK Integration -->
-<!-- Firebase Core -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<!-- Firestore SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
 <script>
@@ -53,118 +188,72 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore(app);
 
-// Managers
+// Managers Data (Hardcoded for now)
 let managers = [
     { username: "jcamins", fullName: "James Camins", corpNumber: "45357", password: "HMCAS1234" },
     { username: "hkerkeni", fullName: "Habib Kerkeni", corpNumber: "11748", password: "HMCAS1234" }
 ];
 
-// Auto logout 5 mins
-let logoutTimer;
-function resetTimer(){
-    clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(()=>{ alert("Logged out due to inactivity."); logout(); },5*60*1000);
-}
-document.onmousemove = resetTimer;
-document.onkeydown = resetTimer;
-
-// Login
-function login(){
+// Login Functionality
+function login() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const manager = managers.find(m=>m.username===username && m.password===password);
-    if(manager){
+    const manager = managers.find(m => m.username === username && m.password === password);
+    
+    if (manager) {
         localStorage.setItem('currentManager', JSON.stringify(manager));
         checkLogin();
-    } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
+    } else {
+        document.getElementById('errorMessage').innerText = "Invalid username or password!";
+    }
 }
 
-function logout(){
+// Logout Functionality
+function logout() {
     localStorage.removeItem('currentManager');
-    document.getElementById('loginPage').style.display='flex';
-    document.getElementById('dashboardPage').style.display='none';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('dashboardPage').style.display = 'none';
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
 }
 
 // Check login state
-function checkLogin(){
+function checkLogin() {
     const manager = JSON.parse(localStorage.getItem('currentManager'));
-    if(manager){
-        document.getElementById('loginPage').style.display='none';
-        document.getElementById('dashboardPage').style.display='block';
-        document.getElementById('managerName').innerText = `${manager.fullName} ${manager.corpNumber}`;
-        resetTimer();
+    if (manager) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboardPage').style.display = 'block';
+        document.getElementById('managerName').innerText = `Welcome, ${manager.fullName} (${manager.corpNumber})`;
         loadManagerTable();
     }
 }
 
-// Fetch data from Firestore
+// Load data from Firestore
 function loadManagerTable() {
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML = '';
 
-    // Get filter values
-    const hubFilter = document.getElementById('hubFilter').value.toLowerCase();
-    const dateFilter = document.getElementById('dateFilter').value;
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-
     db.collection('requests').get()
         .then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                let s = doc.data();
-                const matchHub = !hubFilter || s.hub.toLowerCase() === hubFilter;
-                const matchDate = !dateFilter || s.date.split('T')[0] === dateFilter;
-                const matchSearch = !searchTerm ||
-                    s.name.toLowerCase().includes(searchTerm) ||
-                    s.corp.toLowerCase().includes(searchTerm) ||
-                    (s.trip && s.trip.toLowerCase().includes(searchTerm)) ||
-                    (s.unit && s.unit.toLowerCase().includes(searchTerm));
-
-                if (matchHub && matchDate && matchSearch) {
-                    let statusClass = s.status === 'Pending' ? 'status-pending' : 'status-completed';
-                    let disabled = s.status === 'Completed' ? 'disabled' : '';
-                    let statusHTML = `<select class="status-select ${statusClass}" onchange="updateStatus('${doc.id}', this)" ${disabled}>
-                        <option value="Pending" ${s.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="Completed" ${s.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                    </select>`;
-                    if (s.status === 'Completed') statusHTML += ` by ${s.processedBy || 'Supervisor'} (${formatDateTime(s.completedAt)})`;
-
-                    tbody.innerHTML += `<tr>
-                        <td>${formatDateTime(s.date)}</td>
-                        <td>${s.name}</td>
-                        <td>${s.corp}</td>
-                        <td>${s.hub}</td>
-                        <td>${s.unit}</td>
-                        <td>${s.shift}</td>
-                        <td>${s.trip}</td>
-                        <td>${s.timeout}</td>
-                        <td>${statusHTML}</td>
-                    </tr>`;
-                }
+                const s = doc.data();
+                tbody.innerHTML += `<tr>
+                    <td>${formatDateTime(s.date)}</td>
+                    <td>${s.name}</td>
+                    <td>${s.corp}</td>
+                    <td>${s.hub}</td>
+                    <td>${s.unit}</td>
+                    <td>${s.shift}</td>
+                    <td>${s.trip}</td>
+                    <td>${s.timeout}</td>
+                    <td>${s.typeOfDuty || 'Not Available'}</td> <!-- Display Type of Duty -->
+                    <td>${s.status}</td>
+                </tr>`;
             });
         })
         .catch(error => {
             console.error("Error fetching requests: ", error);
         });
-}
-
-// Update status in Firestore
-function updateStatus(docId, selectElem) {
-    const value = selectElem.value;
-    const manager = JSON.parse(localStorage.getItem('currentManager'));
-
-    if (value === 'Completed') {
-        db.collection('requests').doc(docId).update({
-            status: 'Completed',
-            processedBy: manager.fullName,
-            completedAt: new Date()
-        }).then(() => {
-            loadManagerTable();
-        }).catch(error => {
-            console.error("Error updating status: ", error);
-        });
-    }
 }
 
 // Format date with time
@@ -179,6 +268,8 @@ function formatDateTime(dateString) {
     return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
 
+// Auto login check on page load
+checkLogin();
 </script>
 
 <footer>
