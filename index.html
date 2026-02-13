@@ -10,6 +10,12 @@
   <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
 
+  <!-- Link to Google Fonts (Roboto) -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Link to Font Awesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
   <script>
     // Firebase configuration (replace with your actual config from Firebase Console)
     const firebaseConfig = {
@@ -27,20 +33,21 @@
   </script>
 
   <style>
+    /* Apply Roboto font to the whole body */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
       margin: 20px;
       padding: 10px;
       background-color: #f4f4f4;
     }
 
     .logos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;  /* Allow wrapping of items for mobile view */
-}
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
     .logos img {
       width: 250px;
@@ -53,8 +60,25 @@
       text-align: center;
       margin-top: 0;
       margin-bottom: 20px;
+      font-weight: bold;
+      color: black;
     }
 
+    /* Change label color to black and make them bold */
+    label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: black;
+    }
+
+    label i {
+      margin-right: 10px;
+      color: #4CAF50; /* Green icon color */
+    }
+
+    /* Form container */
     form {
       max-width: 600px;
       margin: 0 auto;
@@ -64,13 +88,14 @@
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
+    /* Add styles for input fields */
+    .input-container {
+      position: relative;
+      margin-bottom: 12px;
     }
 
-    input, select {
+    .input-container input,
+    .input-container select {
       width: 100%;
       padding: 8px;
       margin-bottom: 12px;
@@ -79,11 +104,17 @@
       border: 1px solid #ccc;
     }
 
+    /* Center the submit button and make its size the same as the input boxes */
     input[type="submit"] {
       background-color: #4CAF50;
       color: white;
       border: none;
       cursor: pointer;
+      padding: 10px; /* Same height as input boxes */
+      width: 100%;  /* Full width of the form */
+      font-weight: bold;
+      border-radius: 4px;
+      text-align: center;
     }
 
     input[type="submit"]:hover {
@@ -120,60 +151,85 @@
     <h1>Late Call Entry Form</h1>
 
     <form id="lateCallForm">
-      <label for="date">Date *</label>
-      <input type="date" id="date" required>
+      <!-- Date -->
+      <div class="input-container">
+        <label for="date"><i class="fas fa-calendar-alt"></i> Date *</label>
+        <input type="date" id="date" required>
+      </div>
 
-      <label for="name">Name *</label>
-      <input type="text" id="name" required>
+      <!-- Name -->
+      <div class="input-container">
+        <label for="name"><i class="fas fa-user"></i> Name *</label>
+        <input type="text" id="name" required>
+      </div>
 
-      <label for="corp">Corp Number *</label>
-      <input type="text" id="corp" required>
+      <!-- Corp Number -->
+      <div class="input-container">
+        <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
+        <input type="text" id="corp" required>
+      </div>
 
       <!-- Type of Duty -->
-      <label for="typeOfDuty">Type of Duty *</label>
-      <select id="typeOfDuty" required>
-        <option value="">-- Select Type of Duty --</option>
-        <option>Regular Shift</option>
-        <option>Overtime</option>
-      </select>
+      <div class="input-container">
+        <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
+        <select id="typeOfDuty" required>
+          <option value="">-- Select Type of Duty --</option>
+          <option>Regular Shift</option>
+          <option>Overtime</option>
+        </select>
+      </div>
 
-      <label for="hub">HUB *</label>
-      <select id="hub" required>
-        <option value="">-- Select HUB --</option>
-        <option>Hub 1</option>
-        <option>Hub 2</option>
-        <option>Hub 3</option>
-        <option>Hub 4</option>
-        <option>Hub 5</option>
-        <option>Hub 6</option>
-        <option>Hub 7</option>
-        <option>Hub 8</option>
-        <option>Events</option>
-        <option>SAS</option>
-        <option>Retrieval</option>
-        <option>Life Flight</option>
-        <option value="Others">Other/s : Please Specify</option>
-      </select>
+      <!-- HUB -->
+      <div class="input-container">
+        <label for="hub"><i class="fas fa-home"></i> HUB *</label>
+        <select id="hub" required>
+          <option value="">-- Select HUB --</option>
+          <option>Hub 1</option>
+          <option>Hub 2</option>
+          <option>Hub 3</option>
+          <option>Hub 4</option>
+          <option>Hub 5</option>
+          <option>Hub 6</option>
+          <option>Hub 7</option>
+          <option>Hub 8</option>
+          <option>Events</option>
+          <option>SAS</option>
+          <option>Retrieval</option>
+          <option>Life Flight</option>
+          <option value="Others">Other/s : Please Specify</option>
+        </select>
+        <input type="text" id="otherHub" placeholder="Please specify">
+      </div>
 
-      <input type="text" id="otherHub" placeholder="Please specify">
+      <!-- Unit -->
+      <div class="input-container">
+        <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
+        <input type="text" id="unit" required>
+      </div>
 
-      <label for="unit">Unit *</label>
-      <input type="text" id="unit" required>
+      <!-- Shift -->
+      <div class="input-container">
+        <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
+        <select id="shift" required>
+          <option value="">-- Select Shift --</option>
+          <option>Day</option>
+          <option>Peak</option>
+          <option>Night</option>
+          <option>Event</option>
+        </select>
+      </div>
 
-      <label for="shift">Shift *</label>
-      <select id="shift" required>
-        <option value="">-- Select Shift --</option>
-        <option>Day</option>
-        <option>Peak</option>
-        <option>Night</option>
-        <option>Event</option>
-      </select>
+      <!-- Time Out -->
+      <div class="input-container">
+        <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
+        <input type="time" id="timeout" required>
+      </div>
 
-      <label for="timeout">Time Out *</label>
-      <input type="time" id="timeout" required>
-
-      <label for="trip">Trip Number / Reason for Late Time Out *</label>
-      <input type="text" id="trip" required>
+      <!-- Trip -->
+      <div class="input-container">
+        <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
+        <input type="text" id="trip" required>
+      </div>
 
       <input type="submit" value="Submit">
     </form>
