@@ -4,71 +4,155 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Late Call Entry Form</title>
+
+  <!-- Basic Styles to Fix Layout Issues -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    #otherHub {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
   <!-- Late Call Entry Form -->
-  <h1>Late Call Entry Form</h1>
-  
-  <form id="lateCallForm" action="https://script.google.com/macros/s/AKfycbwaXPM3lQl78sVcLSyea7qQZUM4ABeWST11bVUiTfAg2NzNONW9RKD2j_mWkK6PMgTMdg/exec" method="POST">
-    <label for="date">Date *</label>
-    <input type="date" id="date" name="date" required>
+  <div>
+    <h1>Late Call Entry Form</h1>
+    <form id="lateCallForm" action="https://script.google.com/macros/s/AKfycbwaXPM3lQl78sVcLSyea7qQZUM4ABeWST11bVUiTfAg2NzNONW9RKD2j_mWkK6PMgTMdg/exec" method="POST">
+      
+      <div class="form-group">
+        <label for="date">Date *</label>
+        <input type="date" id="date" name="date" required>
+      </div>
 
-    <label for="name">Name *</label>
-    <input type="text" id="name" name="name" required>
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" required>
+      </div>
 
-    <label for="corp">Corp Number *</label>
-    <input type="text" id="corp" name="corp" required>
+      <div class="form-group">
+        <label for="corp">Corp Number *</label>
+        <input type="text" id="corp" name="corp" required>
+      </div>
 
-    <!-- Type of Duty Field -->
-    <label for="dutyType">Type of Duty *</label>
-    <select id="dutyType" name="dutyType" required>
-      <option value="">-- Select Type of Duty --</option>
-      <option>Regular Shift</option>
-      <option>Overtime</option>
-    </select>
+      <div class="form-group">
+        <label for="dutyType">Type of Duty *</label>
+        <select id="dutyType" name="dutyType" required>
+          <option value="">-- Select Type of Duty --</option>
+          <option>Regular Shift</option>
+          <option>Overtime</option>
+        </select>
+      </div>
 
-    <label for="hub">HUB *</label>
-    <select id="hub" name="hub" required>
-      <option value="">-- Select HUB --</option>
-      <option>Hub 1</option>
-      <option>Hub 2</option>
-      <option>Hub 3</option>
-      <option>Hub 4</option>
-      <option>Hub 5</option>
-      <option>Hub 6</option>
-      <option>Hub 7</option>
-      <option>Hub 8</option>
-      <option>Events</option>
-      <option>SAS</option>
-      <option>Retrieval</option>
-      <option>Life Flight</option>
-      <option value="Others">Other/s : Please Specify</option>
-    </select>
+      <div class="form-group">
+        <label for="hub">HUB *</label>
+        <select id="hub" name="hub" required>
+          <option value="">-- Select HUB --</option>
+          <option>Hub 1</option>
+          <option>Hub 2</option>
+          <option>Hub 3</option>
+          <option>Hub 4</option>
+          <option>Hub 5</option>
+          <option>Hub 6</option>
+          <option>Hub 7</option>
+          <option>Hub 8</option>
+          <option>Events</option>
+          <option>SAS</option>
+          <option>Retrieval</option>
+          <option>Life Flight</option>
+          <option value="Others">Other/s : Please Specify</option>
+        </select>
 
-    <input type="text" id="otherHub" name="otherHub" placeholder="Please specify" style="display:none;">
+        <input type="text" id="otherHub" name="otherHub" placeholder="Please specify" style="display:none;">
+      </div>
 
-    <label for="unit">Unit *</label>
-    <input type="text" id="unit" name="unit" required>
+      <div class="form-group">
+        <label for="unit">Unit *</label>
+        <input type="text" id="unit" name="unit" required>
+      </div>
 
-    <label for="shift">Shift *</label>
-    <select id="shift" name="shift" required>
-      <option value="">-- Select Shift --</option>
-      <option>Day</option>
-      <option>Peak</option>
-      <option>Night</option>
-      <option>Event</option>
-    </select>
+      <div class="form-group">
+        <label for="shift">Shift *</label>
+        <select id="shift" name="shift" required>
+          <option value="">-- Select Shift --</option>
+          <option>Day</option>
+          <option>Peak</option>
+          <option>Night</option>
+          <option>Event</option>
+        </select>
+      </div>
 
-    <label for="timeout">Time Out *</label>
-    <input type="time" id="timeout" name="timeout" required>
+      <div class="form-group">
+        <label for="timeout">Time Out *</label>
+        <input type="time" id="timeout" name="timeout" required>
+      </div>
 
-    <label for="trip">Trip Number / Reason for Late Time Out *</label>
-    <input type="text" id="trip" name="trip" required>
+      <div class="form-group">
+        <label for="trip">Trip Number / Reason for Late Time Out *</label>
+        <input type="text" id="trip" name="trip" required>
+      </div>
 
-    <input type="submit" value="Submit">
-  </form>
+      <div class="form-group">
+        <input type="submit" value="Submit">
+      </div>
+
+    </form>
+  </div>
 
   <!-- Form Submission Script -->
   <script>
