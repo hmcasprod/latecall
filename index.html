@@ -41,6 +41,14 @@
     <label for="corp">Corp Number *</label>
     <input type="text" id="corp" required>
 
+    <!-- Type of Duty Field -->
+    <label for="dutyType">Type of Duty *</label>
+    <select id="dutyType" required>
+      <option value="">-- Select Type of Duty --</option>
+      <option>Regular Shift</option>
+      <option>Overtime</option>
+    </select>
+
     <label for="hub">HUB *</label>
     <select id="hub" required>
       <option value="">-- Select HUB --</option>
@@ -91,6 +99,7 @@
       const date = document.getElementById('date').value;
       const name = document.getElementById('name').value;
       const corp = document.getElementById('corp').value;
+      const dutyType = document.getElementById('dutyType').value;
       const hub = document.getElementById('hub').value === "Others" 
         ? document.getElementById('otherHub').value
         : document.getElementById('hub').value;
@@ -105,6 +114,7 @@
           date: date, 
           name: name,
           corp: corp,
+          dutyType: dutyType,  // New field added
           hub: hub,
           unit: unit,
           shift: shift,
