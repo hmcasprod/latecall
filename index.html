@@ -34,8 +34,24 @@
       background-color: #f4f4f4;
     }
 
+    .logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logos img {
+      width: 250px;  /* Fixed width */
+      height: 90px;  /* Fixed height */
+      object-fit: contain;
+      margin: 0 15px;
+    }
+
     h1 {
       text-align: center;
+      margin-top: 0;
+      margin-bottom: 20px;
     }
 
     form {
@@ -81,16 +97,6 @@
       display: none;
     }
 
-    .logos {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .logos img {
-      height: 60px;
-      margin: 0 15px;
-    }
-
     .form-container {
       max-width: 600px;
       margin: 0 auto;
@@ -106,9 +112,8 @@
   <div class="form-container">
     <!-- Logos Section -->
     <div class="logos">
-     <img src="logo1.png" alt="Logo 1">
-    <img src="logo2.png" alt="Logo 2">
-
+      <img src="logo1.png" alt="Logo 1">
+      <img src="logo2.png" alt="Logo 2">
     </div>
 
     <h1>Late Call Entry Form</h1>
@@ -208,7 +213,7 @@
           date: date,
           name: name,
           corp: corp,
-          typeOfDuty: typeOfDuty,  // Added Type of Duty field
+          typeOfDuty: typeOfDuty,
           hub: hub,
           unit: unit,
           shift: shift,
