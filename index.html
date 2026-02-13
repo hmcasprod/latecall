@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,8 +106,9 @@
   <div class="form-container">
     <!-- Logos Section -->
     <div class="logos">
-      <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/assets/images/logo1.png" alt="Logo 1" class="logo">
-      <img src="https://raw.githubusercontent.com/yourusername/yourrepo/main/assets/images/logo2.png" alt="Logo 2" class="logo">
+     <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
+
     </div>
 
     <h1>Late Call Entry Form</h1>
@@ -120,6 +122,14 @@
 
       <label for="corp">Corp Number *</label>
       <input type="text" id="corp" required>
+
+      <!-- Type of Duty -->
+      <label for="typeOfDuty">Type of Duty *</label>
+      <select id="typeOfDuty" required>
+        <option value="">-- Select Type of Duty --</option>
+        <option>Regular Shift</option>
+        <option>Overtime</option>
+      </select>
 
       <label for="hub">HUB *</label>
       <select id="hub" required>
@@ -185,6 +195,7 @@
       const date = document.getElementById('date').value;
       const name = document.getElementById('name').value;
       const corp = document.getElementById('corp').value;
+      const typeOfDuty = document.getElementById('typeOfDuty').value;
       const hub = document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value;
       const unit = document.getElementById('unit').value;
       const shift = document.getElementById('shift').value;
@@ -197,6 +208,7 @@
           date: date,
           name: name,
           corp: corp,
+          typeOfDuty: typeOfDuty,  // Added Type of Duty field
           hub: hub,
           unit: unit,
           shift: shift,
