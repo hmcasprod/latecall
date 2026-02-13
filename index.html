@@ -4,26 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Late Call Entry Form</title>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
-
-  <script>
-    // Firebase configuration (replace with your actual config from Firebase Console)
-    const firebaseConfig = {
-      apiKey: "AIzaSyC-RidAbJBCvoxT6aalA-lXA1u5ZT1PC4o",
-      authDomain: "hmcas-latecall.firebaseapp.com",
-      projectId: "hmcas-latecall",
-      storageBucket: "hmcas-latecall.appspot.com",
-      messagingSenderId: "498700648548",
-      appId: "1:498700648548:web:393d1676210823f7f49f71"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
 </head>
 
 <body>
@@ -31,26 +11,26 @@
   <!-- Late Call Entry Form -->
   <h1>Late Call Entry Form</h1>
   
-  <form id="lateCallForm">
+  <form id="lateCallForm" action="https://script.google.com/macros/s/AKfycbwaXPM3lQl78sVcLSyea7qQZUM4ABeWST11bVUiTfAg2NzNONW9RKD2j_mWkK6PMgTMdg/exec" method="POST">
     <label for="date">Date *</label>
-    <input type="date" id="date" required>
+    <input type="date" id="date" name="date" required>
 
     <label for="name">Name *</label>
-    <input type="text" id="name" required>
+    <input type="text" id="name" name="name" required>
 
     <label for="corp">Corp Number *</label>
-    <input type="text" id="corp" required>
+    <input type="text" id="corp" name="corp" required>
 
     <!-- Type of Duty Field -->
     <label for="dutyType">Type of Duty *</label>
-    <select id="dutyType" required>
+    <select id="dutyType" name="dutyType" required>
       <option value="">-- Select Type of Duty --</option>
       <option>Regular Shift</option>
       <option>Overtime</option>
     </select>
 
     <label for="hub">HUB *</label>
-    <select id="hub" required>
+    <select id="hub" name="hub" required>
       <option value="">-- Select HUB --</option>
       <option>Hub 1</option>
       <option>Hub 2</option>
@@ -67,13 +47,13 @@
       <option value="Others">Other/s : Please Specify</option>
     </select>
 
-    <input type="text" id="otherHub" placeholder="Please specify" style="display:none;">
+    <input type="text" id="otherHub" name="otherHub" placeholder="Please specify" style="display:none;">
 
     <label for="unit">Unit *</label>
-    <input type="text" id="unit" required>
+    <input type="text" id="unit" name="unit" required>
 
     <label for="shift">Shift *</label>
-    <select id="shift" required>
+    <select id="shift" name="shift" required>
       <option value="">-- Select Shift --</option>
       <option>Day</option>
       <option>Peak</option>
@@ -82,51 +62,23 @@
     </select>
 
     <label for="timeout">Time Out *</label>
-    <input type="time" id="timeout" required>
+    <input type="time" id="timeout" name="timeout" required>
 
     <label for="trip">Trip Number / Reason for Late Time Out *</label>
-    <input type="text" id="trip" required>
+    <input type="text" id="trip" name="trip" required>
 
     <input type="submit" value="Submit">
   </form>
 
   <!-- Form Submission Script -->
   <script>
-    document.getElementById('lateCallForm').addEventListener('submit', async (e) => {
-      e.preventDefault(); // Prevent default form submission
-
-      // Get form data
-      const date = document.getElementById('date').value;
-      const name = document.getElementById('name').value;
-      const corp = document.getElementById('corp').value;
-      const dutyType = document.getElementById('dutyType').value;
-      const hub = document.getElementById('hub').value === "Others" 
-        ? document.getElementById('otherHub').value
-        : document.getElementById('hub').value;
-      const unit = document.getElementById('unit').value;
-      const shift = document.getElementById('shift').value;
-      const timeout = document.getElementById('timeout').value;
-      const trip = document.getElementById('trip').value;
-
-      // Submit data to Firestore
-      try {
-        await db.collection('requests').add({
-          date: date, 
-          name: name,
-          corp: corp,
-          dutyType: dutyType,  // New field added
-          hub: hub,
-          unit: unit,
-          shift: shift,
-          timeout: timeout,
-          trip: trip,
-          status: 'Pending',  // Default status
-        });
-        alert('Request submitted successfully!');
-        document.getElementById('lateCallForm').reset();  // Reset form after submission
-      } catch (error) {
-        console.error("Error submitting data: ", error);
-        alert('Failed to submit data.');
+    // Show "Other/s" input when 'Others' is selected in the hub field
+    document.getElementById('hub').addEventListener('change', function() {
+      const otherHubField = document.getElementById('otherHub');
+      if (this.value === 'Others') {
+        otherHubField.style.display = 'block'; // Show "Please specify" input
+      } else {
+        otherHubField.style.display = 'none'; // Hide "Please specify" input
       }
     });
   </script>
