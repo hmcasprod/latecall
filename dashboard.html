@@ -158,7 +158,7 @@
     <!-- Filters -->
     <div class="top-bar">
         <div>
-            <label>Date From:</label><input type="date" id="filterFrom">
+            <label>Late Call Date From:</label><input type="date" id="filterFrom">
             <label>To:</label><input type="date" id="filterTo">
             <label>Hub:</label>
             <select id="filterHub">
@@ -288,18 +288,16 @@ async function loadTable(){
     let rows = [];
 
     data.forEach(r => {
-        const d = new Date(r.dateSubmitted); 
+        const lateCallDate = new Date(r.lateCallDate); 
 
-        if (isNaN(d.getTime())) {
-            console.error("Invalid date:", r.dateSubmitted);
+        if (isNaN(lateCallDate.getTime())) {
+            console.error("Invalid late call date:", r.lateCallDate);
             return;
         }
 
-        const lateCallDate = new Date(r.lateCallDate); 
-
         let include = true;
-        if(from && new Date(from) > d) include = false;
-        if(to && new Date(to) < d) include = false;
+        if(from && new Date(from) > lateCallDate) include = false;
+        if(to && new Date(to) < lateCallDate) include = false;
         if(hub && r.hub !== hub) include = false;
         if(statusFilter && r.status !== statusFilter) include = false;
         if(shiftFilter && r.shift !== shiftFilter) include = false;
@@ -316,25 +314,19 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
-            const formattedDate = d.toLocaleDateString('en-GB', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: '2-digit' 
-            });
-
-            const formattedTime = d.toLocaleTimeString('en-GB', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-
-            const formattedDateTime = `${formattedDate} ${formattedTime}`;
-
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
                 year: 'numeric', 
                 month: 'short', 
                 day: '2-digit' 
             });
+
+            const formattedTime = lateCallDate.toLocaleTimeString('en-GB', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            const formattedDateTime = `${formattedLateCallDate} ${formattedTime}`;
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -357,8 +349,8 @@ async function loadTable(){
     });
 
     rows.sort((a, b) => {
-        const dateA = new Date(a.cells[0].innerText);  
-        const dateB = new Date(b.cells[0].innerText);  
+        const dateA = new Date(a.cells[1].innerText);  
+        const dateB = new Date(b.cells[1].innerText);  
         return dateB - dateA; 
     });
 
