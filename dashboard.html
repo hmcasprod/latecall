@@ -6,42 +6,108 @@
 <title>Supervisor Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Inter', sans-serif; margin:0; background: linear-gradient(to right,#eef2f3,#ffffff); color:#333; }
-.header-logos { display:flex; justify-content:space-between; align-items:center; padding:20px 40px; background-color:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
-.header-logos img { height:50px; }
-#loginPage { display:flex; justify-content:center; align-items:center; height:100vh; }
-.login-container { background:#fff; padding:50px 40px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.15); width:100%; max-width:400px; text-align:center; display:flex; flex-direction:column; gap:15px; }
-.login-container h2 { margin-bottom:25px; color:#333; font-weight:700; }
-.login-container input { width:100%; padding:14px; border:1px solid #ddd; border-radius:6px; font-size:16px; transition:border 0.2s ease; }
-.login-container input:focus { border-color:#4CAF50; outline:none; }
-.login-container button { width:100%; padding:14px; background:#4CAF50; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:16px; margin-top:10px; transition: background 0.2s ease; }
-.login-container button:hover { background:#45a049; }
-.login-container .error-message { color:red; margin-top:10px; font-size:14px; }
-.remember-me label { display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer; margin:0; }
-.remember-me input { width:auto; height:auto; }
-.forgot-password { margin-top:15px; text-align:center; font-size:14px; }
-.forgot-password a { color:#007BFF; text-decoration:underline; cursor:pointer; }
-#dashboardPage { display:none; padding:20px; padding-bottom:80px; }
-.top-bar { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
-.top-bar label { font-weight:600; }
-.top-bar input, .top-bar select, .top-bar button { padding:6px 10px; font-size:14px; }
-.top-bar button { background:#4CAF50; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-.table-container { overflow-x:auto; border-radius:8px; background:#fff; padding:10px; }
-table { width:100%; border-collapse:collapse; min-width:900px; }
-th, td { padding:10px; text-align:center; border:1px solid #ddd; }
-th { background:#f2f2f2; font-weight:600; }
-tr:nth-child(even) td { background:#fafafa; }
-.status-pending { background:#FFD700; color:#000; font-weight:600; }
-.status-approved { background:#4CAF50; color:#fff; font-weight:600; }
-.status-rejected { background:#f44336; color:#fff; font-weight:600; }
-.action-btn { cursor:pointer; padding:5px 10px; border:none; border-radius:4px; margin:2px; }
-footer { position:fixed; bottom:0; width:100%; text-align:center; background:#fff; padding:10px 0; font-size:12px; color:#555; box-shadow:0 -2px 5px rgba(0,0,0,0.1); }
-@media(max-width:900px){ table{ min-width:600px; } }
-@media(max-width:600px){ .top-bar{ flex-direction:column; align-items:flex-start; } }
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: linear-gradient(to right, #eef2f3, #ffffff);
+    color: #333;
+}
+.header-logos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.header-logos img {height: 50px;}
+#loginPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-container {
+    background: #fff;
+    padding: 50px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
+.login-container input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border 0.2s ease;
+}
+.login-container input:focus {border-color: #4CAF50;outline: none;}
+.login-container button {
+    width: 100%;
+    padding: 14px;
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+.login-container button:hover {background: #45a049;}
+.login-container .error-message {color: red;margin-top: 10px;font-size: 14px;}
+.remember-me label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0;
+}
+.remember-me input {width:auto;height:auto;}
+.forgot-password {margin-top:15px;text-align:center;font-size:14px;}
+.forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
+#dashboardPage {
+    display:none;
+    padding:20px;
+    padding-bottom:80px; /* extra space for fixed footer */
+}
+.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.top-bar label {font-weight:600;}
+.top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
+.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
+table {width:100%;border-collapse:collapse;min-width:900px;}
+th, td {padding:10px;text-align:center;border:1px solid #ddd;}
+th {background:#f2f2f2;font-weight:600;}
+tr:nth-child(even) td {background:#fafafa;}
+.status-pending {background:#FFD700;color:#000;font-weight:600;}
+.status-approved {background:#4CAF50;color:#fff;font-weight:600;}
+.status-rejected {background:#f44336;color:#fff;font-weight:600;}
+.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: #fff;
+    padding: 10px 0;
+    font-size: 12px;
+    color: #555;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+@media(max-width:900px){table{min-width:600px;}}
+@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
 </style>
 </head>
 <body>
-
 <div class="header-logos">
     <img src="logo1.png" alt="Logo 1">
     <img src="logo2.png" alt="Logo 2">
@@ -120,20 +186,20 @@ footer { position:fixed; bottom:0; width:100%; text-align:center; background:#ff
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Supervisor Accounts
+// Initialize Supervisors
 const supervisorsInit = [
     {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
-if(!localStorage.getItem('supervisors')) {
-    localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
-}
+localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
+// Show/hide password
 function togglePassword(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type === "password" ? "text" : "password";
 }
 
+// Login function
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -150,6 +216,7 @@ function login(){
     }
 }
 
+// Forgot Password
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -162,6 +229,7 @@ function forgotPassword(){
     alert("Password reset successfully!");
 }
 
+// Logout
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -172,6 +240,7 @@ function logout(){
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
 
+// Check login
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -183,6 +252,7 @@ function checkLogin(){
     }
 }
 
+// Load table from Firebase
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -228,13 +298,13 @@ async function loadTable(){
     });
 }
 
+// Approve / Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
     await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
-
 async function reject(id){
     const reason = prompt("Reason for rejection:");
     if(!reason) return;
@@ -244,6 +314,7 @@ async function reject(id){
     loadTable();
 }
 
+// Export CSV
 function exportToExcel(){
     let table=document.getElementById('requestsTable');
     let rows=table.querySelectorAll('tr');
@@ -255,6 +326,7 @@ function exportToExcel(){
     link.click();
 }
 
+// Auto logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
@@ -267,27 +339,21 @@ function resetInactivityTimer(){
     inactivityTimer = setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000);
 }
 
+// --- ENTER key login ---
+document.getElementById('username').addEventListener('keydown', function(e){
+    if(e.key==='Enter') login();
+});
+document.getElementById('password').addEventListener('keydown', function(e){
+    if(e.key==='Enter') login();
+});
+
 // Initial login check
 checkLogin();
-
-// ======================
-// Expose functions for inline onclick
-// ======================
-window.login = login;
-window.forgotPassword = forgotPassword;
-window.logout = logout;
-window.togglePassword = togglePassword;
-window.loadTable = loadTable;
-window.approve = approve;
-window.reject = reject;
-window.exportToExcel = exportToExcel;
-
 </script>
 
 <footer>
 © 2026 HMCAS Support Service Production.<br>
 James Ross Camins. All rights reserved.
 </footer>
-
 </body>
 </html>
