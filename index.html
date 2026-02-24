@@ -23,10 +23,10 @@
   .input-container input, .input-container select { width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border-radius:4px; border:1px solid #ccc; }
   input[type="submit"] { background-color:#4CAF50; color:white; border:none; cursor:pointer; padding:10px; width:100%; font-weight:bold; border-radius:4px; text-align:center; }
   input[type="submit"]:hover { background-color:#45a049; }
-  input:required { border-left:4px solid #4CAF50; }
   #otherHub { display:none; }
   .form-container { max-width:600px; margin:0 auto; }
-
+  /* Error highlight */
+  .input-error { border:2px solid red !important; }
   /* Modal */
   #confirmationModal { 
     display:none; 
@@ -46,7 +46,6 @@
     font-size:18px; 
     font-weight:bold; 
   }
-
   footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
 </style>
 </head>
@@ -60,7 +59,7 @@
 
   <h1>Late Call Entry Form</h1>
 
-  <form id="lateCallForm">
+  <form id="lateCallForm" novalidate>
     <div class="input-container">
       <label for="date"><i class="fas fa-calendar-alt"></i> Date *</label>
       <input type="date" id="date" required>
@@ -135,11 +134,10 @@
   </div>
 </div>
 
-<!-- Firebase submission logic -->
 <script type="module">
 import { submitLateCall } from './firebase.js';
 
-// Restrict date to today or earlier
+// Set date max to today
 const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('max', today);
@@ -153,12 +151,31 @@ document.getElementById('hub').addEventListener('change', function() {
   } else {
     otherHub.style.display = "none";
     otherHub.required = false;
+    otherHub.classList.remove('input-error');
   }
 });
+
+// Highlight errors and focus
+function highlightErrors(form) {
+  const fields = form.querySelectorAll('input, select');
+  let firstError = null;
+  fields.forEach(f => f.classList.remove('input-error'));
+  fields.forEach(f => {
+    if (!f.checkValidity()) {
+      f.classList.add('input-error');
+      if (!firstError) firstError = f;
+    }
+  });
+  if(firstError) firstError.focus();
+  return !firstError; // true if all valid
+}
 
 // Form submission
 document.getElementById('lateCallForm').addEventListener('submit', async function(e) {
   e.preventDefault();
+  
+  // Validate form
+  if(!highlightErrors(this)) return;
 
   const data = {
     date: dateInput.value,
@@ -175,11 +192,10 @@ document.getElementById('lateCallForm').addEventListener('submit', async functio
 
   const success = await submitLateCall(data);
   if (success) {
-    // Reset form
     this.reset();
     document.getElementById('otherHub').style.display = "none";
-    
-    // Show modal
+
+    // Show confirmation modal
     const modal = document.getElementById('confirmationModal');
     modal.style.display = 'flex';
     setTimeout(() => { modal.style.display = 'none'; }, 2500);
