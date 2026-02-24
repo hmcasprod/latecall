@@ -1,123 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supervisor Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    background: linear-gradient(to right, #eef2f3, #ffffff);
-    color: #333;
-}
-.header-logos {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.header-logos img {height: 50px;}
-#loginPage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.login-container {
-    background: #fff;
-    padding: 50px 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
-.login-container input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border 0.2s ease;
-}
-.login-container input:focus {border-color: #4CAF50;outline: none;}
-.login-container button {
-    width: 100%;
-    padding: 14px;
-    background: #4CAF50;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-    transition: background 0.2s ease;
-}
-.login-container button:hover {background: #45a049;}
-.login-container .error-message {color: red;margin-top: 10px;font-size: 14px;}
-.remember-me label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    margin: 0;
-}
-.remember-me input {width:auto;height:auto;}
-.forgot-password {margin-top:15px;text-align:center;font-size:14px;}
-.forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
-#dashboardPage {
-    display:none;
-    padding:20px;
-    padding-bottom:80px;
-}
-.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.top-bar label {font-weight:600;}
-.top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
-.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
-.clear-filters-btn {
-    background-color: #f44336;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 14px;
-}
-.clear-filters-btn:hover {
-    background-color: #e53935;
-}
-.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
-table {width:100%;border-collapse:collapse;min-width:900px;}
-th, td {padding:10px;text-align:center;border:1px solid #ddd;}
-th {background:#f2f2f2;font-weight:600;}
-tr:nth-child(even) td {background:#fafafa;}
-.status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
-.status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
-.status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
-.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    background: #fff;
-    padding: 10px 0;
-    font-size: 12px;
-    color: #555;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-}
-@media(max-width:900px){table{min-width:600px;} }
-@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #eef2f3, #ffffff);
+            color: #333;
+        }
+        .header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-logos img {height: 50px;}
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #fff;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
+        .login-container input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.2s ease;
+        }
+        .login-container input:focus {border-color: #4CAF50;outline: none;}
+        .login-container button {
+            width: 100%;
+            padding: 14px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.2s ease;
+        }
+        .login-container button:hover {background: #45a049;}
+        .login-container .error-message {color: red;margin-top: 10px;font-size: 14px;}
+        .remember-me label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 0;
+        }
+        .remember-me input {width:auto;height:auto;}
+        .forgot-password {margin-top:15px;text-align:center;font-size:14px;}
+        .forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
+        #dashboardPage {
+            display:none;
+            padding:20px;
+            padding-bottom:80px;
+        }
+        .top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+        .top-bar label {font-weight:600;}
+        .top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
+        .top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+        .clear-filters-btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .clear-filters-btn:hover {
+            background-color: #e53935;
+        }
+        .table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
+        table {width:100%;border-collapse:collapse;min-width:900px;}
+        th, td {padding:10px;text-align:center;border:1px solid #ddd;}
+        th {background:#f2f2f2;font-weight:600;}
+        tr:nth-child(even) td {background:#fafafa;}
+        .status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
+        .status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
+        .status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
+        .action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background: #fff;
+            padding: 10px 0;
+            font-size: 12px;
+            color: #555;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        @media(max-width:900px){table{min-width:600px;} }
+        @media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;} }
+    </style>
 </head>
 <body>
 <div class="header-logos">
@@ -305,10 +305,19 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
             ` : "";
 
-            // Format the date to DD-MMM-YYYY
-            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });  // Format as 24-Feb-2026
-            // Format the time to 24-hour format without seconds (HH:mm)
-            const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });  // Format as 21:45
+            // Format the date to DD-MMM-YYYY (e.g., 24-Feb-2026)
+            const formattedDate = d.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            });
+
+            // Format the time to 24-hour format without seconds (e.g., 22:18)
+            const formattedTime = d.toLocaleTimeString('en-GB', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
 
             // Combine date and time for the "Date Submitted"
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
@@ -422,5 +431,4 @@ document.getElementById('loginBtn').onclick = login;
 James Ross Camins. All rights reserved.
 </footer>
 </body>
-</html>
-
+</html
