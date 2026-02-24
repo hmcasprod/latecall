@@ -278,7 +278,8 @@ async function loadTable(){
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            const statusNormalized = (r.status || "").trim().toLowerCase();
+            // Normalize status robustly
+            const statusNormalized = ((r.status || "").replace(/[^a-zA-Z]/g,"").toLowerCase());
             const statusClass = statusNormalized === "pending" ? "status-pending" :
                                 statusNormalized === "approved" ? "status-approved" :
                                 statusNormalized === "rejected" ? "status-rejected" : "";
