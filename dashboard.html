@@ -173,8 +173,13 @@ footer {
             <select id="filterStatus">
                 <option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option>
             </select>
+            <label>Shift:</label>
+            <select id="filterShift" onchange="loadTable()">
+                <option value="">All</option>
+                <option>Day</option><option>Night</option>
+            </select>
             <label>Search:</label>
-            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip">
+            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip" oninput="loadTable()">
             <button onclick="loadTable()">Filter</button>
             <button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
         </div>
@@ -274,6 +279,7 @@ async function loadTable(){
     const to = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
     const statusFilter = document.getElementById('filterStatus').value;
+    const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
     let rows = [];
@@ -285,6 +291,7 @@ async function loadTable(){
         if(to && new Date(to)<d) include=false;
         if(hub && r.hub!==hub) include=false;
         if(statusFilter && r.status!==statusFilter) include=false;
+        if(shiftFilter && r.shift!==shiftFilter) include=false;
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
@@ -342,6 +349,7 @@ function clearFilters(){
     document.getElementById('filterTo').value = '';
     document.getElementById('filterHub').value = '';
     document.getElementById('filterStatus').value = '';
+    document.getElementById('filterShift').value = '';
     document.getElementById('filterSearch').value = '';
     loadTable();
 }
