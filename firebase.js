@@ -19,7 +19,12 @@ const db = getFirestore(app);
 // Submit Late Call
 export async function submitLateCall(data) {
   try {
-    await addDoc(collection(db, "requests"), data);
+    // Add both `dateSubmitted` (current time) and `lateCallDate` (user-selected date)
+    await addDoc(collection(db, "requests"), {
+      ...data,  // Include all the form data
+      dateSubmitted: new Date().toISOString(),  // Store the actual submission date and time
+      lateCallDate: data.date,  // Store the user-selected late call date
+    });
     return true;
   } catch (err) {
     console.error("Error submitting data:", err);
@@ -31,7 +36,15 @@ export async function submitLateCall(data) {
 export async function getLateCalls() {
   try {
     const snapshot = await getDocs(collection(db, "requests"));
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        dateSubmitted: data.dateSubmitted,  // Include actual submission date
+        lateCallDate: data.lateCallDate,    // Include late call date
+        ...data  // Spread other fields (e.g., name, corp, hub, shift, etc.)
+      };
+    });
   } catch (err) {
     console.error("Error fetching data:", err);
     return [];
