@@ -1,281 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervisor Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-        }
-
-        .header-logos {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-logos img {
-            height: 50px;
-        }
-
-        /* Login Page Styles */
-        #loginPage {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #e3f2fd;
-        }
-
-        .login-container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .login-container h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        .login-container input {
-            padding: 12px;
-            margin: 10px 0;
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .login-container button {
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-        }
-
-        .login-container button:hover {
-            background-color: #45a049;
-        }
-
-        .login-container .error-message {
-            color: red;
-            margin-top: 10px;
-        }
-
-        /* Dashboard Page Styles */
-        #dashboardPage {
-            display: none;
-            padding: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f4f4f4;
-            color: #555;
-        }
-
-        td {
-            background-color: #fff;
-        }
-
-        /* Footer Styles */
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            font-size: 12px;
-            color: #555;
-        }
-
-        @media (max-width: 600px) {
-            .header-logos {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supervisor Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+.header-logos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.header-logos img {height: 50px;}
+#loginPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-container {
+    background:#fff;
+    padding:40px;
+    border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    width:100%;
+    max-width:400px;
+    text-align:center;
+}
+.login-container h2 {margin-bottom:20px;}
+.login-container input {width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:4px;font-size:16px;}
+.login-container button {width:100%;padding:12px;background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:16px;}
+.login-container button:hover {background:#45a049;}
+.login-container .error-message {color:red;margin-top:10px;}
+#dashboardPage {display:none;padding:20px;}
+.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.top-bar label {font-weight:600;}
+.top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
+.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
+table {width:100%;border-collapse:collapse;min-width:900px;}
+th, td {padding:10px;text-align:center;border:1px solid #ddd;}
+th {background:#f2f2f2;font-weight:600;}
+tr:nth-child(even) td {background:#fafafa;}
+.status-pending {background:#FFD700;color:#000;font-weight:600;}
+.status-approved {background:#4CAF50;color:#fff;font-weight:600;}
+.status-rejected {background:#f44336;color:#fff;font-weight:600;}
+.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
+footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
+@media(max-width:900px){table{min-width:600px;}}
+@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
+</style>
 </head>
-<body>
 
-<!-- Logo Header -->
+<body>
 <div class="header-logos">
     <img src="logo1.png" alt="Logo 1">
     <img src="logo2.png" alt="Logo 2">
 </div>
 
-<!-- Login Page -->
+<!-- Login -->
 <div id="loginPage">
     <div class="login-container">
-        <h2>Manager Login</h2>
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
+        <h2>Supervisor Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <div style="position:relative;">
+            <input type="password" id="password" placeholder="Password">
+            <span style="position:absolute;right:10px;top:10px;cursor:pointer;" onclick="togglePassword()">👁️</span>
+        </div>
+        <label><input type="checkbox" id="savePassword"> Remember Password</label>
         <button onclick="login()">Login</button>
         <div id="errorMessage" class="error-message"></div>
     </div>
 </div>
 
-<!-- Dashboard Page -->
+<!-- Dashboard -->
 <div id="dashboardPage">
-    <!-- Dashboard Content Here -->
-    <h2 id="managerName"></h2>
-    <table id="requestsTable">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Corp Number</th>
-                <th>Hub</th>
-                <th>Unit</th>
-                <th>Shift</th>
-                <th>Trip</th>
-                <th>Timeout</th>
-                <th>Type of Duty</th> <!-- New Column for Type of Duty -->
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Dynamic content will be injected here by JavaScript -->
-        </tbody>
-    </table>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h2 id="managerName"></h2>
+        <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="top-bar">
+        <div>
+            <label>Date From:</label>
+            <input type="date" id="filterFrom">
+            <label>To:</label>
+            <input type="date" id="filterTo">
+            <label>Hub:</label>
+            <select id="filterHub">
+                <option value="">All</option>
+                <option>Hub 1</option>
+                <option>Hub 2</option>
+                <option>Hub 3</option>
+                <option>Hub 4</option>
+                <option>Hub 5</option>
+                <option>Hub 6</option>
+                <option>Hub 7</option>
+                <option>Hub 8</option>
+                <option>Events</option>
+                <option>SAS</option>
+                <option>Retrieval</option>
+                <option>Life Flight</option>
+                <option>Others</option>
+            </select>
+            <label>Status:</label>
+            <select id="filterStatus">
+                <option value="">All</option>
+                <option>Pending</option>
+                <option>Approved</option>
+                <option>Rejected</option>
+            </select>
+            <label>Search:</label>
+            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Trip">
+            <button onclick="loadTable()">Filter</button>
+        </div>
+        <button onclick="exportToExcel()">Export Excel</button>
+    </div>
+
+    <div class="table-container">
+        <table id="requestsTable">
+            <thead>
+                <tr>
+                    <th>Date Submitted</th>
+                    <th>Name</th>
+                    <th>Corp Number</th>
+                    <th>Hub</th>
+                    <th>Unit</th>
+                    <th>Shift</th>
+                    <th>Trip</th>
+                    <th>Time Out</th>
+                    <th>Type of Duty</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>Processed By</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Firebase SDK Integration -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
 <script>
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyC-RidAbJBCvoxT6aalA-lXA1u5ZT1PC4o",
-    authDomain: "hmcas-latecall.firebaseapp.com",
-    projectId: "hmcas-latecall",
-    storageBucket: "hmcas-latecall.appspot.com",
-    messagingSenderId: "498700648548",
-    appId: "1:498700648548:web:393d1676210823f7f49f71"
-};
-
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(app);
-
-// Managers Data (Hardcoded for now)
-let managers = [
-    { username: "jcamins", fullName: "James Camins", corpNumber: "45357", password: "HMCAS1234" },
-    { username: "hkerkeni", fullName: "Habib Kerkeni", corpNumber: "11748", password: "HMCAS1234" }
+// Supervisor Accounts
+const supervisors = [
+    {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
+    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 
-// Login Functionality
-function login() {
+// Show Password
+function togglePassword(){
+    const pwd = document.getElementById('password');
+    pwd.type = pwd.type === "password" ? "text" : "password";
+}
+
+// Login
+function login(){
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const manager = managers.find(m => m.username === username && m.password === password);
-    
-    if (manager) {
-        localStorage.setItem('currentManager', JSON.stringify(manager));
+    const supervisor = supervisors.find(s => s.username===username && s.password===password);
+    if(supervisor){
+        localStorage.setItem('currentSupervisor', JSON.stringify(supervisor));
+        if(document.getElementById('savePassword').checked){
+            localStorage.setItem('savedPassword', password);
+        } else {
+            localStorage.removeItem('savedPassword');
+        }
         checkLogin();
     } else {
-        document.getElementById('errorMessage').innerText = "Invalid username or password!";
+        document.getElementById('errorMessage').innerText="Invalid username or password!";
     }
 }
 
-// Logout Functionality
-function logout() {
-    localStorage.removeItem('currentManager');
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('dashboardPage').style.display = 'none';
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
+// Trigger login on Enter key
+document.getElementById('username').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') login();
+});
+document.getElementById('password').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') login();
+});
+
+// Logout
+function logout(){
+    localStorage.removeItem('currentSupervisor');
+    document.getElementById('loginPage').style.display='flex';
+    document.getElementById('dashboardPage').style.display='none';
 }
 
-// Check login state
-function checkLogin() {
-    const manager = JSON.parse(localStorage.getItem('currentManager'));
-    if (manager) {
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('dashboardPage').style.display = 'block';
-        document.getElementById('managerName').innerText = `Welcome, ${manager.fullName} (${manager.corpNumber})`;
-        loadManagerTable();
+// Check Login
+function checkLogin(){
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    if(sup){
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('dashboardPage').style.display='block';
+        document.getElementById('managerName').innerText=`${sup.fullName} CN ${sup.corp}`;
+        loadTable();
+        startInactivityTimer();
     }
 }
 
-// Load data from Firestore
-function loadManagerTable() {
+// Initialize empty requests if none exist
+if(!localStorage.getItem('requests')){
+    localStorage.setItem('requests', JSON.stringify([]));
+}
+
+// Load Table
+function loadTable(){
+    let data = JSON.parse(localStorage.getItem('requests')) || [];
     const tbody = document.querySelector('#requestsTable tbody');
-    tbody.innerHTML = '';
+    tbody.innerHTML='';
 
-    db.collection('requests').get()
-        .then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                const s = doc.data();
-                tbody.innerHTML += `<tr>
-                    <td>${formatDateTime(s.date)}</td>
-                    <td>${s.name}</td>
-                    <td>${s.corp}</td>
-                    <td>${s.hub}</td>
-                    <td>${s.unit}</td>
-                    <td>${s.shift}</td>
-                    <td>${s.trip}</td>
-                    <td>${s.timeout}</td>
-                    <td>${s.typeOfDuty || 'Not Available'}</td> <!-- Display Type of Duty -->
-                    <td>${s.status}</td>
-                </tr>`;
-            });
-        })
-        .catch(error => {
-            console.error("Error fetching requests: ", error);
-        });
+    const from = document.getElementById('filterFrom').value;
+    const to = document.getElementById('filterTo').value;
+    const hub = document.getElementById('filterHub').value;
+    const status = document.getElementById('filterStatus').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase();
+
+    data.forEach((r,index)=>{
+        let d = new Date(r.date);
+        let dateStr = d.toLocaleString();
+        let include=true;
+
+        if(from && new Date(from)>d) include=false;
+        if(to && new Date(to) < d) include=false;
+        if(hub && r.hub!==hub) include=false;
+        if(status && r.status!==status) include=false;
+        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
+
+        if(include){
+            let statusClass = r.status==="Pending"?"status-pending":(r.status==="Approved"?"status-approved":"status-rejected");
+            let actionButtons = r.status==="Pending"?`
+                <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approveRequest(${index})">✔</button>
+                <button class="action-btn" style="background:#f44336;color:#fff;" onclick="rejectRequest(${index})">✖</button>
+            `:"";
+
+            tbody.innerHTML+=`
+                <tr>
+                    <td>${dateStr}</td>
+                    <td>${r.name}</td>
+                    <td>${r.corp}</td>
+                    <td>${r.hub}</td>
+                    <td>${r.unit}</td>
+                    <td>${r.shift}</td>
+                    <td>${r.trip}</td>
+                    <td>${r.timeout}</td>
+                    <td>${r.typeOfDuty}</td>
+                    <td class="${statusClass}">${r.status}</td>
+                    <td>${actionButtons}</td>
+                    <td>${r.processedBy}</td>
+                </tr>
+            `;
+        }
+    });
 }
 
-// Format date with time
-function formatDateTime(dateString) {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const d = new Date(dateString);
-    let day = d.getDate().toString().padStart(2, '0');
-    let month = months[d.getMonth()];
-    let year = d.getFullYear();
-    let hours = d.getHours().toString().padStart(2, '0');
-    let minutes = d.getMinutes().toString().padStart(2, '0');
-    return `${day}-${month}-${year} ${hours}:${minutes}`;
+// Approve
+function approveRequest(index){
+    let data = JSON.parse(localStorage.getItem('requests'));
+    let sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    data[index].status="Approved";
+    data[index].processedBy=`${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
+    localStorage.setItem('requests', JSON.stringify(data));
+    loadTable();
 }
 
-// Auto login check on page load
+// Reject
+function rejectRequest(index){
+    let reason = prompt("Reason for Rejection:");
+    if(reason){
+        let data = JSON.parse(localStorage.getItem('requests'));
+        let sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+        data[index].status="Rejected";
+        data[index].processedBy=`${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()}) - ${reason}`;
+        localStorage.setItem('requests', JSON.stringify(data));
+        loadTable();
+    }
+}
+
+// Excel Export
+function exportToExcel(){
+    let table = document.getElementById('requestsTable');
+    let rows = table.querySelectorAll('tr');
+    let csvContent = Array.from(rows).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>`"${c.innerText}"`).join(",")).join("\n");
+
+    let blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
+    let link=document.createElement("a");
+    link.href=URL.createObjectURL(blob);
+    link.download="dashboard_export.csv";
+    link.click();
+}
+
+// Auto Logout after 5 mins inactivity
+let inactivityTimer;
+function startInactivityTimer(){
+    resetInactivityTimer();
+    document.onclick=resetInactivityTimer;
+    document.onmousemove=resetInactivityTimer;
+    document.onkeypress=resetInactivityTimer;
+}
+function resetInactivityTimer(){
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000);
+}
+
+// Initial check login
 checkLogin();
 </script>
 
 <footer>
-    © 2026 HMCAS Support Service Production. <br>
-    James Ross Camins. All rights reserved.
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
 </footer>
-
 </body>
 </html>
