@@ -83,6 +83,18 @@ body {
 .top-bar label {font-weight:600;}
 .top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
 .top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+.clear-filters-btn {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.clear-filters-btn:hover {
+    background-color: #e53935;
+}
 .table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
 table {width:100%;border-collapse:collapse;min-width:900px;}
 th, td {padding:10px;text-align:center;border:1px solid #ddd;}
@@ -164,6 +176,7 @@ footer {
             <label>Search:</label>
             <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Trip">
             <button onclick="loadTable()">Filter</button>
+            <button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
         </div>
         <button onclick="exportToExcel()">Export Excel</button>
     </div>
@@ -336,6 +349,16 @@ function exportToExcel(){
     link.href=URL.createObjectURL(blob);
     link.download="dashboard_export.csv";
     link.click();
+}
+
+// Clear Filters
+function clearFilters(){
+    document.getElementById('filterFrom').value = '';
+    document.getElementById('filterTo').value = '';
+    document.getElementById('filterHub').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterSearch').value = '';
+    loadTable();
 }
 
 // Inactivity auto logout
