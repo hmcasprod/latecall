@@ -208,12 +208,8 @@ function login(){
     if(sup){
         localStorage.setItem('currentSupervisor', JSON.stringify(sup));
         if(document.getElementById('savePassword').checked){
-            localStorage.setItem('savedUsername', username);
             localStorage.setItem('savedPassword', password);
-        } else { 
-            localStorage.removeItem('savedUsername');
-            localStorage.removeItem('savedPassword');
-        }
+        } else { localStorage.removeItem('savedPassword'); }
         checkLogin();
     } else {
         document.getElementById('errorMessage').innerText="Invalid username or password!";
