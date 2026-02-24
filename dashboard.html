@@ -103,8 +103,8 @@ footer {
     color: #555;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }
-@media(max-width:900px){table{min-width:600px;}}
-@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
+@media(max-width:900px){table{min-width:600px;} }
+@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;} }
 </style>
 </head>
 <body>
@@ -252,7 +252,7 @@ function checkLogin(){
     }
 }
 
-// Load table
+// Load table (status coloring fixed)
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -260,7 +260,7 @@ async function loadTable(){
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
-    const status = document.getElementById('filterStatus').value;
+    const statusFilter = document.getElementById('filterStatus').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
     data.forEach(r=>{
@@ -269,15 +269,21 @@ async function loadTable(){
         if(from && new Date(from)>d) include=false;
         if(to && new Date(to)<d) include=false;
         if(hub && r.hub!==hub) include=false;
-        if(status && r.status!==status) include=false;
+        if(statusFilter && r.status!==statusFilter) include=false;
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            const statusClass = r.status==="Pending"?"status-pending":(r.status==="Approved"?"status-approved":"status-rejected");
-            const actionButtons = r.status==="Pending"?`
+            // Fix: normalize status for correct coloring
+            const statusNormalized = (r.status || "").trim().toLowerCase();
+            const statusClass = statusNormalized === "pending" ? "status-pending" :
+                                statusNormalized === "approved" ? "status-approved" :
+                                statusNormalized === "rejected" ? "status-rejected" : "";
+
+            const actionButtons = statusNormalized === "pending" ? `
                 <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
-            `:"";
+            ` : "";
+
             tbody.innerHTML+=`
                 <tr>
                     <td>${d.toLocaleString()}</td>
