@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Late Call Entry Form</title>
 
-  <!-- Link to Google Fonts (Roboto) -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-
-  <!-- Link to Font Awesome for icons -->
+  <!-- Font Awesome for icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
   <style>
-    /* Your existing CSS (no changes needed) */
     body { font-family: 'Roboto', sans-serif; margin:20px; padding:10px; background-color:#f4f4f4; }
     .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
     .logos img { width:250px; height:90px; object-fit:contain; margin:0 15px; }
@@ -27,6 +25,7 @@
     input:required { border-left:4px solid #4CAF50; }
     #otherHub { display:none; }
     .form-container { max-width:600px; margin:0 auto; }
+    #submitMessage { text-align:center; font-weight:bold; margin-top:10px; display:none; }
     footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
   </style>
 </head>
@@ -41,7 +40,6 @@
     <h1>Late Call Entry Form</h1>
 
     <form id="lateCallForm">
-      <!-- Your form inputs (unchanged) -->
       <div class="input-container">
         <label for="date"><i class="fas fa-calendar-alt"></i> Date *</label>
         <input type="date" id="date" required>
@@ -107,47 +105,61 @@
 
       <input type="submit" value="Submit">
     </form>
+
+    <!-- Success / Error message -->
+    <div id="submitMessage"></div>
   </div>
 
-  <!-- Import Firebase and submission logic -->
   <script type="module">
     import { submitLateCall } from './firebase.js';
 
-    // Show/hide "Other Hub" input
-    document.getElementById('hub').addEventListener('change', function () {
-      const otherHub = document.getElementById('otherHub');
-      if (this.value === "Others") {
-        otherHub.style.display = "block";
-        otherHub.required = true;
+    const hubSelect = document.getElementById('hub');
+    const otherHubInput = document.getElementById('otherHub');
+    const form = document.getElementById('lateCallForm');
+    const messageDiv = document.getElementById('submitMessage');
+
+    // Show/hide "Other Hub"
+    hubSelect.addEventListener('change', () => {
+      if (hubSelect.value === "Others") {
+        otherHubInput.style.display = 'block';
+        otherHubInput.required = true;
       } else {
-        otherHub.style.display = "none";
-        otherHub.required = false;
+        otherHubInput.style.display = 'none';
+        otherHubInput.required = false;
       }
     });
 
     // Form submission
-    document.getElementById('lateCallForm').addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const data = {
-        date: document.getElementById('date').value,
-        name: document.getElementById('name').value,
-        corp: document.getElementById('corp').value,
+        date: document.getElementById('date').value.trim(),
+        name: document.getElementById('name').value.trim(),
+        corp: document.getElementById('corp').value.trim(),
         typeOfDuty: document.getElementById('typeOfDuty').value,
-        hub: document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value,
-        unit: document.getElementById('unit').value,
+        hub: hubSelect.value === "Others" ? otherHubInput.value.trim() : hubSelect.value,
+        unit: document.getElementById('unit').value.trim(),
         shift: document.getElementById('shift').value,
         timeout: document.getElementById('timeout').value,
-        trip: document.getElementById('trip').value,
+        trip: document.getElementById('trip').value.trim(),
         status: 'Pending'
       };
 
       const success = await submitLateCall(data);
+
       if (success) {
-        alert('Request submitted successfully!');
-        this.reset();
+        form.reset();
+        otherHubInput.style.display = 'none';
+        otherHubInput.required = false;
+        messageDiv.style.color = 'green';
+        messageDiv.innerText = '✅ Late Call Details submitted successfully!';
+        messageDiv.style.display = 'block';
+        setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
       } else {
-        alert('Failed to submit data.');
+        messageDiv.style.color = 'red';
+        messageDiv.innerText = '❌ Failed to submit data. Please try again.';
+        messageDiv.style.display = 'block';
       }
     });
   </script>
