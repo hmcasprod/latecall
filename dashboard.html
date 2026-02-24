@@ -206,19 +206,6 @@ function login(){
     }
 }
 
-// Forgot password
-function forgotPassword(){
-    const username = prompt("Enter your username to reset password:");
-    if(!username) return;
-    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const supIndex = supervisors.findIndex(s=>s.username===username);
-    if(supIndex===-1){ alert("Username not found!"); return; }
-    const newPwd = prompt("Enter new password:"); if(!newPwd) return;
-    supervisors[supIndex].password=newPwd;
-    localStorage.setItem('supervisors', JSON.stringify(supervisors));
-    alert("Password reset successfully!");
-}
-
 // Logout
 function logout(){
     localStorage.removeItem('currentSupervisor');
@@ -277,7 +264,7 @@ async function loadTable(){
 
             // Format the date to DD-MMM-YYYY
             const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });  
-            // Format the time to 24-hour format without seconds (HH:mm)
+            // Format the time to 24-hour format (HH:mm)
             const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });  
 
             // Combine date and time for the "Date Submitted"
@@ -311,32 +298,6 @@ async function loadTable(){
 
     // Append the sorted rows to the table body
     rows.forEach(row => tbody.appendChild(row));
-}
-
-// Clear all filters
-function clearFilters(){
-    document.getElementById('filterFrom').value = '';
-    document.getElementById('filterTo').value = '';
-    document.getElementById('filterHub').value = '';
-    document.getElementById('filterStatus').value = '';
-    document.getElementById('filterSearch').value = '';
-    loadTable();
-}
-
-// Approve/Reject
-async function approve(id){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
-    await updateRequestStatus(id,"Approved",processedBy);
-    loadTable();
-}
-async function reject(id){
-    const reason = prompt("Reason for rejection:");
-    if(!reason) return;
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()}) - ${reason}`;
-    await updateRequestStatus(id,"Rejected",processedBy);
-    loadTable();
 }
 
 // Export to Excel
