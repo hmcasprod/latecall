@@ -11,7 +11,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
   <style>
-    body { font-family: 'Roboto', sans-serif; margin:20px; padding:10px; background-color:#f4f4f4; }
+    body { font-family: 'Roboto', sans-serif; margin:0; padding:10px; background-color:#f4f4f4; }
     .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
     .logos img { width:250px; height:90px; object-fit:contain; margin:0 15px; }
     h1 { text-align:center; margin-top:0; margin-bottom:20px; font-weight:bold; color:black; }
@@ -25,7 +25,31 @@
     input:required { border-left:4px solid #4CAF50; }
     #otherHub { display:none; }
     .form-container { max-width:600px; margin:0 auto; }
-    #submitMessage { text-align:center; font-weight:bold; margin-top:10px; display:none; }
+
+    /* Centered popup message with fade animation */
+    #submitMessage {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 30px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Show message (fade in) */
+    #submitMessage.show {
+      display: block;
+      opacity: 1;
+    }
+
     footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
   </style>
 </head>
@@ -105,10 +129,10 @@
 
       <input type="submit" value="Submit">
     </form>
-
-    <!-- Success / Error message -->
-    <div id="submitMessage"></div>
   </div>
+
+  <!-- Centered Message -->
+  <div id="submitMessage"></div>
 
   <script type="module">
     import { submitLateCall } from './firebase.js';
@@ -128,6 +152,17 @@
         otherHubInput.required = false;
       }
     });
+
+    // Show message with fade-in/fade-out
+    function showMessage(text, color) {
+      messageDiv.innerText = text;
+      messageDiv.style.backgroundColor = color;
+      messageDiv.classList.add('show');
+
+      setTimeout(() => {
+        messageDiv.classList.remove('show');
+      }, 4000);
+    }
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -152,14 +187,9 @@
         form.reset();
         otherHubInput.style.display = 'none';
         otherHubInput.required = false;
-        messageDiv.style.color = 'green';
-        messageDiv.innerText = '✅ Late Call Details submitted successfully!';
-        messageDiv.style.display = 'block';
-        setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
+        showMessage('✅ Late Call Details submitted successfully!', '#4CAF50');
       } else {
-        messageDiv.style.color = 'red';
-        messageDiv.innerText = '❌ Failed to submit data. Please try again.';
-        messageDiv.style.display = 'block';
+        showMessage('❌ Failed to submit data. Please try again.', '#f44336');
       }
     });
   </script>
