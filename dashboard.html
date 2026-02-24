@@ -74,7 +74,11 @@ body {
 .remember-me input {width:auto;height:auto;}
 .forgot-password {margin-top:15px;text-align:center;font-size:14px;}
 .forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
-#dashboardPage {display:none;padding:20px;}
+#dashboardPage {
+    display:none;
+    padding:20px;
+    padding-bottom:80px; /* extra space for fixed footer */
+}
 .top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
 .top-bar label {font-weight:600;}
 .top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
@@ -88,7 +92,17 @@ tr:nth-child(even) td {background:#fafafa;}
 .status-approved {background:#4CAF50;color:#fff;font-weight:600;}
 .status-rejected {background:#f44336;color:#fff;font-weight:600;}
 .action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
-footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: #fff;
+    padding: 10px 0;
+    font-size: 12px;
+    color: #555;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
 @media(max-width:900px){table{min-width:600px;}}
 @media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
 </style>
@@ -172,20 +186,17 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Always initialize supervisors
 const supervisorsInit = [
     {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-// Show/Hide Password
 function togglePassword(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type === "password" ? "text" : "password";
 }
 
-// Login
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -202,7 +213,6 @@ function login(){
     }
 }
 
-// Forgot Password
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -215,7 +225,6 @@ function forgotPassword(){
     alert("Password reset successfully!");
 }
 
-// Logout
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -226,7 +235,6 @@ function logout(){
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
 
-// Check Login
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -238,7 +246,6 @@ function checkLogin(){
     }
 }
 
-// Load Table
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -284,7 +291,6 @@ async function loadTable(){
     });
 }
 
-// Approve/Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
@@ -300,7 +306,6 @@ async function reject(id){
     loadTable();
 }
 
-// Export CSV
 function exportToExcel(){
     let table=document.getElementById('requestsTable');
     let rows=table.querySelectorAll('tr');
@@ -312,7 +317,6 @@ function exportToExcel(){
     link.click();
 }
 
-// Inactivity logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
@@ -325,7 +329,6 @@ function resetInactivityTimer(){
     inactivityTimer = setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000);
 }
 
-// Initial login check
 checkLogin();
 </script>
 
