@@ -285,11 +285,11 @@ async function loadTable(){
     let rows = [];
 
     data.forEach(r => {
-        const d = new Date(r.date); // Ensure this is the actual submission date
+        const d = new Date(r.dateSubmitted); // Ensure this is the actual submission date
 
         // Check if the date is valid
         if (isNaN(d.getTime())) {
-            console.error("Invalid date:", r.date);
+            console.error("Invalid date:", r.dateSubmitted);
             return;
         }
 
