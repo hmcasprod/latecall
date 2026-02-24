@@ -10,7 +10,7 @@
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;
-    background-color: #f4f4f4;
+    background: linear-gradient(to right, #eef2f3, #ffffff);
     color: #333;
 }
 .header-logos {
@@ -29,19 +29,76 @@ body {
     height: 100vh;
 }
 .login-container {
-    background:#fff;
-    padding:40px;
-    border-radius:8px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    width:100%;
-    max-width:400px;
-    text-align:center;
+    background: #fff;
+    padding: 50px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
-.login-container h2 {margin-bottom:20px;}
-.login-container input {width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:4px;font-size:16px;}
-.login-container button {width:100%;padding:12px;background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:16px;}
-.login-container button:hover {background:#45a049;}
-.login-container .error-message {color:red;margin-top:10px;}
+.login-container h2 {
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: 700;
+}
+.login-container input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border 0.2s ease;
+}
+.login-container input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+.login-container button {
+    width: 100%;
+    padding: 14px;
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+.login-container button:hover {
+    background: #45a049;
+}
+.login-container .error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+}
+.remember-me label {
+    display: flex;
+    align-items: center;  /* vertical alignment */
+    gap: 6px;             /* space between text and checkbox */
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0;
+}
+.remember-me input {
+    width: auto;
+    height: auto;
+}
+.forgot-password {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+.forgot-password a {
+    color: #007BFF;
+    text-decoration: underline;
+    cursor: pointer;
+}
 #dashboardPage {display:none;padding:20px;}
 .top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
 .top-bar label {font-weight:600;}
@@ -75,11 +132,24 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
         <input type="text" id="username" placeholder="Username">
         <div style="position:relative;">
             <input type="password" id="password" placeholder="Password">
-            <span style="position:absolute;right:10px;top:10px;cursor:pointer;" onclick="togglePassword()">👁️</span>
+            <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
         </div>
-        <label><input type="checkbox" id="savePassword"> Remember Password</label>
+
+        <!-- Remember Me checkbox inline -->
+        <div class="remember-me">
+            <label>
+                Remember Me
+                <input type="checkbox" id="savePassword">
+            </label>
+        </div>
+
         <button onclick="login()">Login</button>
         <div id="errorMessage" class="error-message"></div>
+
+        <!-- Forgot Password link at bottom -->
+        <div class="forgot-password">
+            <a onclick="forgotPassword()">Forgot Password?</a>
+        </div>
     </div>
 </div>
 
@@ -153,10 +223,13 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
 
 <script>
 // Supervisor Accounts
-const supervisors = [
-    {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
-    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
-];
+if(!localStorage.getItem('supervisors')){
+    const supervisorsInit = [
+        {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
+        {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
+    ];
+    localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+}
 
 // Show Password
 function togglePassword(){
@@ -168,6 +241,8 @@ function togglePassword(){
 function login(){
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+
+    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
     const supervisor = supervisors.find(s => s.username===username && s.password===password);
     if(supervisor){
         localStorage.setItem('currentSupervisor', JSON.stringify(supervisor));
@@ -182,19 +257,45 @@ function login(){
     }
 }
 
-// Trigger login on Enter key
-document.getElementById('username').addEventListener('keypress', function(e){
-    if(e.key === 'Enter') login();
-});
-document.getElementById('password').addEventListener('keypress', function(e){
-    if(e.key === 'Enter') login();
-});
+// Enter key triggers login
+document.getElementById('username').addEventListener('keypress', function(e){if(e.key==='Enter') login();});
+document.getElementById('password').addEventListener('keypress', function(e){if(e.key==='Enter') login();});
+
+// Clear error on focus
+document.getElementById('username').addEventListener('focus', () => { document.getElementById('errorMessage').innerText = ''; });
+document.getElementById('password').addEventListener('focus', () => { document.getElementById('errorMessage').innerText = ''; });
+
+// Forgot Password
+function forgotPassword(){
+    const username = prompt("Enter your username to reset password:");
+    if(!username) return;
+
+    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
+    const supIndex = supervisors.findIndex(s => s.username===username);
+    if(supIndex === -1){
+        alert("Username not found!");
+        return;
+    }
+    const newPwd = prompt("Enter new password:");
+    if(!newPwd) return;
+    supervisors[supIndex].password = newPwd;
+    localStorage.setItem('supervisors', JSON.stringify(supervisors));
+    alert("Password has been reset successfully!");
+}
 
 // Logout
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
     document.getElementById('dashboardPage').style.display='none';
+    
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('errorMessage').innerText = '';
+    document.querySelector('#requestsTable tbody').innerHTML = '';
+    if(!document.getElementById('savePassword').checked){
+        localStorage.removeItem('savedPassword');
+    }
 }
 
 // Check Login
