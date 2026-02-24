@@ -1,228 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+<script type="module">
+import { db } from './firebase.js';
+import {
+    collection,
+    getDocs,
+    updateDoc,
+    doc,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supervisor Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    background: linear-gradient(to right, #eef2f3, #ffffff);
-    color: #333;
-}
-.header-logos {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.header-logos img {height: 50px;}
-#loginPage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.login-container {
-    background: #fff;
-    padding: 50px 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.login-container h2 {
-    margin-bottom: 25px;
-    color: #333;
-    font-weight: 700;
-}
-.login-container input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border 0.2s ease;
-}
-.login-container input:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
-.login-container button {
-    width: 100%;
-    padding: 14px;
-    background: #4CAF50;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-    transition: background 0.2s ease;
-}
-.login-container button:hover {
-    background: #45a049;
-}
-.login-container .error-message {
-    color: red;
-    margin-top: 10px;
-    font-size: 14px;
-}
-.remember-me label {
-    display: flex;
-    align-items: center;  /* vertical alignment */
-    gap: 6px;             /* space between text and checkbox */
-    font-size: 14px;
-    cursor: pointer;
-    margin: 0;
-}
-.remember-me input {
-    width: auto;
-    height: auto;
-}
-.forgot-password {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-}
-.forgot-password a {
-    color: #007BFF;
-    text-decoration: underline;
-    cursor: pointer;
-}
-#dashboardPage {display:none;padding:20px;}
-.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.top-bar label {font-weight:600;}
-.top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
-.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
-.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
-table {width:100%;border-collapse:collapse;min-width:900px;}
-th, td {padding:10px;text-align:center;border:1px solid #ddd;}
-th {background:#f2f2f2;font-weight:600;}
-tr:nth-child(even) td {background:#fafafa;}
-.status-pending {background:#FFD700;color:#000;font-weight:600;}
-.status-approved {background:#4CAF50;color:#fff;font-weight:600;}
-.status-rejected {background:#f44336;color:#fff;font-weight:600;}
-.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
-footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
-@media(max-width:900px){table{min-width:600px;}}
-@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
-</style>
-</head>
+/* ==============================
+   SUPERVISOR LOGIN (unchanged)
+============================== */
 
-<body>
-<div class="header-logos">
-    <img src="logo1.png" alt="Logo 1">
-    <img src="logo2.png" alt="Logo 2">
-</div>
-
-<!-- Login -->
-<div id="loginPage">
-    <div class="login-container">
-        <h2>Supervisor Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <div style="position:relative;">
-            <input type="password" id="password" placeholder="Password">
-            <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
-        </div>
-
-        <!-- Remember Me checkbox inline -->
-        <div class="remember-me">
-            <label>
-                Remember Me
-                <input type="checkbox" id="savePassword">
-            </label>
-        </div>
-
-        <button onclick="login()">Login</button>
-        <div id="errorMessage" class="error-message"></div>
-
-        <!-- Forgot Password link at bottom -->
-        <div class="forgot-password">
-            <a onclick="forgotPassword()">Forgot Password?</a>
-        </div>
-    </div>
-</div>
-
-<!-- Dashboard -->
-<div id="dashboardPage">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-        <h2 id="managerName"></h2>
-        <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
-    </div>
-
-    <!-- Filters -->
-    <div class="top-bar">
-        <div>
-            <label>Date From:</label>
-            <input type="date" id="filterFrom">
-            <label>To:</label>
-            <input type="date" id="filterTo">
-            <label>Hub:</label>
-            <select id="filterHub">
-                <option value="">All</option>
-                <option>Hub 1</option>
-                <option>Hub 2</option>
-                <option>Hub 3</option>
-                <option>Hub 4</option>
-                <option>Hub 5</option>
-                <option>Hub 6</option>
-                <option>Hub 7</option>
-                <option>Hub 8</option>
-                <option>Events</option>
-                <option>SAS</option>
-                <option>Retrieval</option>
-                <option>Life Flight</option>
-                <option>Others</option>
-            </select>
-            <label>Status:</label>
-            <select id="filterStatus">
-                <option value="">All</option>
-                <option>Pending</option>
-                <option>Approved</option>
-                <option>Rejected</option>
-            </select>
-            <label>Search:</label>
-            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Trip">
-            <button onclick="loadTable()">Filter</button>
-        </div>
-        <button onclick="exportToExcel()">Export Excel</button>
-    </div>
-
-    <div class="table-container">
-        <table id="requestsTable">
-            <thead>
-                <tr>
-                    <th>Date Submitted</th>
-                    <th>Name</th>
-                    <th>Corp Number</th>
-                    <th>Hub</th>
-                    <th>Unit</th>
-                    <th>Shift</th>
-                    <th>Trip</th>
-                    <th>Time Out</th>
-                    <th>Type of Duty</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                    <th>Processed By</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-// Supervisor Accounts
 if(!localStorage.getItem('supervisors')){
     const supervisorsInit = [
         {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
@@ -231,14 +21,12 @@ if(!localStorage.getItem('supervisors')){
     localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 }
 
-// Show Password
-function togglePassword(){
+window.togglePassword = function(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type === "password" ? "text" : "password";
 }
 
-// Login
-function login(){
+window.login = function(){
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
@@ -246,59 +34,17 @@ function login(){
     const supervisor = supervisors.find(s => s.username===username && s.password===password);
     if(supervisor){
         localStorage.setItem('currentSupervisor', JSON.stringify(supervisor));
-        if(document.getElementById('savePassword').checked){
-            localStorage.setItem('savedPassword', password);
-        } else {
-            localStorage.removeItem('savedPassword');
-        }
         checkLogin();
     } else {
         document.getElementById('errorMessage').innerText="Invalid username or password!";
     }
 }
 
-// Enter key triggers login
-document.getElementById('username').addEventListener('keypress', function(e){if(e.key==='Enter') login();});
-document.getElementById('password').addEventListener('keypress', function(e){if(e.key==='Enter') login();});
-
-// Clear error on focus
-document.getElementById('username').addEventListener('focus', () => { document.getElementById('errorMessage').innerText = ''; });
-document.getElementById('password').addEventListener('focus', () => { document.getElementById('errorMessage').innerText = ''; });
-
-// Forgot Password
-function forgotPassword(){
-    const username = prompt("Enter your username to reset password:");
-    if(!username) return;
-
-    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const supIndex = supervisors.findIndex(s => s.username===username);
-    if(supIndex === -1){
-        alert("Username not found!");
-        return;
-    }
-    const newPwd = prompt("Enter new password:");
-    if(!newPwd) return;
-    supervisors[supIndex].password = newPwd;
-    localStorage.setItem('supervisors', JSON.stringify(supervisors));
-    alert("Password has been reset successfully!");
-}
-
-// Logout
-function logout(){
+window.logout = function(){
     localStorage.removeItem('currentSupervisor');
-    document.getElementById('loginPage').style.display='flex';
-    document.getElementById('dashboardPage').style.display='none';
-    
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('errorMessage').innerText = '';
-    document.querySelector('#requestsTable tbody').innerHTML = '';
-    if(!document.getElementById('savePassword').checked){
-        localStorage.removeItem('savedPassword');
-    }
+    location.reload();
 }
 
-// Check Login
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -306,121 +52,76 @@ function checkLogin(){
         document.getElementById('dashboardPage').style.display='block';
         document.getElementById('managerName').innerText=`${sup.fullName} CN ${sup.corp}`;
         loadTable();
-        startInactivityTimer();
     }
 }
 
-// Initialize empty requests if none exist
-if(!localStorage.getItem('requests')){
-    localStorage.setItem('requests', JSON.stringify([]));
-}
+checkLogin();
 
-// Load Table
-function loadTable(){
-    let data = JSON.parse(localStorage.getItem('requests')) || [];
+/* ==============================
+   FIRESTORE TABLE LOADING
+============================== */
+
+async function loadTable(){
+    const snapshot = await getDocs(collection(db, "requests"));
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML='';
 
-    const from = document.getElementById('filterFrom').value;
-    const to = document.getElementById('filterTo').value;
-    const hub = document.getElementById('filterHub').value;
-    const status = document.getElementById('filterStatus').value;
-    const search = document.getElementById('filterSearch').value.toLowerCase();
+    snapshot.forEach((docSnap)=>{
+        const r = docSnap.data();
+        const id = docSnap.id;
 
-    data.forEach((r,index)=>{
-        let d = new Date(r.date);
-        let dateStr = d.toLocaleString();
-        let include=true;
+        let statusClass =
+            r.status==="Pending" ? "status-pending" :
+            r.status==="Approved" ? "status-approved" :
+            "status-rejected";
 
-        if(from && new Date(from)>d) include=false;
-        if(to && new Date(to) < d) include=false;
-        if(hub && r.hub!==hub) include=false;
-        if(status && r.status!==status) include=false;
-        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
+        let actionButtons = r.status==="Pending" ? `
+            <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approveRequest('${id}')">✔</button>
+            <button class="action-btn" style="background:#f44336;color:#fff;" onclick="rejectRequest('${id}')">✖</button>
+        ` : "";
 
-        if(include){
-            let statusClass = r.status==="Pending"?"status-pending":(r.status==="Approved"?"status-approved":"status-rejected");
-            let actionButtons = r.status==="Pending"?`
-                <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approveRequest(${index})">✔</button>
-                <button class="action-btn" style="background:#f44336;color:#fff;" onclick="rejectRequest(${index})">✖</button>
-            `:"";
-
-            tbody.innerHTML+=`
-                <tr>
-                    <td>${dateStr}</td>
-                    <td>${r.name}</td>
-                    <td>${r.corp}</td>
-                    <td>${r.hub}</td>
-                    <td>${r.unit}</td>
-                    <td>${r.shift}</td>
-                    <td>${r.trip}</td>
-                    <td>${r.timeout}</td>
-                    <td>${r.typeOfDuty}</td>
-                    <td class="${statusClass}">${r.status}</td>
-                    <td>${actionButtons}</td>
-                    <td>${r.processedBy}</td>
-                </tr>
-            `;
-        }
+        tbody.innerHTML += `
+            <tr>
+                <td>${r.date}</td>
+                <td>${r.name}</td>
+                <td>${r.corp}</td>
+                <td>${r.hub}</td>
+                <td>${r.unit}</td>
+                <td>${r.shift}</td>
+                <td>${r.trip}</td>
+                <td>${r.timeout}</td>
+                <td>${r.typeOfDuty}</td>
+                <td class="${statusClass}">${r.status}</td>
+                <td>${actionButtons}</td>
+                <td>${r.processedBy || ""}</td>
+            </tr>
+        `;
     });
 }
 
-// Approve
-function approveRequest(index){
-    let data = JSON.parse(localStorage.getItem('requests'));
-    let sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    data[index].status="Approved";
-    data[index].processedBy=`${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
-    localStorage.setItem('requests', JSON.stringify(data));
+/* ==============================
+   APPROVE / REJECT
+============================== */
+
+window.approveRequest = async function(id){
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    await updateDoc(doc(db, "requests", id), {
+        status: "Approved",
+        processedBy: `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`
+    });
     loadTable();
 }
 
-// Reject
-function rejectRequest(index){
-    let reason = prompt("Reason for Rejection:");
-    if(reason){
-        let data = JSON.parse(localStorage.getItem('requests'));
-        let sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-        data[index].status="Rejected";
-        data[index].processedBy=`${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()}) - ${reason}`;
-        localStorage.setItem('requests', JSON.stringify(data));
-        loadTable();
-    }
+window.rejectRequest = async function(id){
+    const reason = prompt("Reason for Rejection:");
+    if(!reason) return;
+
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    await updateDoc(doc(db, "requests", id), {
+        status: "Rejected",
+        processedBy: `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()}) - ${reason}`
+    });
+    loadTable();
 }
 
-// Excel Export
-function exportToExcel(){
-    let table = document.getElementById('requestsTable');
-    let rows = table.querySelectorAll('tr');
-    let csvContent = Array.from(rows).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>`"${c.innerText}"`).join(",")).join("\n");
-
-    let blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
-    let link=document.createElement("a");
-    link.href=URL.createObjectURL(blob);
-    link.download="dashboard_export.csv";
-    link.click();
-}
-
-// Auto Logout after 5 mins inactivity
-let inactivityTimer;
-function startInactivityTimer(){
-    resetInactivityTimer();
-    document.onclick=resetInactivityTimer;
-    document.onmousemove=resetInactivityTimer;
-    document.onkeypress=resetInactivityTimer;
-}
-function resetInactivityTimer(){
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000);
-}
-
-// Initial check login
-checkLogin();
 </script>
-
-<footer>
-© 2026 HMCAS Support Service Production.<br>
-James Ross Camins. All rights reserved.
-</footer>
-</body>
-</html>
