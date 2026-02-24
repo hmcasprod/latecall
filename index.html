@@ -177,6 +177,8 @@ document.getElementById('lateCallForm').addEventListener('submit', async functio
   // Validate form
   if(!highlightErrors(this)) return;
 
+  const dateSubmitted = new Date(); // Capture the exact date and time of submission
+
   const data = {
     date: dateInput.value,
     name: document.getElementById('name').value,
@@ -187,7 +189,8 @@ document.getElementById('lateCallForm').addEventListener('submit', async functio
     shift: document.getElementById('shift').value,
     timeout: document.getElementById('timeout').value,
     trip: document.getElementById('trip').value,
-    status: 'Pending'
+    status: 'Pending',
+    dateSubmitted: dateSubmitted.toISOString(),  // Store the date as ISO format (with 24-hour time)
   };
 
   const success = await submitLateCall(data);
