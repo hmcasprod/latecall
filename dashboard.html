@@ -210,7 +210,7 @@ function login(){
         if(document.getElementById('savePassword').checked){
             localStorage.setItem('savedUsername', username);
             localStorage.setItem('savedPassword', password);
-        } else {
+        } else { 
             localStorage.removeItem('savedUsername');
             localStorage.removeItem('savedPassword');
         }
@@ -256,7 +256,7 @@ function checkLogin(){
     }
 }
 
-// Load table with fixed status color
+// Load table (status coloring fixed)
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -266,6 +266,8 @@ async function loadTable(){
     const hub = document.getElementById('filterHub').value;
     const statusFilter = document.getElementById('filterStatus').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
+
+    let rows = [];
 
     data.forEach(r=>{
         const d = new Date(r.date);
@@ -277,14 +279,12 @@ async function loadTable(){
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            const rawStatus = (r.status || "").trim();
-            const normalized = rawStatus.toLowerCase();
-            let statusClass = "";
-            if(normalized === "pending") statusClass = "status-pending";
-            else if(normalized === "approved") statusClass = "status-approved";
-            else if(normalized === "rejected") statusClass = "status-rejected";
+            const statusNormalized = (r.status || "").trim().toLowerCase();
+            const statusClass = statusNormalized === "pending" ? "status-pending" :
+                                statusNormalized === "approved" ? "status-approved" :
+                                statusNormalized === "rejected" ? "status-rejected" : "";
 
-            const actionButtons = normalized === "pending" ? `
+            const actionButtons = statusNormalized === "pending" ? `
                 <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
             ` : "";
@@ -300,14 +300,21 @@ async function loadTable(){
                 <td>${r.trip}</td>
                 <td>${r.timeout}</td>
                 <td>${r.typeOfDuty}</td>
-                <td>${rawStatus}</td>
+                <td class="${statusClass}">${r.status}</td>
                 <td>${actionButtons}</td>
                 <td>${r.processedBy||''}</td>
             `;
-            tr.children[9].className = statusClass;
-            tbody.appendChild(tr);
+            rows.push(tr);
         }
     });
+
+    rows.sort((a, b) => {
+        const dateA = new Date(a.cells[0].innerText);
+        const dateB = new Date(b.cells[0].innerText);
+        return dateA - dateB; // Ascending order by Date
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
 }
 
 // Approve/Reject
@@ -356,22 +363,6 @@ function resetInactivityTimer(){
 // Allow Enter key login
 document.getElementById('password').addEventListener('keydown', e=>{
     if(e.key==='Enter'){ login(); }
-});
-
-// Pre-fill Remember Me and auto-filter
-window.addEventListener('DOMContentLoaded', () => {
-    const savedUsername = localStorage.getItem('savedUsername');
-    const savedPassword = localStorage.getItem('savedPassword');
-    if(savedUsername && savedPassword){
-        document.getElementById('username').value = savedUsername;
-        document.getElementById('password').value = savedPassword;
-        document.getElementById('savePassword').checked = true;
-    }
-
-    // Auto-apply filters for Hub, Status, and Search
-    document.getElementById('filterHub').addEventListener('change', loadTable);
-    document.getElementById('filterStatus').addEventListener('change', loadTable);
-    document.getElementById('filterSearch').addEventListener('input', loadTable);
 });
 
 // Initial check
