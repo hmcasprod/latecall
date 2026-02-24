@@ -302,9 +302,12 @@ async function loadTable(){
             const formattedDate = d.toLocaleDateString('en-GB');  // Formats as DD/MM/YYYY
             const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false });  // 24-hour time
 
+            // Combine date and time for the "Date Submitted"
+            const formattedDateTime = `${formattedDate} ${formattedTime}`;
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${formattedDate}</td>
+                <td>${formattedDateTime}</td>
                 <td>${r.name}</td>
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
