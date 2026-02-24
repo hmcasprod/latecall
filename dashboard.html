@@ -41,7 +41,7 @@
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Late Call Date</th><th>Date Submitted</th><th>Name</th><th>Corp Number</th>
+                    <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
                     <th>Status</th><th>Action</th><th>Processed By</th>
@@ -76,7 +76,7 @@ function checkLogin(){
     }
 }
 
-// Load table function (with Late Call Date properly formatted)
+// Load table function (with dateSubmitted properly formatted)
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -91,17 +91,19 @@ async function loadTable(){
     let rows = [];
 
     data.forEach(r => {
-        const lateCallDate = new Date(r.lateCallDate); // Use lateCallDate instead of dateSubmitted
+        const d = new Date(r.dateSubmitted); // Ensure this is the actual submission date
 
-        // Check if the lateCallDate is valid
-        if (isNaN(lateCallDate.getTime())) {
-            console.error("Invalid late call date:", r.lateCallDate);
+        // Check if the date is valid
+        if (isNaN(d.getTime())) {
+            console.error("Invalid date:", r.dateSubmitted);
             return;
         }
 
+        const lateCallDate = new Date(r.lateCallDate); // Assuming lateCallDate is available
+
         let include = true;
-        if(from && new Date(from) > lateCallDate) include = false;
-        if(to && new Date(to) < lateCallDate) include = false;
+        if(from && new Date(from) > d) include = false;
+        if(to && new Date(to) < d) include = false;
         if(hub && r.hub !== hub) include = false;
         if(statusFilter && r.status !== statusFilter) include = false;
         if(shiftFilter && r.shift !== shiftFilter) include = false;
@@ -118,27 +120,34 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
-            // Format the lateCallDate to DD-MMM-YYYY (e.g., 24-Feb-2026)
+            // Format the date to DD-MMM-YYYY (e.g., 24-Feb-2026)
+            const formattedDate = d.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            });
+
+            // Format the time to 24-hour format without seconds (e.g., 22:18)
+            const formattedTime = d.toLocaleTimeString('en-GB', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            // Combine date and time for the "Date Submitted"
+            const formattedDateTime = `${formattedDate} ${formattedTime}`;
+
+            // Format the Late Call Date
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
                 year: 'numeric', 
                 month: 'short', 
                 day: '2-digit' 
             });
 
-            // Format the time of the Late Call Date to 24-hour format without seconds (e.g., 22:18)
-            const formattedLateCallTime = lateCallDate.toLocaleTimeString('en-GB', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-
-            // Combine the date and time for the Late Call Date
-            const formattedLateCallDateTime = `${formattedLateCallDate} ${formattedLateCallTime}`;
-
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${formattedLateCallDateTime}</td>  <!-- Display the formatted Late Call Date with time -->
-                <td>${r.dateSubmitted}</td>  <!-- You can keep the Date Submitted column as is, or adjust it as needed -->
+                <td>${formattedDateTime}</td>
+                <td>${formattedLateCallDate}</td>
                 <td>${r.name}</td>
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
