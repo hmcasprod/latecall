@@ -174,7 +174,7 @@ footer {
                 <option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option>
             </select>
             <label>Search:</label>
-            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Trip">
+            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip">
             <button onclick="loadTable()">Filter</button>
             <button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
         </div>
@@ -285,7 +285,7 @@ async function loadTable(){
         if(to && new Date(to) < d) include=false;
         if(hub && r.hub !== hub) include=false;
         if(statusFilter && r.status !== statusFilter) include=false;
-        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
+        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
             const statusNormalized = (r.status || "").trim().toLowerCase();
