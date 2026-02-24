@@ -366,7 +366,21 @@ function clearFilters(){
 // Approve/Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
+    
+    // Format the current date and time as DD-MMM-YYYY HH:mm
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+    });
+    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime})`;
+
     await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
@@ -374,7 +388,21 @@ async function reject(id){
     const reason = prompt("Reason for rejection:");
     if(!reason) return;
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()}) - ${reason}`;
+    
+    // Format the current date and time as DD-MMM-YYYY HH:mm
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+    });
+    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
+
     await updateRequestStatus(id,"Rejected",processedBy);
     loadTable();
 }
@@ -431,4 +459,4 @@ document.getElementById('loginBtn').onclick = login;
 James Ross Camins. All rights reserved.
 </footer>
 </body>
-</html
+</html>
