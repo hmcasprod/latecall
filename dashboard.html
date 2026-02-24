@@ -34,7 +34,28 @@
     </div>
 
     <!-- Filters -->
-    <!-- Filters section remains unchanged -->
+    <div class="filters">
+        <input type="date" id="filterFrom" placeholder="From" onchange="loadTable()">
+        <input type="date" id="filterTo" placeholder="To" onchange="loadTable()">
+        <select id="filterHub" onchange="loadTable()">
+            <option value="">All Hubs</option>
+            <!-- Add other hub options here -->
+        </select>
+        <select id="filterStatus" onchange="loadTable()">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+        <select id="filterShift" onchange="loadTable()">
+            <option value="">All Shifts</option>
+            <option value="Day">Day</option>
+            <option value="Peak">Peak</option>
+            <option value="Night">Night</option>
+            <option value="Event">Event</option>
+        </select>
+        <input type="text" id="filterSearch" placeholder="Search" oninput="loadTable()">
+    </div>
 
     <!-- Table Container -->
     <div class="table-container">
@@ -143,7 +164,7 @@ async function loadTable(){
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
                 <td>${r.unit}</td>
-                <td>${r.shift}</td>
+                <td>${r.shift}</td> <!-- Display the Shift -->
                 <td>${r.trip}</td>
                 <td>${r.timeout}</td>
                 <td>${r.typeOfDuty}</td>
