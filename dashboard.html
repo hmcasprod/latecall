@@ -88,9 +88,9 @@ table {width:100%;border-collapse:collapse;min-width:900px;}
 th, td {padding:10px;text-align:center;border:1px solid #ddd;}
 th {background:#f2f2f2;font-weight:600;}
 tr:nth-child(even) td {background:#fafafa;}
-.status-pending {background:#FFD700;color:#000;font-weight:600;}
-.status-approved {background:#4CAF50;color:#fff;font-weight:600;}
-.status-rejected {background:#f44336;color:#fff;font-weight:600;}
+.status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
+.status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
+.status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
 .action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
 footer {
     position: fixed;
@@ -207,13 +207,12 @@ function login(){
     const sup = supervisors.find(s=>s.username===username && s.password===password);
     if(sup){
         localStorage.setItem('currentSupervisor', JSON.stringify(sup));
-        // Remember Me
         if(document.getElementById('savePassword').checked){
             localStorage.setItem('savedUsername', username);
             localStorage.setItem('savedPassword', password);
-        } else { 
-            localStorage.removeItem('savedUsername'); 
-            localStorage.removeItem('savedPassword'); 
+        } else {
+            localStorage.removeItem('savedUsername');
+            localStorage.removeItem('savedPassword');
         }
         checkLogin();
     } else {
@@ -278,13 +277,19 @@ async function loadTable(){
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            // Normalize status robustly
-            const statusNormalized = ((r.status || "").replace(/[^a-zA-Z]/g,"").toLowerCase());
-            const statusClass = statusNormalized === "pending" ? "status-pending" :
-                                statusNormalized === "approved" ? "status-approved" :
-                                statusNormalized === "rejected" ? "status-rejected" : "";
+            // Robust status coloring
+            const rawStatus = r.status || "";
+            const normalized = rawStatus.trim().toLowerCase();
+            let statusClass = "";
+            switch(normalized){
+                case "pending": statusClass="status-pending"; break;
+                case "approved": statusClass="status-approved"; break;
+                case "rejected": statusClass="status-rejected"; break;
+                default: statusClass=""; break;
+            }
+            const displayStatus = rawStatus.trim();
 
-            const actionButtons = statusNormalized === "pending" ? `
+            const actionButtons = normalized === "pending" ? `
                 <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
             ` : "";
@@ -300,7 +305,7 @@ async function loadTable(){
                     <td>${r.trip}</td>
                     <td>${r.timeout}</td>
                     <td>${r.typeOfDuty}</td>
-                    <td class="${statusClass}">${r.status}</td>
+                    <td class="${statusClass}">${displayStatus}</td>
                     <td>${actionButtons}</td>
                     <td>${r.processedBy||''}</td>
                 </tr>
