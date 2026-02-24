@@ -262,12 +262,9 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
             ` : "";
 
-            // Format the date to DD-MMM-YYYY
-            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });  
-            // Format the time to 24-hour format (HH:mm)
-            const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });  
-
-            // Combine date and time for the "Date Submitted"
+            // Fixing the date and time formatting
+            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+            const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
 
             const tr = document.createElement('tr');
@@ -289,14 +286,12 @@ async function loadTable(){
         }
     });
 
-    // Sort rows in descending order (newest at the top)
     rows.sort((a, b) => {
-        const dateA = new Date(a.cells[0].innerText);  
-        const dateB = new Date(b.cells[0].innerText);  
-        return dateB - dateA; 
+        const dateA = new Date(a.cells[0].innerText);
+        const dateB = new Date(b.cells[0].innerText);
+        return dateB - dateA;
     });
 
-    // Append the sorted rows to the table body
     rows.forEach(row => tbody.appendChild(row));
 }
 
@@ -326,11 +321,6 @@ function resetInactivityTimer(){
     clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000);
 }
-
-// Allow Enter key login
-document.getElementById('password').addEventListener('keydown', e=>{
-    if(e.key==='Enter'){ login(); }
-});
 
 // Initial check
 checkLogin();
