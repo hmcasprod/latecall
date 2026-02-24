@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,11 +39,7 @@ body {
     flex-direction: column;
     gap: 15px;
 }
-.login-container h2 {
-    margin-bottom: 25px;
-    color: #333;
-    font-weight: 700;
-}
+.login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
 .login-container input {
     width: 100%;
     padding: 14px;
@@ -53,10 +48,7 @@ body {
     font-size: 16px;
     transition: border 0.2s ease;
 }
-.login-container input:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
+.login-container input:focus {border-color: #4CAF50;outline: none;}
 .login-container button {
     width: 100%;
     padding: 14px;
@@ -69,14 +61,8 @@ body {
     margin-top: 10px;
     transition: background 0.2s ease;
 }
-.login-container button:hover {
-    background: #45a049;
-}
-.login-container .error-message {
-    color: red;
-    margin-top: 10px;
-    font-size: 14px;
-}
+.login-container button:hover {background: #45a049;}
+.login-container .error-message {color: red;margin-top: 10px;font-size: 14px;}
 .remember-me label {
     display: flex;
     align-items: center;
@@ -85,20 +71,9 @@ body {
     cursor: pointer;
     margin: 0;
 }
-.remember-me input {
-    width: auto;
-    height: auto;
-}
-.forgot-password {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
-}
-.forgot-password a {
-    color: #007BFF;
-    text-decoration: underline;
-    cursor: pointer;
-}
+.remember-me input {width:auto;height:auto;}
+.forgot-password {margin-top:15px;text-align:center;font-size:14px;}
+.forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
 #dashboardPage {display:none;padding:20px;}
 .top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
 .top-bar label {font-weight:600;}
@@ -118,14 +93,13 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
 @media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
 </style>
 </head>
-
 <body>
 <div class="header-logos">
     <img src="logo1.png" alt="Logo 1">
     <img src="logo2.png" alt="Logo 2">
 </div>
 
-<!-- Login -->
+<!-- Login Page -->
 <div id="loginPage">
     <div class="login-container">
         <h2>Supervisor Login</h2>
@@ -134,24 +108,21 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
             <input type="password" id="password" placeholder="Password">
             <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
         </div>
-
         <div class="remember-me">
             <label>
                 Remember Me
                 <input type="checkbox" id="savePassword">
             </label>
         </div>
-
         <button onclick="login()">Login</button>
         <div id="errorMessage" class="error-message"></div>
-
         <div class="forgot-password">
             <a onclick="forgotPassword()">Forgot Password?</a>
         </div>
     </div>
 </div>
 
-<!-- Dashboard -->
+<!-- Dashboard Page -->
 <div id="dashboardPage">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
         <h2 id="managerName"></h2>
@@ -161,33 +132,20 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
     <!-- Filters -->
     <div class="top-bar">
         <div>
-            <label>Date From:</label>
-            <input type="date" id="filterFrom">
-            <label>To:</label>
-            <input type="date" id="filterTo">
+            <label>Date From:</label><input type="date" id="filterFrom">
+            <label>To:</label><input type="date" id="filterTo">
             <label>Hub:</label>
             <select id="filterHub">
                 <option value="">All</option>
-                <option>Hub 1</option>
-                <option>Hub 2</option>
-                <option>Hub 3</option>
-                <option>Hub 4</option>
-                <option>Hub 5</option>
-                <option>Hub 6</option>
-                <option>Hub 7</option>
-                <option>Hub 8</option>
-                <option>Events</option>
-                <option>SAS</option>
-                <option>Retrieval</option>
-                <option>Life Flight</option>
-                <option>Others</option>
+                <option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
+                <option>Hub 4</option><option>Hub 5</option><option>Hub 6</option>
+                <option>Hub 7</option><option>Hub 8</option>
+                <option>Events</option><option>SAS</option><option>Retrieval</option>
+                <option>Life Flight</option><option>Others</option>
             </select>
             <label>Status:</label>
             <select id="filterStatus">
-                <option value="">All</option>
-                <option>Pending</option>
-                <option>Approved</option>
-                <option>Rejected</option>
+                <option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option>
             </select>
             <label>Search:</label>
             <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Trip">
@@ -200,18 +158,10 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Date Submitted</th>
-                    <th>Name</th>
-                    <th>Corp Number</th>
-                    <th>Hub</th>
-                    <th>Unit</th>
-                    <th>Shift</th>
-                    <th>Trip</th>
-                    <th>Time Out</th>
-                    <th>Type of Duty</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                    <th>Processed By</th>
+                    <th>Date Submitted</th><th>Name</th><th>Corp Number</th>
+                    <th>Hub</th><th>Unit</th><th>Shift</th>
+                    <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
+                    <th>Status</th><th>Action</th><th>Processed By</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -219,20 +169,17 @@ footer {text-align:center;margin-top:40px;font-size:12px;color:#555;}
     </div>
 </div>
 
-<!-- Firebase Integration -->
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Supervisor Accounts
-if(!localStorage.getItem('supervisors')){
-    const supervisorsInit = [
-        {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
-        {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
-    ];
-    localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
-}
+// Always initialize supervisors
+const supervisorsInit = [
+    {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
+    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
+];
+localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-// Show Password
+// Show/Hide Password
 function togglePassword(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type === "password" ? "text" : "password";
@@ -240,18 +187,15 @@ function togglePassword(){
 
 // Login
 function login(){
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
     let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const supervisor = supervisors.find(s => s.username===username && s.password===password);
-    if(supervisor){
-        localStorage.setItem('currentSupervisor', JSON.stringify(supervisor));
+    const sup = supervisors.find(s=>s.username===username && s.password===password);
+    if(sup){
+        localStorage.setItem('currentSupervisor', JSON.stringify(sup));
         if(document.getElementById('savePassword').checked){
             localStorage.setItem('savedPassword', password);
-        } else {
-            localStorage.removeItem('savedPassword');
-        }
+        } else { localStorage.removeItem('savedPassword'); }
         checkLogin();
     } else {
         document.getElementById('errorMessage').innerText="Invalid username or password!";
@@ -262,18 +206,13 @@ function login(){
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
-
     let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const supIndex = supervisors.findIndex(s => s.username===username);
-    if(supIndex === -1){
-        alert("Username not found!");
-        return;
-    }
-    const newPwd = prompt("Enter new password:");
-    if(!newPwd) return;
-    supervisors[supIndex].password = newPwd;
+    const supIndex = supervisors.findIndex(s=>s.username===username);
+    if(supIndex===-1){ alert("Username not found!"); return; }
+    const newPwd = prompt("Enter new password:"); if(!newPwd) return;
+    supervisors[supIndex].password=newPwd;
     localStorage.setItem('supervisors', JSON.stringify(supervisors));
-    alert("Password has been reset successfully!");
+    alert("Password reset successfully!");
 }
 
 // Logout
@@ -281,10 +220,10 @@ function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
     document.getElementById('dashboardPage').style.display='none';
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('errorMessage').innerText = '';
-    document.querySelector('#requestsTable tbody').innerHTML = '';
+    document.getElementById('username').value='';
+    document.getElementById('password').value='';
+    document.getElementById('errorMessage').innerText='';
+    document.querySelector('#requestsTable tbody').innerHTML='';
 }
 
 // Check Login
@@ -299,19 +238,18 @@ function checkLogin(){
     }
 }
 
-// Load Table from Firestore
+// Load Table
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML='';
-
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
     const status = document.getElementById('filterStatus').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
-    data.forEach((r)=>{
+    data.forEach(r=>{
         const d = new Date(r.date);
         let include=true;
         if(from && new Date(from)>d) include=false;
@@ -326,7 +264,6 @@ async function loadTable(){
                 <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
             `:"";
-
             tbody.innerHTML+=`
                 <tr>
                     <td>${d.toLocaleString()}</td>
@@ -347,15 +284,13 @@ async function loadTable(){
     });
 }
 
-// Approve request
+// Approve/Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
     await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
-
-// Reject request
 async function reject(id){
     const reason = prompt("Reason for rejection:");
     if(!reason) return;
@@ -365,12 +300,11 @@ async function reject(id){
     loadTable();
 }
 
-// Export to Excel
+// Export CSV
 function exportToExcel(){
-    let table = document.getElementById('requestsTable');
-    let rows = table.querySelectorAll('tr');
+    let table=document.getElementById('requestsTable');
+    let rows=table.querySelectorAll('tr');
     let csvContent = Array.from(rows).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>`"${c.innerText}"`).join(",")).join("\n");
-
     let blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
     let link=document.createElement("a");
     link.href=URL.createObjectURL(blob);
@@ -378,7 +312,7 @@ function exportToExcel(){
     link.click();
 }
 
-// Auto Logout after inactivity
+// Inactivity logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
@@ -391,7 +325,7 @@ function resetInactivityTimer(){
     inactivityTimer = setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000);
 }
 
-// Initial check login
+// Initial login check
 checkLogin();
 </script>
 
