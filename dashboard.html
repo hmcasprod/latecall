@@ -256,7 +256,7 @@ function checkLogin(){
     }
 }
 
-// Load table
+// Load table with fixed status color
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -277,38 +277,35 @@ async function loadTable(){
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            const rawStatus = r.status || "";
-            const normalized = rawStatus.trim().toLowerCase();
+            const rawStatus = (r.status || "").trim();
+            const normalized = rawStatus.toLowerCase();
             let statusClass = "";
-            switch(normalized){
-                case "pending": statusClass="status-pending"; break;
-                case "approved": statusClass="status-approved"; break;
-                case "rejected": statusClass="status-rejected"; break;
-                default: statusClass=""; break;
-            }
-            const displayStatus = rawStatus.trim();
+            if(normalized === "pending") statusClass = "status-pending";
+            else if(normalized === "approved") statusClass = "status-approved";
+            else if(normalized === "rejected") statusClass = "status-rejected";
 
             const actionButtons = normalized === "pending" ? `
                 <button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>
             ` : "";
 
-            tbody.innerHTML+=`
-                <tr>
-                    <td>${d.toLocaleString()}</td>
-                    <td>${r.name}</td>
-                    <td>${r.corp}</td>
-                    <td>${r.hub}</td>
-                    <td>${r.unit}</td>
-                    <td>${r.shift}</td>
-                    <td>${r.trip}</td>
-                    <td>${r.timeout}</td>
-                    <td>${r.typeOfDuty}</td>
-                    <td class="${statusClass}">${displayStatus}</td>
-                    <td>${actionButtons}</td>
-                    <td>${r.processedBy||''}</td>
-                </tr>
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${d.toLocaleString()}</td>
+                <td>${r.name}</td>
+                <td>${r.corp}</td>
+                <td>${r.hub}</td>
+                <td>${r.unit}</td>
+                <td>${r.shift}</td>
+                <td>${r.trip}</td>
+                <td>${r.timeout}</td>
+                <td>${r.typeOfDuty}</td>
+                <td>${rawStatus}</td>
+                <td>${actionButtons}</td>
+                <td>${r.processedBy||''}</td>
             `;
+            tr.children[9].className = statusClass;
+            tbody.appendChild(tr);
         }
     });
 }
@@ -361,7 +358,7 @@ document.getElementById('password').addEventListener('keydown', e=>{
     if(e.key==='Enter'){ login(); }
 });
 
-// Pre-fill Remember Me
+// Pre-fill Remember Me and auto-filter
 window.addEventListener('DOMContentLoaded', () => {
     const savedUsername = localStorage.getItem('savedUsername');
     const savedPassword = localStorage.getItem('savedPassword');
