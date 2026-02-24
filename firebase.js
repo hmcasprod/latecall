@@ -16,42 +16,36 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ===============================
-// Submit a Late Call Request
-// ===============================
+// Submit Late Call
 export async function submitLateCall(data) {
   try {
     await addDoc(collection(db, "requests"), data);
     return true;
-  } catch (error) {
-    console.error("Error submitting data:", error);
+  } catch (err) {
+    console.error("Error submitting data:", err);
     return false;
   }
 }
 
-// ===============================
-// Get all Late Call Requests
-// ===============================
+// Get all Late Calls
 export async function getLateCalls() {
   try {
     const snapshot = await getDocs(collection(db, "requests"));
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error("Error fetching data:", error);
+  } catch (err) {
+    console.error("Error fetching data:", err);
     return [];
   }
 }
 
-// ===============================
-// Update Request Status (Approve/Reject)
-// ===============================
+// Update request status
 export async function updateRequestStatus(id, status, processedBy) {
   try {
     const ref = doc(db, "requests", id);
-    await updateDoc(ref, { status: status, processedBy: processedBy });
+    await updateDoc(ref, { status, processedBy });
     return true;
-  } catch (error) {
-    console.error("Error updating status:", error);
+  } catch (err) {
+    console.error("Error updating status:", err);
     return false;
   }
 }
