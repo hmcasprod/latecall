@@ -186,7 +186,7 @@ footer {
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Initialize supervisors
+// Only initialize supervisors if not already in localStorage
 if(!localStorage.getItem('supervisors')){
     const supervisorsInit = [
         {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
@@ -195,17 +195,18 @@ if(!localStorage.getItem('supervisors')){
     localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 }
 
+// Toggle password visibility
 function togglePassword(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type === "password" ? "text" : "password";
 }
 
-// Enter key login
+// Press Enter to login
 function checkEnter(event){
     if(event.key === "Enter") login();
 }
 
-// Login
+// Login function
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -221,7 +222,7 @@ function login(){
     }
 }
 
-// Forgot Password
+// Forgot password
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -258,7 +259,7 @@ function checkLogin(){
     }
 }
 
-// Load Table
+// Load table
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -303,7 +304,7 @@ async function loadTable(){
     });
 }
 
-// Approve/Reject
+// Approve / Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const processedBy = `${sup.fullName} CN ${sup.corp} (${new Date().toLocaleString()})`;
