@@ -19,11 +19,16 @@ const db = getFirestore(app);
 // Submit Late Call
 export async function submitLateCall(data) {
   try {
+    // Create date and time for submission (dateSubmitted) and keep user selected date (lateCallDate)
+    const dateSubmitted = new Date();  // Capture the actual current date and time of form submission
+    const lateCallDate = new Date(data.date);  // User selected date for late call
+
     // Add both `dateSubmitted` (current time) and `lateCallDate` (user-selected date)
     await addDoc(collection(db, "requests"), {
       ...data,  // Include all the form data
-      dateSubmitted: new Date().toISOString(),  // Store the actual submission date and time
-      lateCallDate: data.date,  // Store the user-selected late call date
+      dateSubmitted: dateSubmitted.toISOString(),  // Store the actual submission date and time
+      lateCallDate: lateCallDate.toISOString().split('T')[0],  // Store user selected date as YYYY-MM-DD
+      timeout: data.timeout,  // Store the timeout as selected by the user
     });
     return true;
   } catch (err) {
@@ -42,6 +47,7 @@ export async function getLateCalls() {
         id: doc.id,
         dateSubmitted: data.dateSubmitted,  // Include actual submission date
         lateCallDate: data.lateCallDate,    // Include late call date
+        timeout: data.timeout,              // Include timeout
         ...data  // Spread other fields (e.g., name, corp, hub, shift, etc.)
       };
     });
