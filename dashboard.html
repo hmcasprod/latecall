@@ -277,7 +277,6 @@ async function loadTable(){
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            // Robust status coloring
             const rawStatus = r.status || "";
             const normalized = rawStatus.trim().toLowerCase();
             let statusClass = "";
@@ -371,6 +370,11 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('password').value = savedPassword;
         document.getElementById('savePassword').checked = true;
     }
+
+    // Auto-apply filters for Hub, Status, and Search
+    document.getElementById('filterHub').addEventListener('change', loadTable);
+    document.getElementById('filterStatus').addEventListener('change', loadTable);
+    document.getElementById('filterSearch').addEventListener('input', loadTable);
 });
 
 // Initial check
