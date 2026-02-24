@@ -207,9 +207,14 @@ function login(){
     const sup = supervisors.find(s=>s.username===username && s.password===password);
     if(sup){
         localStorage.setItem('currentSupervisor', JSON.stringify(sup));
+        // Remember Me
         if(document.getElementById('savePassword').checked){
+            localStorage.setItem('savedUsername', username);
             localStorage.setItem('savedPassword', password);
-        } else { localStorage.removeItem('savedPassword'); }
+        } else { 
+            localStorage.removeItem('savedUsername'); 
+            localStorage.removeItem('savedPassword'); 
+        }
         checkLogin();
     } else {
         document.getElementById('errorMessage').innerText="Invalid username or password!";
@@ -252,7 +257,7 @@ function checkLogin(){
     }
 }
 
-// Load table (status coloring fixed)
+// Load table
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -273,7 +278,6 @@ async function loadTable(){
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
-            // Fix: normalize status for correct coloring
             const statusNormalized = (r.status || "").trim().toLowerCase();
             const statusClass = statusNormalized === "pending" ? "status-pending" :
                                 statusNormalized === "approved" ? "status-approved" :
@@ -350,6 +354,17 @@ function resetInactivityTimer(){
 // Allow Enter key login
 document.getElementById('password').addEventListener('keydown', e=>{
     if(e.key==='Enter'){ login(); }
+});
+
+// Pre-fill Remember Me
+window.addEventListener('DOMContentLoaded', () => {
+    const savedUsername = localStorage.getItem('savedUsername');
+    const savedPassword = localStorage.getItem('savedPassword');
+    if(savedUsername && savedPassword){
+        document.getElementById('username').value = savedUsername;
+        document.getElementById('password').value = savedPassword;
+        document.getElementById('savePassword').checked = true;
+    }
 });
 
 // Initial check
