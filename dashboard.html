@@ -1,216 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Late Call Entry Form</title>
+<label>Shift:</label>
+<select id="filterShift" onchange="loadTable()">
+<option value="">All</option>
+                <option>Day</option><option>Night</option>
+                <option>Day</option>
+                <option>Peak</option>
+                <option>Night</option>
+                <option>Event</option>
+</select>
+<label>Search:</label>
+<input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip" oninput="loadTable()">
+@@ -285,15 +288,14 @@ <h2 id="managerName"></h2>
+let rows = [];
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+data.forEach(r => {
+        const d = new Date(r.dateSubmitted); // Ensure this is the actual submission date
+        const d = new Date(r.dateSubmitted); 
 
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-<style>
-  body { font-family: 'Roboto', sans-serif; margin:0; padding:10px; background-color:#f4f4f4; }
-  .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
-  .logos img { width:250px; height:90px; object-fit:contain; margin:0 15px; }
-  h1 { text-align:center; margin-top:0; margin-bottom:20px; font-weight:bold; color:black; }
-  label { display:flex; align-items:center; margin-bottom:6px; font-weight:bold; color:black; line-height:1.5; }
-  label i { margin-right:10px; color:#4CAF50; font-size:1.2em; }
-  form { max-width:600px; margin:0 auto; padding:20px; background-color:#fff; border-radius:8px; box-shadow:0px 4px 8px rgba(0,0,0,0.1); }
-  .input-container { position:relative; margin-bottom:12px; }
-  .input-container input, .input-container select { width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border-radius:4px; border:1px solid #ccc; }
-  input[type="submit"] { background-color:#4CAF50; color:white; border:none; cursor:pointer; padding:10px; width:100%; font-weight:bold; border-radius:4px; text-align:center; }
-  input[type="submit"]:hover { background-color:#45a049; }
-  #otherHub { display:none; }
-  .form-container { max-width:600px; margin:0 auto; }
-  /* Error highlight */
-  .input-error { border:2px solid red !important; }
-  /* Modal */
-  #confirmationModal { 
-    display:none; 
-    position:fixed; 
-    top:0; left:0; right:0; bottom:0; 
-    background: rgba(0,0,0,0.6); 
-    z-index:9999; 
-    justify-content:center; 
-    align-items:center; 
-  }
-  #confirmationModal .modal-content { 
-    background:#fff; 
-    padding:30px 40px; 
-    border-radius:8px; 
-    text-align:center; 
-    box-shadow:0 4px 8px rgba(0,0,0,0.2); 
-    font-size:18px; 
-    font-weight:bold; 
-  }
-  footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
-</style>
-</head>
-
-<body>
-<div class="form-container">
-  <div class="logos">
-    <img src="logo1.png" alt="Logo 1">
-    <img src="logo2.png" alt="Logo 2">
-  </div>
-
-  <h1>Late Call Entry Form</h1>
-
-  <form id="lateCallForm" novalidate>
-    <div class="input-container">
-      <label for="date"><i class="fas fa-calendar-alt"></i> Late Call Date *</label>
-      <input type="date" id="date" required>
-    </div>
-    <div class="input-container">
-      <label for="name"><i class="fas fa-user"></i> Name *</label>
-      <input type="text" id="name" required>
-    </div>
-    <div class="input-container">
-      <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
-      <input type="number" id="corp" required min="0" step="1" placeholder="Enter Corporation Number">
-    </div>
-    <div class="input-container">
-      <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
-      <select id="typeOfDuty" required>
-        <option value="">-- Select Type of Duty --</option>
-        <option>Regular Shift</option>
-        <option>Overtime</option>
-      </select>
-    </div>
-    <div class="input-container">
-      <label for="hub"><i class="fas fa-home"></i> HUB *</label>
-      <select id="hub" required>
-        <option value="">-- Select HUB --</option>
-        <option>Hub 1</option>
-        <option>Hub 2</option>
-        <option>Hub 3</option>
-        <option>Hub 4</option>
-        <option>Hub 5</option>
-        <option>Hub 6</option>
-        <option>Hub 7</option>
-        <option>Hub 8</option>
-        <option>Events</option>
-        <option>SAS</option>
-        <option>Retrieval</option>
-        <option>Life Flight</option>
-        <option value="Others">Other/s : Please Specify</option>
-      </select>
-      <input type="text" id="otherHub" placeholder="Please specify">
-    </div>
-    <div class="input-container">
-      <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
-      <input type="text" id="unit" required>
-    </div>
-    <div class="input-container">
-      <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
-      <select id="shift" required>
-        <option value="">-- Select Shift --</option>
-        <option>Day</option>
-        <option>Peak</option>
-        <option>Night</option>
-        <option>Event</option>
-      </select>
-    </div>
-    <div class="input-container">
-      <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
-      <input type="time" id="timeout" required>
-    </div>
-    <div class="input-container">
-      <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
-      <input type="text" id="trip" required>
-    </div>
-
-    <input type="submit" value="Submit">
-  </form>
-</div>
-
-<!-- Confirmation Modal -->
-<div id="confirmationModal">
-  <div class="modal-content">
-    Late Call Details Submitted Successfully!
-  </div>
-</div>
-
-<script type="module">
-import { submitLateCall } from './firebase.js';
-
-// Set date max to today
-const dateInput = document.getElementById('date');
-const today = new Date().toISOString().split('T')[0];
-dateInput.setAttribute('max', today);
-
-// Show/hide "Other Hub"
-document.getElementById('hub').addEventListener('change', function() {
-  const otherHub = document.getElementById('otherHub');
-  if (this.value === "Others") {
-    otherHub.style.display = "block";
-    otherHub.required = true;
-  } else {
-    otherHub.style.display = "none";
-    otherHub.required = false;
-    otherHub.classList.remove('input-error');
-  }
-});
-
-// Highlight errors and focus
-function highlightErrors(form) {
-  const fields = form.querySelectorAll('input, select');
-  let firstError = null;
-  fields.forEach(f => f.classList.remove('input-error'));
-  fields.forEach(f => {
-    if (!f.checkValidity()) {
-      f.classList.add('input-error');
-      if (!firstError) firstError = f;
-    }
-  });
-  if(firstError) firstError.focus();
-  return !firstError; // true if all valid
+        // Check if the date is valid
+if (isNaN(d.getTime())) {
+console.error("Invalid date:", r.dateSubmitted);
+return;
 }
 
-// Form submission
-document.getElementById('lateCallForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  
-  // Validate form
-  if(!highlightErrors(this)) return;
+        const lateCallDate = new Date(r.lateCallDate); // Assuming lateCallDate is available
+        const lateCallDate = new Date(r.lateCallDate); 
 
-  const dateSubmitted = new Date(); // Capture the exact date and time of submission
+let include = true;
+if(from && new Date(from) > d) include = false;
+@@ -314,24 +316,20 @@ <h2 id="managerName"></h2>
+               <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
+: "";
 
-  const data = {
-    date: dateInput.value,
-    name: document.getElementById('name').value,
-    corp: document.getElementById('corp').value,
-    typeOfDuty: document.getElementById('typeOfDuty').value,
-    hub: document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value,
-    unit: document.getElementById('unit').value,
-    shift: document.getElementById('shift').value,
-    timeout: document.getElementById('timeout').value,
-    trip: document.getElementById('trip').value,
-    status: 'Pending',
-    dateSubmitted: dateSubmitted.toISOString(),  // Store the date as ISO format (with 24-hour time)
-  };
-
-  const success = await submitLateCall(data);
-  if (success) {
-    this.reset();
-    document.getElementById('otherHub').style.display = "none";
-
-    // Show confirmation modal
-    const modal = document.getElementById('confirmationModal');
-    modal.style.display = 'flex';
-    setTimeout(() => { modal.style.display = 'none'; }, 2500);
-  } else {
-    alert('Failed to submit data.');
-  }
+            // Format the date to DD-MMM-YYYY (e.g., 24-Feb-2026)
+const formattedDate = d.toLocaleDateString('en-GB', { 
+year: 'numeric', 
+month: 'short', 
+day: '2-digit' 
 });
-</script>
 
-<footer>
-© 2026 HMCAS Support Service Production.<br>
-James Ross Camins. All rights reserved.
-</footer>
-</body>
-</html>
+            // Format the time to 24-hour format without seconds (e.g., 22:18)
+const formattedTime = d.toLocaleTimeString('en-GB', { 
+hour12: false, 
+hour: '2-digit', 
+minute: '2-digit' 
+});
+
+            // Combine date and time for the "Date Submitted"
+const formattedDateTime = `${formattedDate} ${formattedTime}`;
+
+            // Format the Late Call Date
+const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
+year: 'numeric', 
+month: 'short', 
+@@ -358,14 +356,12 @@ <h2 id="managerName"></h2>
+}
+});
+
+    // Sort rows in descending order (newest at the top)
+rows.sort((a, b) => {
+const dateA = new Date(a.cells[0].innerText);  
+const dateB = new Date(b.cells[0].innerText);  
+        return dateB - dateA; // Sort in descending order (newest first)
+        return dateB - dateA; 
+});
+
+    // Append the sorted rows to the table body
+rows.forEach(row => tbody.appendChild(row));
+}
+
+@@ -384,7 +380,6 @@ <h2 id="managerName"></h2>
+async function approve(id){
+const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+
+    // Format the current date and time as DD-MMM-YYYY HH:mm
+const currentDate = new Date();
+const formattedDate = currentDate.toLocaleDateString('en-GB', {
+year: 'numeric',
+@@ -407,7 +402,6 @@ <h2 id="managerName"></h2>
+if(!reason) return;
+const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+
+    // Format the current date and time as DD-MMM-YYYY HH:mm
+const currentDate = new Date();
+const formattedDate = currentDate.toLocaleDateString('en-GB', {
+year: 'numeric',
+@@ -432,7 +426,7 @@ <h2 id="managerName"></h2>
+const csvContent = Array.from(rows)
+.map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>c.innerText).join(","))
+.join("\n");
+    const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
+    const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"}); 
+const link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download="dashboard_export.csv";
