@@ -265,7 +265,7 @@ function checkLogin(){
     }
 }
 
-// Load table
+// Load table (status coloring fixed)
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -300,7 +300,7 @@ async function loadTable(){
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${d.toLocaleString()}</td>
+                <td>${d.toLocaleString('en-GB', { hour12: false })}</td>
                 <td>${r.name}</td>
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
