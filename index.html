@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Late Call Entry Form</title>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js"></script>
 
   <!-- Link to Google Fonts (Roboto) -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
@@ -16,142 +11,28 @@
   <!-- Link to Font Awesome for icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-  <script>
-    // Firebase configuration (replace with your actual config from Firebase Console)
-    const firebaseConfig = {
-      apiKey: "AIzaSyC-RidAbJBCvoxT6aalA-lXA1u5ZT1PC4o",
-      authDomain: "hmcas-latecall.firebaseapp.com",
-      projectId: "hmcas-latecall",
-      storageBucket: "hmcas-latecall.appspot.com",
-      messagingSenderId: "498700648548",
-      appId: "1:498700648548:web:393d1676210823f7f49f71"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-
   <style>
-    /* Apply Roboto font to the whole body */
-    body {
-      font-family: 'Roboto', sans-serif;
-      margin: 20px;
-      padding: 10px;
-      background-color: #f4f4f4;
-    }
-
-    .logos {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .logos img {
-      width: 250px;
-      height: 90px;
-      object-fit: contain;
-      margin: 0 15px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-weight: bold;
-      color: black;
-    }
-
-    /* Change label color to black and make them bold */
-    label {
-      display: flex;
-      align-items: center;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: black;
-      line-height: 1.5;
-    }
-
-    label i {
-      margin-right: 10px;
-      color: #4CAF50; /* Green icon color */
-      font-size: 1.2em; /* Increase icon size slightly */
-    }
-
-    /* Form container */
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Add styles for input fields */
-    .input-container {
-      position: relative;
-      margin-bottom: 12px;
-    }
-
-    .input-container input,
-    .input-container select {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 12px;
-      box-sizing: border-box;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-
-    /* Center the submit button and make its size the same as the input boxes */
-    input[type="submit"] {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 10px; /* Same height as input boxes */
-      width: 100%;  /* Full width of the form */
-      font-weight: bold;
-      border-radius: 4px;
-      text-align: center;
-    }
-
-    input[type="submit"]:hover {
-      background-color: #45a049;
-    }
-
-    input:required {
-      border-left: 4px solid #4CAF50;
-    }
-
-    #otherHub {
-      display: none;
-    }
-
-    .form-container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* Centering the footer */
-    footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #555; /* Optional: Adjust the color of the footer text */
-    }
+    /* Your existing CSS (no changes needed) */
+    body { font-family: 'Roboto', sans-serif; margin:20px; padding:10px; background-color:#f4f4f4; }
+    .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+    .logos img { width:250px; height:90px; object-fit:contain; margin:0 15px; }
+    h1 { text-align:center; margin-top:0; margin-bottom:20px; font-weight:bold; color:black; }
+    label { display:flex; align-items:center; margin-bottom:6px; font-weight:bold; color:black; line-height:1.5; }
+    label i { margin-right:10px; color:#4CAF50; font-size:1.2em; }
+    form { max-width:600px; margin:0 auto; padding:20px; background-color:#fff; border-radius:8px; box-shadow:0px 4px 8px rgba(0,0,0,0.1); }
+    .input-container { position:relative; margin-bottom:12px; }
+    .input-container input, .input-container select { width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border-radius:4px; border:1px solid #ccc; }
+    input[type="submit"] { background-color:#4CAF50; color:white; border:none; cursor:pointer; padding:10px; width:100%; font-weight:bold; border-radius:4px; text-align:center; }
+    input[type="submit"]:hover { background-color:#45a049; }
+    input:required { border-left:4px solid #4CAF50; }
+    #otherHub { display:none; }
+    .form-container { max-width:600px; margin:0 auto; }
+    footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
   </style>
-
 </head>
 
 <body>
-
-  <!-- Late Call Entry Form -->
   <div class="form-container">
-    <!-- Logos Section -->
     <div class="logos">
       <img src="logo1.png" alt="Logo 1">
       <img src="logo2.png" alt="Logo 2">
@@ -160,25 +41,19 @@
     <h1>Late Call Entry Form</h1>
 
     <form id="lateCallForm">
-      <!-- Date -->
+      <!-- Your form inputs (unchanged) -->
       <div class="input-container">
         <label for="date"><i class="fas fa-calendar-alt"></i> Date *</label>
         <input type="date" id="date" required>
       </div>
-
-      <!-- Name -->
       <div class="input-container">
         <label for="name"><i class="fas fa-user"></i> Name *</label>
         <input type="text" id="name" required>
       </div>
-
-      <!-- Corp Number -->
       <div class="input-container">
         <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
         <input type="text" id="corp" required>
       </div>
-
-      <!-- Type of Duty -->
       <div class="input-container">
         <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
         <select id="typeOfDuty" required>
@@ -187,8 +62,6 @@
           <option>Overtime</option>
         </select>
       </div>
-
-      <!-- HUB -->
       <div class="input-container">
         <label for="hub"><i class="fas fa-home"></i> HUB *</label>
         <select id="hub" required>
@@ -209,14 +82,10 @@
         </select>
         <input type="text" id="otherHub" placeholder="Please specify">
       </div>
-
-      <!-- Unit -->
       <div class="input-container">
         <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
         <input type="text" id="unit" required>
       </div>
-
-      <!-- Shift -->
       <div class="input-container">
         <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
         <select id="shift" required>
@@ -227,14 +96,10 @@
           <option>Event</option>
         </select>
       </div>
-
-      <!-- Time Out -->
       <div class="input-container">
         <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
         <input type="time" id="timeout" required>
       </div>
-
-      <!-- Trip -->
       <div class="input-container">
         <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
         <input type="text" id="trip" required>
@@ -244,53 +109,44 @@
     </form>
   </div>
 
-  <!-- Form Submission Script -->
-  <script>
-    // Show or hide the "Other Hub" input field based on selection
+  <!-- Import Firebase and submission logic -->
+  <script type="module">
+    import { submitLateCall } from './firebase.js';
+
+    // Show/hide "Other Hub" input
     document.getElementById('hub').addEventListener('change', function () {
-      const otherHubInput = document.getElementById('otherHub');
+      const otherHub = document.getElementById('otherHub');
       if (this.value === "Others") {
-        otherHubInput.style.display = "block";
-        otherHubInput.required = true;
+        otherHub.style.display = "block";
+        otherHub.required = true;
       } else {
-        otherHubInput.style.display = "none";
-        otherHubInput.required = false;
+        otherHub.style.display = "none";
+        otherHub.required = false;
       }
     });
 
-    // Form submission logic
+    // Form submission
     document.getElementById('lateCallForm').addEventListener('submit', async function (e) {
-      e.preventDefault(); // Prevent form from submitting the traditional way
+      e.preventDefault();
 
-      // Collect form data
-      const date = document.getElementById('date').value;
-      const name = document.getElementById('name').value;
-      const corp = document.getElementById('corp').value;
-      const typeOfDuty = document.getElementById('typeOfDuty').value;
-      const hub = document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value;
-      const unit = document.getElementById('unit').value;
-      const shift = document.getElementById('shift').value;
-      const timeout = document.getElementById('timeout').value;
-      const trip = document.getElementById('trip').value;
+      const data = {
+        date: document.getElementById('date').value,
+        name: document.getElementById('name').value,
+        corp: document.getElementById('corp').value,
+        typeOfDuty: document.getElementById('typeOfDuty').value,
+        hub: document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value,
+        unit: document.getElementById('unit').value,
+        shift: document.getElementById('shift').value,
+        timeout: document.getElementById('timeout').value,
+        trip: document.getElementById('trip').value,
+        status: 'Pending'
+      };
 
-      // Send data to Firestore
-      try {
-        await db.collection('requests').add({
-          date: date,
-          name: name,
-          corp: corp,
-          typeOfDuty: typeOfDuty,
-          hub: hub,
-          unit: unit,
-          shift: shift,
-          timeout: timeout,
-          trip: trip,
-          status: 'Pending',  // Default status
-        });
+      const success = await submitLateCall(data);
+      if (success) {
         alert('Request submitted successfully!');
-        document.getElementById('lateCallForm').reset(); // Reset the form
-      } catch (error) {
-        console.error('Error submitting data:', error);
+        this.reset();
+      } else {
         alert('Failed to submit data.');
       }
     });
@@ -300,7 +156,5 @@
     © 2026 HMCAS Support Service Production. <br>
     James Ross Camins. All rights reserved.
   </footer>
-
 </body>
-
 </html>
