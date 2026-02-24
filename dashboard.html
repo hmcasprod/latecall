@@ -190,7 +190,9 @@
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Date Submitted</th><th>Date Selected</th><th>Name</th><th>Corp Number</th>
+                    <th>Date Submitted</th>
+                    <th>Late Call Date</th>
+                    <th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
                     <th>Status</th><th>Action</th><th>Processed By</th>
@@ -286,6 +288,8 @@ async function loadTable(){
 
     data.forEach(r=>{
         const d = new Date(r.date);
+        const lateCallDate = new Date(r.lateCallDate); // Assuming lateCallDate is available in the data
+
         let include = true;
         if(from && new Date(from)>d) include=false;
         if(to && new Date(to)<d) include=false;
@@ -312,6 +316,13 @@ async function loadTable(){
                 day: '2-digit' 
             });
 
+            // Format the Late Call Date (assuming it's available)
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            });
+
             // Format the time to 24-hour format without seconds (e.g., 22:18)
             const formattedTime = d.toLocaleTimeString('en-GB', { 
                 hour12: false, 
@@ -322,17 +333,10 @@ async function loadTable(){
             // Combine date and time for the "Date Submitted"
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
 
-            // Date Selected (current date of the filter applied)
-            const selectedDate = new Date().toLocaleDateString('en-GB', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: '2-digit' 
-            });
-
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${formattedDateTime}</td>
-                <td>${selectedDate}</td>  <!-- Date Selected Column -->
+                <td>${formattedLateCallDate}</td>
                 <td>${r.name}</td>
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
