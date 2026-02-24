@@ -1,216 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Late Call Entry Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Late Call Entry Form</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <!-- Font Awesome for icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
-  <style>
-    body { font-family: 'Roboto', sans-serif; margin:0; padding:10px; background-color:#f4f4f4; }
-    .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
-    .logos img { width:250px; height:90px; object-fit:contain; margin:0 15px; }
-    h1 { text-align:center; margin-top:0; margin-bottom:20px; font-weight:bold; color:black; }
-    label { display:flex; align-items:center; margin-bottom:6px; font-weight:bold; color:black; line-height:1.5; }
-    label i { margin-right:10px; color:#4CAF50; font-size:1.2em; }
-    form { max-width:600px; margin:0 auto; padding:20px; background-color:#fff; border-radius:8px; box-shadow:0px 4px 8px rgba(0,0,0,0.1); }
-    .input-container { position:relative; margin-bottom:12px; }
-    .input-container input, .input-container select { width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border-radius:4px; border:1px solid #ccc; }
-    input[type="submit"] { background-color:#4CAF50; color:white; border:none; cursor:pointer; padding:10px; width:100%; font-weight:bold; border-radius:4px; text-align:center; }
-    input[type="submit"]:hover { background-color:#45a049; }
-    input:required { border-left:4px solid #4CAF50; }
-    #otherHub { display:none; }
-    .form-container { max-width:600px; margin:0 auto; }
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-    /* Overlay background */
-    #overlay {
-      position: fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      z-index: 999;
-    }
+<style>
+  body { font-family: 'Roboto', sans-serif; margin:0; padding:10px; background-color:#f4f4f4; }
+  .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  .logos img { width:250px; height:90px; object-fit:contain; margin:0 15px; }
+  h1 { text-align:center; margin-top:0; margin-bottom:20px; font-weight:bold; color:black; }
+  label { display:flex; align-items:center; margin-bottom:6px; font-weight:bold; color:black; line-height:1.5; }
+  label i { margin-right:10px; color:#4CAF50; font-size:1.2em; }
+  form { max-width:600px; margin:0 auto; padding:20px; background-color:#fff; border-radius:8px; box-shadow:0px 4px 8px rgba(0,0,0,0.1); }
+  .input-container { position:relative; margin-bottom:12px; }
+  .input-container input, .input-container select { width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; border-radius:4px; border:1px solid #ccc; }
+  input[type="submit"] { background-color:#4CAF50; color:white; border:none; cursor:pointer; padding:10px; width:100%; font-weight:bold; border-radius:4px; text-align:center; }
+  input[type="submit"]:hover { background-color:#45a049; }
+  input:required { border-left:4px solid #4CAF50; }
+  #otherHub { display:none; }
+  .form-container { max-width:600px; margin:0 auto; }
 
-    /* Centered popup message */
-    #submitMessage {
-      position: fixed;
-      top:50%;
-      left:50%;
-      transform: translate(-50%, -50%);
-      padding: 25px 35px;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 18px;
-      display: none;
-      z-index: 1000;
-      background-color: #4CAF50;
-      color: #fff;
-      text-align:center;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      opacity:0;
-      transition: opacity 0.5s ease;
-    }
+  /* Modal */
+  #confirmationModal { 
+    display:none; 
+    position:fixed; 
+    top:0; left:0; right:0; bottom:0; 
+    background: rgba(0,0,0,0.6); 
+    z-index:9999; 
+    justify-content:center; 
+    align-items:center; 
+  }
+  #confirmationModal .modal-content { 
+    background:#fff; 
+    padding:30px 40px; 
+    border-radius:8px; 
+    text-align:center; 
+    box-shadow:0 4px 8px rgba(0,0,0,0.2); 
+    font-size:18px; 
+    font-weight:bold; 
+  }
 
-    #submitMessage.show {
-      display:block;
-      opacity:1;
-    }
-
-    footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
-  </style>
+  footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
+</style>
 </head>
 
 <body>
-  <div class="form-container">
-    <div class="logos">
-      <img src="logo1.png" alt="Logo 1">
-      <img src="logo2.png" alt="Logo 2">
-    </div>
-
-    <h1>Late Call Entry Form</h1>
-
-    <form id="lateCallForm">
-      <div class="input-container">
-        <label for="date"><i class="fas fa-calendar-alt"></i> Date *</label>
-        <input type="date" id="date" required>
-      </div>
-      <div class="input-container">
-        <label for="name"><i class="fas fa-user"></i> Name *</label>
-        <input type="text" id="name" required>
-      </div>
-      <div class="input-container">
-        <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
-        <input type="text" id="corp" required>
-      </div>
-      <div class="input-container">
-        <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
-        <select id="typeOfDuty" required>
-          <option value="">-- Select Type of Duty --</option>
-          <option>Regular Shift</option>
-          <option>Overtime</option>
-        </select>
-      </div>
-      <div class="input-container">
-        <label for="hub"><i class="fas fa-home"></i> HUB *</label>
-        <select id="hub" required>
-          <option value="">-- Select HUB --</option>
-          <option>Hub 1</option>
-          <option>Hub 2</option>
-          <option>Hub 3</option>
-          <option>Hub 4</option>
-          <option>Hub 5</option>
-          <option>Hub 6</option>
-          <option>Hub 7</option>
-          <option>Hub 8</option>
-          <option>Events</option>
-          <option>SAS</option>
-          <option>Retrieval</option>
-          <option>Life Flight</option>
-          <option value="Others">Other/s : Please Specify</option>
-        </select>
-        <input type="text" id="otherHub" placeholder="Please specify">
-      </div>
-      <div class="input-container">
-        <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
-        <input type="text" id="unit" required>
-      </div>
-      <div class="input-container">
-        <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
-        <select id="shift" required>
-          <option value="">-- Select Shift --</option>
-          <option>Day</option>
-          <option>Peak</option>
-          <option>Night</option>
-          <option>Event</option>
-        </select>
-      </div>
-      <div class="input-container">
-        <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
-        <input type="time" id="timeout" required>
-      </div>
-      <div class="input-container">
-        <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
-        <input type="text" id="trip" required>
-      </div>
-
-      <input type="submit" value="Submit">
-    </form>
+<div class="form-container">
+  <div class="logos">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
   </div>
 
-  <!-- Overlay and message -->
-  <div id="overlay"></div>
-  <div id="submitMessage"></div>
+  <h1>Late Call Entry Form</h1>
 
-  <script type="module">
-    import { submitLateCall } from './firebase.js';
+  <form id="lateCallForm">
+    <div class="input-container">
+      <label for="date"><i class="fas fa-calendar-alt"></i> Date *</label>
+      <input type="date" id="date" required>
+    </div>
+    <div class="input-container">
+      <label for="name"><i class="fas fa-user"></i> Name *</label>
+      <input type="text" id="name" required>
+    </div>
+    <div class="input-container">
+      <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
+      <input type="text" id="corp" required>
+    </div>
+    <div class="input-container">
+      <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
+      <select id="typeOfDuty" required>
+        <option value="">-- Select Type of Duty --</option>
+        <option>Regular Shift</option>
+        <option>Overtime</option>
+      </select>
+    </div>
+    <div class="input-container">
+      <label for="hub"><i class="fas fa-home"></i> HUB *</label>
+      <select id="hub" required>
+        <option value="">-- Select HUB --</option>
+        <option>Hub 1</option>
+        <option>Hub 2</option>
+        <option>Hub 3</option>
+        <option>Hub 4</option>
+        <option>Hub 5</option>
+        <option>Hub 6</option>
+        <option>Hub 7</option>
+        <option>Hub 8</option>
+        <option>Events</option>
+        <option>SAS</option>
+        <option>Retrieval</option>
+        <option>Life Flight</option>
+        <option value="Others">Other/s : Please Specify</option>
+      </select>
+      <input type="text" id="otherHub" placeholder="Please specify">
+    </div>
+    <div class="input-container">
+      <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
+      <input type="text" id="unit" required>
+    </div>
+    <div class="input-container">
+      <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
+      <select id="shift" required>
+        <option value="">-- Select Shift --</option>
+        <option>Day</option>
+        <option>Peak</option>
+        <option>Night</option>
+        <option>Event</option>
+      </select>
+    </div>
+    <div class="input-container">
+      <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
+      <input type="time" id="timeout" required>
+    </div>
+    <div class="input-container">
+      <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
+      <input type="text" id="trip" required>
+    </div>
 
-    const hubSelect = document.getElementById('hub');
-    const otherHubInput = document.getElementById('otherHub');
-    const form = document.getElementById('lateCallForm');
-    const overlay = document.getElementById('overlay');
-    const messageDiv = document.getElementById('submitMessage');
+    <input type="submit" value="Submit">
+  </form>
+</div>
 
-    hubSelect.addEventListener('change', () => {
-      if (hubSelect.value === "Others") {
-        otherHubInput.style.display = 'block';
-        otherHubInput.required = true;
-      } else {
-        otherHubInput.style.display = 'none';
-        otherHubInput.required = false;
-      }
-    });
+<!-- Confirmation Modal -->
+<div id="confirmationModal">
+  <div class="modal-content">
+    Late Call Details Submitted Successfully!
+  </div>
+</div>
 
-    function showMessage(text, color) {
-      messageDiv.innerText = text;
-      messageDiv.style.backgroundColor = color;
-      overlay.style.display = 'block';
-      messageDiv.classList.add('show');
+<!-- Firebase submission logic -->
+<script type="module">
+import { submitLateCall } from './firebase.js';
 
-      setTimeout(() => {
-        messageDiv.classList.remove('show');
-        overlay.style.display = 'none';
-      }, 4000);
-    }
+// Restrict date to today or earlier
+const dateInput = document.getElementById('date');
+const today = new Date().toISOString().split('T')[0];
+dateInput.setAttribute('max', today);
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+// Show/hide "Other Hub"
+document.getElementById('hub').addEventListener('change', function() {
+  const otherHub = document.getElementById('otherHub');
+  if (this.value === "Others") {
+    otherHub.style.display = "block";
+    otherHub.required = true;
+  } else {
+    otherHub.style.display = "none";
+    otherHub.required = false;
+  }
+});
 
-      const data = {
-        date: document.getElementById('date').value.trim(),
-        name: document.getElementById('name').value.trim(),
-        corp: document.getElementById('corp').value.trim(),
-        typeOfDuty: document.getElementById('typeOfDuty').value,
-        hub: hubSelect.value === "Others" ? otherHubInput.value.trim() : hubSelect.value,
-        unit: document.getElementById('unit').value.trim(),
-        shift: document.getElementById('shift').value,
-        timeout: document.getElementById('timeout').value,
-        trip: document.getElementById('trip').value.trim(),
-        status: 'Pending'
-      };
+// Form submission
+document.getElementById('lateCallForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-      const success = await submitLateCall(data);
+  const data = {
+    date: dateInput.value,
+    name: document.getElementById('name').value,
+    corp: document.getElementById('corp').value,
+    typeOfDuty: document.getElementById('typeOfDuty').value,
+    hub: document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value,
+    unit: document.getElementById('unit').value,
+    shift: document.getElementById('shift').value,
+    timeout: document.getElementById('timeout').value,
+    trip: document.getElementById('trip').value,
+    status: 'Pending'
+  };
 
-      if (success) {
-        form.reset();
-        otherHubInput.style.display = 'none';
-        otherHubInput.required = false;
-        showMessage('✅ Late Call Details submitted successfully!', '#4CAF50');
-      } else {
-        showMessage('❌ Failed to submit data. Please try again.', '#f44336');
-      }
-    });
-  </script>
+  const success = await submitLateCall(data);
+  if (success) {
+    // Reset form
+    this.reset();
+    document.getElementById('otherHub').style.display = "none";
+    
+    // Show modal
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'flex';
+    setTimeout(() => { modal.style.display = 'none'; }, 2500);
+  } else {
+    alert('Failed to submit data.');
+  }
+});
+</script>
 
-  <footer>
-    © 2026 HMCAS Support Service Production. <br>
-    James Ross Camins. All rights reserved.
-  </footer>
+<footer>
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
+</footer>
 </body>
 </html>
