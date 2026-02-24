@@ -270,7 +270,6 @@ async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML='';
-
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
@@ -278,13 +277,14 @@ async function loadTable(){
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
     let rows = [];
+
     data.forEach(r=>{
         const d = new Date(r.date);
         let include = true;
-        if(from && new Date(from) > d) include=false;
-        if(to && new Date(to) < d) include=false;
-        if(hub && r.hub !== hub) include=false;
-        if(statusFilter && r.status !== statusFilter) include=false;
+        if(from && new Date(from)>d) include=false;
+        if(to && new Date(to)<d) include=false;
+        if(hub && r.hub!==hub) include=false;
+        if(statusFilter && r.status!==statusFilter) include=false;
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
