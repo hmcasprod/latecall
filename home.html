@@ -96,7 +96,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
                 <option value="">All</option><option>Day</option><option>Peak</option><option>Night</option><option>Event</option>
             </select>
             <label>Search:</label>
-            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip">
+            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Type of Duty, Trip">
             <button id="filterBtn">Filter</button>
             <button class="clear-filters-btn" onclick="clearFiltersAndReload()">Clear Filters</button>
         </div>
@@ -195,13 +195,12 @@ async function loadTable(){
         const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
 
+        // Filters
         if(from && new Date(from) > d) include=false;
         if(to && new Date(to) < d) include=false;
         if(statusFilter && r.status !== statusFilter) include=false;
         if(shiftFilter && r.shift !== shiftFilter) include=false;
-        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
-        // HUB filter with "Others"
         if(hub){
             if(hub === "Others"){
                 if(predefinedHubs.includes(r.hub)) include=false;
@@ -209,6 +208,9 @@ async function loadTable(){
                 if(r.hub !== hub) include=false;
             }
         }
+
+        // Live search ONLY on name, corp, unit, typeOfDuty, trip
+        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
             const statusNormalized = (r.status || "").trim().toLowerCase();
@@ -240,7 +242,6 @@ async function loadTable(){
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// CLEAR FILTER FUNCTION
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -251,12 +252,9 @@ function clearFiltersAndReload(){
     loadTable();
 }
 
-// Expose to global so HTML button can access it
-window.clearFiltersAndReload = clearFiltersAndReload;
-
-// Filter button only applies current filters
 document.getElementById('filterBtn').onclick = loadTable;
 
+// Approve / Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const now = new Date();
@@ -296,6 +294,9 @@ function resetInactivityTimer(){ clearTimeout(inactivityTimer); inactivityTimer=
 
 document.getElementById('password').addEventListener('keydown', e=>{ if(e.key==='Enter'){ login(); } });
 
+// Live search only triggers loadTable
+document.getElementById('filterSearch').addEventListener('input', loadTable);
+
 function init() {
     checkLogin();
     window.logout = logout;
@@ -306,7 +307,6 @@ function init() {
     window.forgotPassword = forgotPassword;
     window.togglePassword = togglePassword;
     window.login = login;
-    window.clearFiltersAndReload = clearFiltersAndReload; // <-- important
     document.getElementById('loginBtn').onclick = login;
 }
 init();
