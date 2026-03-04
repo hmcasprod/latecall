@@ -105,7 +105,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
             <thead>
                 <tr>
                     <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
-                    <th>Hub</th><th>Unit</th><th>Shift</th><th>Late Hours</th>
+                    <th>Hub</th><th>Unit</th><th>Shift</th><th>Late Call Hours</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th><th>Status</th>
                     <th>Action</th><th>Processed By</th>
                 </tr>
@@ -173,7 +173,6 @@ function checkLogin(){
     }
 }
 
-// Table loading
 let applyDateFilter = false;
 async function loadTable(){
     const data = await getLateCalls();
@@ -184,7 +183,7 @@ async function loadTable(){
     const hub = document.getElementById('filterHub').value;
     const statusFilter = document.getElementById('filterStatus').value;
     const shiftFilter = document.getElementById('filterShift').value;
-    const search = document.getElementById('filterSearch').value.toLowerCase();
+    const search = document.getElementById('filterSearch').value.toLowerCase().trim();
 
     const rows = [];
     data.forEach(r=>{
@@ -198,13 +197,17 @@ async function loadTable(){
         }
 
         if(hub){
-            if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
-            else if(hub!=="Others" && r.hub!==hub) include=false;
+            if(hub === "Others"){
+                if(predefinedHubs.includes(r.hub)) include = false;
+            } else if(r.hub !== hub){
+                include = false;
+            }
         }
-        if(statusFilter && r.status!==statusFilter) include=false;
-        if(shiftFilter && r.shift!==shiftFilter) include=false;
 
-        if(search){
+        if(statusFilter && r.status !== statusFilter) include = false;
+        if(shiftFilter && r.shift !== shiftFilter) include = false;
+
+        if(search !== ""){
             const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
             if(!text.includes(search)) include=false;
         }
@@ -240,21 +243,17 @@ async function loadTable(){
     });
 });
 document.getElementById('filterSearch').addEventListener('input', loadTable);
-
-document.getElementById('filterBtn').onclick = ()=>{
-    applyDateFilter=true;
-    loadTable();
-}
+document.getElementById('filterBtn').onclick = ()=>{ applyDateFilter=true; loadTable(); }
 
 // ✅ Clear Filters
 function clearFiltersAndReload(){
-    document.getElementById('filterFrom').value='';
-    document.getElementById('filterTo').value='';
-    document.getElementById('filterHub').value='';
-    document.getElementById('filterStatus').value='';
-    document.getElementById('filterShift').value='';
-    document.getElementById('filterSearch').value='';
-    applyDateFilter=false;
+    document.getElementById('filterFrom').value = '';
+    document.getElementById('filterTo').value = '';
+    document.getElementById('filterHub').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterShift').value = '';
+    document.getElementById('filterSearch').value = '';
+    applyDateFilter = false;
     loadTable();
 }
 
