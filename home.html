@@ -1,4 +1,3 @@
-<!-- full HTML starts -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,6 @@
 <title>Supervisor Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* CSS same as before */
 body { font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(to right, #eef2f3, #ffffff); color: #333; }
 .header-logos { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
 .header-logos img {height: 50px;}
@@ -50,6 +48,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     <img src="logo2.png" alt="Logo 2">
 </div>
 
+<!-- Login Page -->
 <div id="loginPage">
     <div class="login-container">
         <h2>Supervisor Login</h2>
@@ -67,12 +66,14 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     </div>
 </div>
 
+<!-- Dashboard Page -->
 <div id="dashboardPage">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 id="managerName"></h2>
         <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
     </div>
 
+    <!-- Filters -->
     <div class="top-bar">
         <div>
             <label>Date From:</label><input type="date" id="filterFrom">
@@ -120,6 +121,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
+// Initialize supervisors
 const supervisorsInit = [
     {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
@@ -127,6 +129,7 @@ const supervisorsInit = [
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
+// Login
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
 
 function login(){
@@ -175,12 +178,12 @@ function checkLogin(){
     }
 }
 
-// Table loading with automatic filters except date
-let applyDateFilter = false;
+// Load table with filters
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML = '';
+
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
@@ -188,71 +191,52 @@ async function loadTable(){
     const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
-    const rows = [];
-    data.forEach(r=>{
+    data.forEach(r => {
         const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
         const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
 
-        // Date filter only applies if Filter button clicked
-        if(applyDateFilter){
-            if(from && new Date(from) > d) include=false;
-            if(to && new Date(to) < d) include=false;
-        }
-
-        // Automatic dropdown filters
+        if(from && new Date(from) > d) include=false;
+        if(to && new Date(to) < d) include=false;
+        if(statusFilter && r.status !== statusFilter) include=false;
+        if(shiftFilter && r.shift !== shiftFilter) include=false;
         if(hub){
-            if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
-            else if(hub!=="Others" && r.hub!==hub) include=false;
+            if(hub==="Others"){ if(predefinedHubs.includes(r.hub)) include=false; }
+            else{ if(r.hub!==hub) include=false; }
         }
-        if(statusFilter && r.status!==statusFilter) include=false;
-        if(shiftFilter && r.shift!==shiftFilter) include=false;
-
-        // Automatic search
-        if(search){
-            const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
-            if(!text.includes(search)) include=false;
+        if(search){ // automatic search filter
+            const str = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
+            if(!str.includes(search)) include=false;
         }
 
         if(include){
-            const statusNormalized = (r.status||"").trim().toLowerCase();
-            const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":"";
+            const statusNormalized = (r.status || "").trim().toLowerCase();
+            const statusClass = statusNormalized === "pending" ? "status-pending" :
+                                statusNormalized === "approved" ? "status-approved" :
+                                statusNormalized === "rejected" ? "status-rejected" : "";
+
             const actionButtons = statusNormalized==="pending"? 
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
-                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
-            const formattedDate = d.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
-            const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
+                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
+
+            const formattedDate = d.toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
+            const formattedTime = d.toLocaleTimeString('en-GB', { hour12:false, hour:'2-digit', minute:'2-digit' });
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
-                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{ year:'numeric', month:'short', day:'2-digit' });
+
+            const tr=document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
+                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours || 0}</td>
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
-                <td>${actionButtons}</td><td>${r.processedBy||''}</td>`;
-            rows.push(tr);
+                <td>${actionButtons}</td><td>${r.processedBy || ''}</td>
+            `;
+            tbody.appendChild(tr);
         }
     });
-
-    rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
-    rows.forEach(row=>tbody.appendChild(row));
 }
 
-// Automatic search and dropdown filters
-['filterHub','filterStatus','filterShift'].forEach(id=>{
-    document.getElementById(id).addEventListener('change', ()=>{
-        applyDateFilter=false; // date filter needs Filter button
-        loadTable();
-    });
-});
-document.getElementById('filterSearch').addEventListener('input', loadTable);
-
-// Filter button applies date
-document.getElementById('filterBtn').onclick = ()=>{
-    applyDateFilter=true;
-    loadTable();
-}
-
-// Clear filters
+// Clear all filters
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -260,11 +244,13 @@ function clearFiltersAndReload(){
     document.getElementById('filterStatus').value='';
     document.getElementById('filterShift').value='';
     document.getElementById('filterSearch').value='';
-    applyDateFilter=false;
     loadTable();
 }
 
-// Approve / Reject
+// Filter button (date filter only)
+document.getElementById('filterBtn').onclick = loadTable;
+
+// Approve/Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const now = new Date();
@@ -272,6 +258,7 @@ async function approve(id){
     await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
+
 async function reject(id){
     const reason = prompt("Reason for rejection:"); if(!reason) return;
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
@@ -281,7 +268,7 @@ async function reject(id){
     loadTable();
 }
 
-// Export
+// Export Excel
 function exportToExcel(){
     const table=document.getElementById('requestsTable');
     const rows=table.querySelectorAll('tr');
@@ -293,7 +280,7 @@ function exportToExcel(){
     link.click();
 }
 
-// Inactivity
+// Inactivity logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
@@ -303,8 +290,10 @@ function startInactivityTimer(){
 }
 function resetInactivityTimer(){ clearTimeout(inactivityTimer); inactivityTimer=setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000); }
 
+// Enter key login
 document.getElementById('password').addEventListener('keydown', e=>{ if(e.key==='Enter'){ login(); } });
 
+// Init
 function init() {
     checkLogin();
     window.logout = logout;
@@ -316,6 +305,11 @@ function init() {
     window.togglePassword = togglePassword;
     window.login = login;
     document.getElementById('loginBtn').onclick = login;
+
+    // Automatic filters for Hub, Status, Shift, Search
+    ['filterHub','filterStatus','filterShift','filterSearch'].forEach(id=>{
+        document.getElementById(id).addEventListener('input', loadTable);
+    });
 }
 init();
 </script>
