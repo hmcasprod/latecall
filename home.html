@@ -1,3 +1,4 @@
+<!-- full HTML starts -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
 <title>Supervisor Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+/* CSS same as before */
 body { font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(to right, #eef2f3, #ffffff); color: #333; }
 .header-logos { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
 .header-logos img {height: 50px;}
@@ -48,7 +50,6 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     <img src="logo2.png" alt="Logo 2">
 </div>
 
-<!-- Login Page -->
 <div id="loginPage">
     <div class="login-container">
         <h2>Supervisor Login</h2>
@@ -66,14 +67,12 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     </div>
 </div>
 
-<!-- Dashboard Page -->
 <div id="dashboardPage">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 id="managerName"></h2>
         <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
     </div>
 
-    <!-- Filters -->
     <div class="top-bar">
         <div>
             <label>Date From:</label><input type="date" id="filterFrom">
@@ -129,6 +128,7 @@ localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
+
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -141,6 +141,7 @@ function login(){
         checkLogin();
     } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
+
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -152,6 +153,7 @@ function forgotPassword(){
     localStorage.setItem('supervisors', JSON.stringify(supervisors));
     alert("Password reset successfully!");
 }
+
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -161,6 +163,7 @@ function logout(){
     document.getElementById('errorMessage').innerText='';
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
+
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -172,7 +175,7 @@ function checkLogin(){
     }
 }
 
-// Table and filters
+// Table loading with automatic filters except date
 let applyDateFilter = false;
 async function loadTable(){
     const data = await getLateCalls();
@@ -184,36 +187,36 @@ async function loadTable(){
     const statusFilter = document.getElementById('filterStatus').value;
     const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
+
     const rows = [];
     data.forEach(r=>{
-        const d = new Date(r.dateSubmitted);
-        if(isNaN(d.getTime())) return;
-        const lateCallDate = new Date(r.lateCallDate);
+        const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
+        const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
 
-        // Date filter only if Filter button clicked
+        // Date filter only applies if Filter button clicked
         if(applyDateFilter){
             if(from && new Date(from) > d) include=false;
             if(to && new Date(to) < d) include=false;
         }
+
+        // Automatic dropdown filters
         if(hub){
-            if(hub === "Others" && predefinedHubs.includes(r.hub)) include=false;
+            if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
             else if(hub!=="Others" && r.hub!==hub) include=false;
         }
         if(statusFilter && r.status!==statusFilter) include=false;
         if(shiftFilter && r.shift!==shiftFilter) include=false;
 
-        // Automatic search for all fields except date
+        // Automatic search
         if(search){
             const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
             if(!text.includes(search)) include=false;
         }
 
         if(include){
-            const statusNormalized = (r.status || "").trim().toLowerCase();
-            const statusClass = statusNormalized==="pending"?"status-pending":
-                                statusNormalized==="approved"?"status-approved":
-                                statusNormalized==="rejected"?"status-rejected":"";
+            const statusNormalized = (r.status||"").trim().toLowerCase();
+            const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":"";
             const actionButtons = statusNormalized==="pending"? 
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                  <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
@@ -229,20 +232,27 @@ async function loadTable(){
             rows.push(tr);
         }
     });
+
     rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// Automatic search
+// Automatic search and dropdown filters
+['filterHub','filterStatus','filterShift'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', ()=>{
+        applyDateFilter=false; // date filter needs Filter button
+        loadTable();
+    });
+});
 document.getElementById('filterSearch').addEventListener('input', loadTable);
 
-// Filter button applies date filter
+// Filter button applies date
 document.getElementById('filterBtn').onclick = ()=>{
     applyDateFilter=true;
     loadTable();
 }
 
-// Clear all filters
+// Clear filters
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -283,7 +293,7 @@ function exportToExcel(){
     link.click();
 }
 
-// Inactivity logout
+// Inactivity
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
