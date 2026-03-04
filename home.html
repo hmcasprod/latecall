@@ -37,7 +37,7 @@ tr:nth-child(even) td { background:#fafafa; }
 .status-approved { background:#4CAF50 !important; color:#fff !important; font-weight:600;}
 .status-rejected { background:#f44336 !important; color:#fff !important; font-weight:600;}
 .action-btn { cursor:pointer; padding:5px 10px; border:none; border-radius:4px; margin:2px;}
-footer { position: fixed; bottom:0; width:100%; text-align:center; background:#fff; padding:10px 0; font-size:12px; color:#555; box-shadow:0 -2px 5px rgba(0,0,0,0.1);}
+footer { position: fixed; bottom:0; width:100%; text-align:center; background:#fff; padding:10px 0; font-size:12px; color:#555; box-shadow:0 -2px 5px rgba(0,0,0,0.1); }
 @media(max-width:900px){table{min-width:600px;}}
 @media(max-width:600px){.top-bar{flex-direction:column; align-items:flex-start;}}
 </style>
@@ -126,6 +126,7 @@ const supervisorsInit = [
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
@@ -200,6 +201,7 @@ async function loadTable(){
         if(shiftFilter && r.shift !== shiftFilter) include=false;
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
+        // HUB filter with "Others"
         if(hub){
             if(hub === "Others"){
                 if(predefinedHubs.includes(r.hub)) include=false;
@@ -238,7 +240,7 @@ async function loadTable(){
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// CLEAR ALL FILTERS and reload table
+// CLEAR FILTER FUNCTION
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -249,6 +251,10 @@ function clearFiltersAndReload(){
     loadTable();
 }
 
+// Expose to global so HTML button can access it
+window.clearFiltersAndReload = clearFiltersAndReload;
+
+// Filter button only applies current filters
 document.getElementById('filterBtn').onclick = loadTable;
 
 async function approve(id){
@@ -300,6 +306,7 @@ function init() {
     window.forgotPassword = forgotPassword;
     window.togglePassword = togglePassword;
     window.login = login;
+    window.clearFiltersAndReload = clearFiltersAndReload; // <-- important
     document.getElementById('loginBtn').onclick = login;
 }
 init();
