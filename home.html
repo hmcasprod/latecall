@@ -92,9 +92,7 @@
             cursor: pointer;
             font-size: 14px;
         }
-        .clear-filters-btn:hover {
-            background-color: #e53935;
-        }
+        .clear-filters-btn:hover { background-color: #e53935; }
         .table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
         table {width:100%;border-collapse:collapse;min-width:900px;}
         th, td {padding:10px;text-align:center;border:1px solid #ddd;}
@@ -135,16 +133,11 @@
             <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
         </div>
         <div class="remember-me">
-            <label>
-                Remember Me
-                <input type="checkbox" id="savePassword">
-            </label>
+            <label>Remember Me <input type="checkbox" id="savePassword"></label>
         </div>
         <button id="loginBtn">Login</button>
         <div id="errorMessage" class="error-message"></div>
-        <div class="forgot-password">
-            <a onclick="forgotPassword()">Forgot Password?</a>
-        </div>
+        <div class="forgot-password"><a onclick="forgotPassword()">Forgot Password?</a></div>
     </div>
 </div>
 
@@ -175,11 +168,7 @@
             </select>
             <label>Shift:</label>
             <select id="filterShift" onchange="loadTable()">
-                <option value="">All</option>
-                <option>Day</option>
-                <option>Peak</option>
-                <option>Night</option>
-                <option>Event</option>
+                <option value="">All</option><option>Day</option><option>Peak</option><option>Night</option><option>Event</option>
             </select>
             <label>Search:</label>
             <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip" oninput="loadTable()">
@@ -193,20 +182,10 @@
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Date Submitted</th>
-                    <th>Late Call Date</th>
-                    <th>Name</th>
-                    <th>Corp Number</th>
-                    <th>Hub</th>
-                    <th>Unit</th>
-                    <th>Shift</th>
-                    <th>Late Hours</th> <!-- ADDED -->
-                    <th>Trip</th>
-                    <th>Time Out</th>
-                    <th>Type of Duty</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                    <th>Processed By</th>
+                    <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
+                    <th>Hub</th><th>Unit</th><th>Shift</th><th>Late Hours</th>
+                    <th>Trip</th><th>Time Out</th><th>Type of Duty</th><th>Status</th>
+                    <th>Action</th><th>Processed By</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -223,10 +202,9 @@ const supervisorsInit = [
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-function togglePassword(){
-    const pwd = document.getElementById('password');
-    pwd.type = pwd.type==="password"?"text":"password";
-}
+const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
+
+function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
 
 function login(){
     const username = document.getElementById('username').value.trim();
@@ -235,13 +213,10 @@ function login(){
     const sup = supervisors.find(s=>s.username===username && s.password===password);
     if(sup){
         localStorage.setItem('currentSupervisor', JSON.stringify(sup));
-        if(document.getElementById('savePassword').checked){
-            localStorage.setItem('savedPassword', password);
-        } else { localStorage.removeItem('savedPassword'); }
+        if(document.getElementById('savePassword').checked){ localStorage.setItem('savedPassword', password); } 
+        else { localStorage.removeItem('savedPassword'); }
         checkLogin();
-    } else {
-        document.getElementById('errorMessage').innerText="Invalid username or password!";
-    }
+    } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
 
 function forgotPassword(){
@@ -293,15 +268,23 @@ async function loadTable(){
     data.forEach(r => {
         const d = new Date(r.dateSubmitted); 
         if (isNaN(d.getTime())) return;
-
         const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
+
         if(from && new Date(from) > d) include = false;
         if(to && new Date(to) < d) include = false;
-        if(hub && r.hub !== hub) include = false;
         if(statusFilter && r.status !== statusFilter) include = false;
         if(shiftFilter && r.shift !== shiftFilter) include = false;
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include = false;
+
+        // HUB filter with "Others"
+        if(hub){
+            if(hub === "Others"){
+                if(predefinedHubs.includes(r.hub)) include = false;
+            } else {
+                if(r.hub !== hub) include = false;
+            }
+        }
 
         if(include){
             const statusNormalized = (r.status || "").trim().toLowerCase();
@@ -311,8 +294,7 @@ async function loadTable(){
 
             const actionButtons = statusNormalized === "pending" ? 
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
-                <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
-             : "";
+                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
 
             const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
             const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -328,7 +310,7 @@ async function loadTable(){
                 <td>${r.hub}</td>
                 <td>${r.unit}</td>
                 <td>${r.shift}</td>
-                <td>${r.lateHours || 0}</td> <!-- ADDED -->
+                <td>${r.lateHours || 0}</td>
                 <td>${r.trip}</td>
                 <td>${r.timeout}</td>
                 <td>${r.typeOfDuty}</td>
@@ -405,9 +387,7 @@ function resetInactivityTimer(){
     }, 5 * 60 * 1000);
 }
 
-document.getElementById('password').addEventListener('keydown', e => {
-    if(e.key === 'Enter'){ login(); }
-});
+document.getElementById('password').addEventListener('keydown', e => { if(e.key === 'Enter'){ login(); } });
 
 checkLogin();
 
