@@ -98,7 +98,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
             <label>Search:</label>
             <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip">
             <button id="filterBtn">Filter</button>
-            <button class="clear-filters-btn" onclick="clearFilters(); loadTable();">Clear Filters</button>
+            <button class="clear-filters-btn" onclick="clearFiltersAndReload()">Clear Filters</button>
         </div>
         <button onclick="exportToExcel()">Export Excel</button>
     </div>
@@ -240,17 +240,18 @@ async function loadTable(){
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-function clearFilters(){
+function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
     document.getElementById('filterHub').value='';
     document.getElementById('filterStatus').value='';
     document.getElementById('filterShift').value='';
     document.getElementById('filterSearch').value='';
+    loadTable();
 }
 
-// Filter button now clears all filters and reloads table
-document.getElementById('filterBtn').onclick = function(){ clearFilters(); loadTable(); };
+// Filter button only applies current filters
+document.getElementById('filterBtn').onclick = loadTable;
 
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
