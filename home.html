@@ -129,7 +129,6 @@ localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
-
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -142,7 +141,6 @@ function login(){
         checkLogin();
     } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
-
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -154,7 +152,6 @@ function forgotPassword(){
     localStorage.setItem('supervisors', JSON.stringify(supervisors));
     alert("Password reset successfully!");
 }
-
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -164,7 +161,6 @@ function logout(){
     document.getElementById('errorMessage').innerText='';
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
-
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -176,6 +172,8 @@ function checkLogin(){
     }
 }
 
+// Table and filters
+let applyDateFilter = false;
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -186,12 +184,11 @@ async function loadTable(){
     const statusFilter = document.getElementById('filterStatus').value;
     const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
-
-    let rows = [];
-
-    data.forEach(r => {
-        const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
-        const lateCallDate = new Date(r.lateCallDate); 
+    const rows = [];
+    data.forEach(r=>{
+        const d = new Date(r.dateSubmitted);
+        if(isNaN(d.getTime())) return;
+        const lateCallDate = new Date(r.lateCallDate);
         let include = true;
 
         // Date filter only if Filter button clicked
@@ -199,17 +196,14 @@ async function loadTable(){
             if(from && new Date(from) > d) include=false;
             if(to && new Date(to) < d) include=false;
         }
-
         if(hub){
-            if(hub === "Others"){
-                if(predefinedHubs.includes(r.hub)) include=false;
-            } else if(r.hub !== hub) include=false;
+            if(hub === "Others" && predefinedHubs.includes(r.hub)) include=false;
+            else if(hub!=="Others" && r.hub!==hub) include=false;
         }
+        if(statusFilter && r.status!==statusFilter) include=false;
+        if(shiftFilter && r.shift!==shiftFilter) include=false;
 
-        if(statusFilter && r.status !== statusFilter) include=false;
-        if(shiftFilter && r.shift !== shiftFilter) include=false;
-
-        // Automatic search
+        // Automatic search for all fields except date
         if(search){
             const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
             if(!text.includes(search)) include=false;
@@ -217,30 +211,24 @@ async function loadTable(){
 
         if(include){
             const statusNormalized = (r.status || "").trim().toLowerCase();
-            const statusClass = statusNormalized === "pending" ? "status-pending" :
-                                statusNormalized === "approved" ? "status-approved" :
-                                statusNormalized === "rejected" ? "status-rejected" : "";
-
+            const statusClass = statusNormalized==="pending"?"status-pending":
+                                statusNormalized==="approved"?"status-approved":
+                                statusNormalized==="rejected"?"status-rejected":"";
             const actionButtons = statusNormalized==="pending"? 
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
-                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
-
-            const formattedDate = d.toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
-            const formattedTime = d.toLocaleTimeString('en-GB', { hour12:false, hour:'2-digit', minute:'2-digit' });
+                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
+            const formattedDate = d.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+            const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{ year:'numeric', month:'short', day:'2-digit' });
-
-            const tr=document.createElement('tr');
-            tr.innerHTML = `
-                <td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
-                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours || 0}</td>
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
+                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
-                <td>${actionButtons}</td><td>${r.processedBy || ''}</td>
-            `;
+                <td>${actionButtons}</td><td>${r.processedBy||''}</td>`;
             rows.push(tr);
         }
     });
-
     rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
     rows.forEach(row=>tbody.appendChild(row));
 }
@@ -248,11 +236,13 @@ async function loadTable(){
 // Automatic search
 document.getElementById('filterSearch').addEventListener('input', loadTable);
 
-// Filter button only applies date filter
-let applyDateFilter = false;
-document.getElementById('filterBtn').onclick = () => { applyDateFilter = true; loadTable(); }
+// Filter button applies date filter
+document.getElementById('filterBtn').onclick = ()=>{
+    applyDateFilter=true;
+    loadTable();
+}
 
-// Clear filters
+// Clear all filters
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -260,7 +250,7 @@ function clearFiltersAndReload(){
     document.getElementById('filterStatus').value='';
     document.getElementById('filterShift').value='';
     document.getElementById('filterSearch').value='';
-    applyDateFilter = false; 
+    applyDateFilter=false;
     loadTable();
 }
 
@@ -281,6 +271,7 @@ async function reject(id){
     loadTable();
 }
 
+// Export
 function exportToExcel(){
     const table=document.getElementById('requestsTable');
     const rows=table.querySelectorAll('tr');
@@ -292,6 +283,7 @@ function exportToExcel(){
     link.click();
 }
 
+// Inactivity logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
