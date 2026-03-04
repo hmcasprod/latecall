@@ -234,12 +234,11 @@ async function loadTable(){
         }
     });
 
-    // Always sort by newest first
     rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// CLEAR FILTERS with latest sorting
+// CLEAR ALL FILTERS and reload table
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
