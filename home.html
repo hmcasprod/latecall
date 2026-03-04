@@ -173,6 +173,7 @@ function checkLogin(){
     }
 }
 
+// Table loading with automatic filters except date
 let applyDateFilter = false;
 async function loadTable(){
     const data = await getLateCalls();
@@ -183,7 +184,7 @@ async function loadTable(){
     const hub = document.getElementById('filterHub').value;
     const statusFilter = document.getElementById('filterStatus').value;
     const shiftFilter = document.getElementById('filterShift').value;
-    const search = document.getElementById('filterSearch').value.toLowerCase().trim();
+    const search = document.getElementById('filterSearch').value.toLowerCase();
 
     const rows = [];
     data.forEach(r=>{
@@ -191,30 +192,29 @@ async function loadTable(){
         const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
 
+        // Date filter only applies if Filter button clicked
         if(applyDateFilter){
             if(from && new Date(from) > d) include=false;
             if(to && new Date(to) < d) include=false;
         }
 
+        // Automatic dropdown filters
         if(hub){
-            if(hub === "Others"){
-                if(predefinedHubs.includes(r.hub)) include = false;
-            } else if(r.hub !== hub){
-                include = false;
-            }
+            if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
+            else if(hub!=="Others" && r.hub!==hub) include=false;
         }
+        if(statusFilter && r.status!==statusFilter) include=false;
+        if(shiftFilter && r.shift!==shiftFilter) include=false;
 
-        if(statusFilter && r.status !== statusFilter) include = false;
-        if(shiftFilter && r.shift !== shiftFilter) include = false;
-
-        if(search !== ""){
+        // Automatic search
+        if(search){
             const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
             if(!text.includes(search)) include=false;
         }
 
         if(include){
             const statusNormalized = (r.status||"").trim().toLowerCase();
-            const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":"";
+            const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":""; 
             const actionButtons = statusNormalized==="pending"? 
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                  <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
@@ -235,46 +235,39 @@ async function loadTable(){
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// Automatic filter listeners
+// Automatic search and dropdown filters
 ['filterHub','filterStatus','filterShift'].forEach(id=>{
     document.getElementById(id).addEventListener('change', ()=>{
-        applyDateFilter=false;
+        applyDateFilter=false; 
         loadTable();
     });
 });
 document.getElementById('filterSearch').addEventListener('input', loadTable);
-document.getElementById('filterBtn').onclick = ()=>{ applyDateFilter=true; loadTable(); }
 
-// ✅ Clear Filters
+// Filter button applies date
+document.getElementById('filterBtn').onclick = ()=>{
+    applyDateFilter=true;
+    loadTable();
+}
+
 function clearFiltersAndReload(){
+    // Reset all filter inputs
     document.getElementById('filterFrom').value = '';
     document.getElementById('filterTo').value = '';
     document.getElementById('filterHub').value = '';
     document.getElementById('filterStatus').value = '';
     document.getElementById('filterShift').value = '';
     document.getElementById('filterSearch').value = '';
+
+    // Disable date filter
     applyDateFilter = false;
-    loadTable();
+
+    // Reload table after a very short delay to ensure inputs are reset
+    setTimeout(() => {
+        loadTable();
+    }, 10);
 }
 
-// Approve / Reject
-async function approve(id){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    const now = new Date();
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${now.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'})} ${now.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'})})`;
-    await updateRequestStatus(id,"Approved",processedBy);
-    loadTable();
-}
-async function reject(id){
-    const reason = prompt("Reason for rejection:"); if(!reason) return;
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    const now = new Date();
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${now.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'})} ${now.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'})}) - ${reason}`;
-    await updateRequestStatus(id,"Rejected",processedBy);
-    loadTable();
-}
-
-// Export
 function exportToExcel(){
     const table=document.getElementById('requestsTable');
     const rows=table.querySelectorAll('tr');
