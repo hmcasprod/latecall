@@ -43,11 +43,13 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
 </style>
 </head>
 <body>
+
 <div class="header-logos">
     <img src="logo1.png" alt="Logo 1">
     <img src="logo2.png" alt="Logo 2">
 </div>
 
+<!-- Login Page -->
 <div id="loginPage">
     <div class="login-container">
         <h2>Supervisor Login</h2>
@@ -65,12 +67,14 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     </div>
 </div>
 
+<!-- Dashboard Page -->
 <div id="dashboardPage">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 id="managerName"></h2>
         <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
     </div>
 
+    <!-- Filters -->
     <div class="top-bar">
         <div>
             <label>Date From:</label><input type="date" id="filterFrom">
@@ -117,9 +121,52 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
 
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
+
+// Predefined hubs
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
+// Example supervisors
+const supervisorsInit = [
+    {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
+    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
+];
+if(!localStorage.getItem('supervisors')) localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
+
+function login(){
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
+    const sup = supervisors.find(s=>s.username===username && s.password===password);
+    if(sup){
+        localStorage.setItem('currentSupervisor', JSON.stringify(sup));
+        if(document.getElementById('savePassword').checked){ localStorage.setItem('savedPassword', password); } 
+        else { localStorage.removeItem('savedPassword'); }
+        checkLogin();
+    } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
+}
+
+function logout(){
+    localStorage.removeItem('currentSupervisor');
+    document.getElementById('loginPage').style.display='flex';
+    document.getElementById('dashboardPage').style.display='none';
+    document.getElementById('username').value='';
+    document.getElementById('password').value='';
+    document.getElementById('errorMessage').innerText='';
+    document.querySelector('#requestsTable tbody').innerHTML='';
+}
+
+function checkLogin(){
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    if(sup){
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('dashboardPage').style.display='block';
+        document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
+        loadTable();
+    }
+}
+
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -130,37 +177,34 @@ function clearFiltersAndReload(){
     loadTable();
 }
 
-// Main table loader
+let applyDateFilter = false;
+
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
-    tbody.innerHTML = '';
+    tbody.innerHTML='';
 
     const search = document.getElementById('filterSearch').value.toLowerCase();
     const hub = document.getElementById('filterHub').value;
     const statusFilter = document.getElementById('filterStatus').value;
     const shiftFilter = document.getElementById('filterShift').value;
-    const from = window.applyDateFilter ? document.getElementById('filterFrom').value : '';
-    const to = window.applyDateFilter ? document.getElementById('filterTo').value : '';
+    const from = applyDateFilter ? document.getElementById('filterFrom').value : '';
+    const to = applyDateFilter ? document.getElementById('filterTo').value : '';
 
-    data.forEach(r => {
+    data.forEach(r=>{
         const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
-        const lateCallDate = new Date(r.lateCallDate); 
+        const lateCallDate = new Date(r.lateCallDate);
         let include = true;
 
-        // Apply date filter only on Filter button
         if(from && new Date(from) > d) include=false;
         if(to && new Date(to) < d) include=false;
 
-        // Live filters
         if(hub){
-            if(hub === "Others"){
-                if(predefinedHubs.includes(r.hub)) include=false;
-            } else { if(r.hub !== hub) include=false; }
+            if(hub === "Others"){ if(predefinedHubs.includes(r.hub)) include=false; }
+            else if(r.hub !== hub) include=false;
         }
         if(statusFilter && r.status !== statusFilter) include=false;
         if(shiftFilter && r.shift !== shiftFilter) include=false;
-
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
 
         if(include){
@@ -168,15 +212,13 @@ async function loadTable(){
             const statusClass = statusNormalized === "pending" ? "status-pending" :
                                 statusNormalized === "approved" ? "status-approved" :
                                 statusNormalized === "rejected" ? "status-rejected" : "";
-
-            const actionButtons = statusNormalized==="pending"? 
+            const actionButtons = statusNormalized==="pending"?
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                  <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
-
-            const formattedDate = d.toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
-            const formattedTime = d.toLocaleTimeString('en-GB', { hour12:false, hour:'2-digit', minute:'2-digit' });
+            const formattedDate = d.toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'2-digit'});
+            const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{ year:'numeric', month:'short', day:'2-digit' });
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
 
             const tr=document.createElement('tr');
             tr.innerHTML = `
@@ -188,17 +230,20 @@ async function loadTable(){
             tbody.appendChild(tr);
         }
     });
-    window.applyDateFilter = false; // reset date filter flag
+    applyDateFilter = false;
 }
 
-// Filter button applies date only
-document.getElementById('filterBtn').onclick = () => { window.applyDateFilter = true; loadTable(); };
-
-// Live filters
+// Event listeners
+document.getElementById('filterBtn').onclick = ()=>{
+    applyDateFilter = true; loadTable();
+};
 document.getElementById('filterHub').addEventListener('change', loadTable);
 document.getElementById('filterStatus').addEventListener('change', loadTable);
 document.getElementById('filterShift').addEventListener('change', loadTable);
 document.getElementById('filterSearch').addEventListener('input', loadTable);
+document.getElementById('loginBtn').onclick = login;
+
+checkLogin();
 </script>
 
 <footer>
