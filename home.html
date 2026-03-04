@@ -126,6 +126,7 @@ const supervisorsInit = [
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
@@ -187,6 +188,8 @@ async function loadTable(){
     const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
+    let rows = [];
+
     data.forEach(r => {
         const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
         const lateCallDate = new Date(r.lateCallDate); 
@@ -229,12 +232,14 @@ async function loadTable(){
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
                 <td>${actionButtons}</td><td>${r.processedBy || ''}</td>
             `;
-            tbody.appendChild(tr);
+            rows.push(tr);
         }
     });
+
+    rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
+    rows.forEach(row=>tbody.appendChild(row));
 }
 
-// CLEAR FILTER FUNCTION
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -245,7 +250,7 @@ function clearFiltersAndReload(){
     loadTable();
 }
 
-// FILTER BUTTON ONLY
+// Filter button only applies current filters
 document.getElementById('filterBtn').onclick = loadTable;
 
 async function approve(id){
