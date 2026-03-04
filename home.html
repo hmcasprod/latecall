@@ -193,10 +193,20 @@
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
-                    <th>Hub</th><th>Unit</th><th>Shift</th>
-                    <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
-                    <th>Status</th><th>Action</th><th>Processed By</th>
+                    <th>Date Submitted</th>
+                    <th>Late Call Date</th>
+                    <th>Name</th>
+                    <th>Corp Number</th>
+                    <th>Hub</th>
+                    <th>Unit</th>
+                    <th>Shift</th>
+                    <th>Late Hours</th> <!-- ADDED -->
+                    <th>Trip</th>
+                    <th>Time Out</th>
+                    <th>Type of Duty</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>Processed By</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -207,20 +217,17 @@
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Supervisor accounts
 const supervisorsInit = [
     {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-// Show/Hide password
 function togglePassword(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type==="password"?"text":"password";
 }
 
-// Login function
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -237,7 +244,6 @@ function login(){
     }
 }
 
-// Forgot password
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -250,7 +256,6 @@ function forgotPassword(){
     alert("Password reset successfully!");
 }
 
-// Logout
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -261,7 +266,6 @@ function logout(){
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
 
-// Check login
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -273,7 +277,6 @@ function checkLogin(){
     }
 }
 
-// Load table (status coloring fixed)
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -289,14 +292,9 @@ async function loadTable(){
 
     data.forEach(r => {
         const d = new Date(r.dateSubmitted); 
-
-        if (isNaN(d.getTime())) {
-            console.error("Invalid date:", r.dateSubmitted);
-            return;
-        }
+        if (isNaN(d.getTime())) return;
 
         const lateCallDate = new Date(r.lateCallDate); 
-
         let include = true;
         if(from && new Date(from) > d) include = false;
         if(to && new Date(to) < d) include = false;
@@ -316,25 +314,10 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
-            const formattedDate = d.toLocaleDateString('en-GB', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: '2-digit' 
-            });
-
-            const formattedTime = d.toLocaleTimeString('en-GB', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-
+            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+            const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
-
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: '2-digit' 
-            });
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -345,6 +328,7 @@ async function loadTable(){
                 <td>${r.hub}</td>
                 <td>${r.unit}</td>
                 <td>${r.shift}</td>
+                <td>${r.lateHours || 0}</td> <!-- ADDED -->
                 <td>${r.trip}</td>
                 <td>${r.timeout}</td>
                 <td>${r.typeOfDuty}</td>
@@ -356,16 +340,10 @@ async function loadTable(){
         }
     });
 
-    rows.sort((a, b) => {
-        const dateA = new Date(a.cells[0].innerText);  
-        const dateB = new Date(b.cells[0].innerText);  
-        return dateB - dateA; 
-    });
-
+    rows.sort((a, b) => new Date(b.cells[0].innerText) - new Date(a.cells[0].innerText));
     rows.forEach(row => tbody.appendChild(row));
 }
 
-// Clear all filters
 function clearFilters(){
     document.getElementById('filterFrom').value = '';
     document.getElementById('filterTo').value = '';
@@ -376,23 +354,12 @@ function clearFilters(){
     loadTable();
 }
 
-// Approve/Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit'
-    });
-    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const formattedDate = currentDate.toLocaleDateString('en-GB',{ year: 'numeric', month: 'short', day: '2-digit' });
+    const formattedTime = currentDate.toLocaleTimeString('en-GB',{ hour12: false, hour: '2-digit', minute: '2-digit' });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime})`;
-
     await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
@@ -401,25 +368,14 @@ async function reject(id){
     const reason = prompt("Reason for rejection:");
     if(!reason) return;
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit'
-    });
-    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const formattedDate = currentDate.toLocaleDateString('en-GB',{ year: 'numeric', month: 'short', day: '2-digit' });
+    const formattedTime = currentDate.toLocaleTimeString('en-GB',{ hour12: false, hour: '2-digit', minute: '2-digit' });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
-
     await updateRequestStatus(id,"Rejected",processedBy);
     loadTable();
 }
 
-// Export to Excel
 function exportToExcel(){
     const table=document.getElementById('requestsTable');
     const rows=table.querySelectorAll('tr');
@@ -433,7 +389,6 @@ function exportToExcel(){
     link.click();
 }
 
-// Inactivity auto logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
@@ -450,15 +405,12 @@ function resetInactivityTimer(){
     }, 5 * 60 * 1000);
 }
 
-// Allow Enter key login
 document.getElementById('password').addEventListener('keydown', e => {
     if(e.key === 'Enter'){ login(); }
 });
 
-// Initial check
 checkLogin();
 
-// Expose functions to HTML
 window.logout = logout;
 window.loadTable = loadTable;
 window.exportToExcel = exportToExcel;
@@ -477,4 +429,3 @@ document.getElementById('loginBtn').onclick = login;
 
 </body>
 </html>
-
