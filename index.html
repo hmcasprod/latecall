@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Late Call Entry Form</title>
 
-<!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 <style>
@@ -25,9 +22,8 @@
   input[type="submit"]:hover { background-color:#45a049; }
   #otherHub { display:none; }
   .form-container { max-width:600px; margin:0 auto; }
-  /* Error highlight */
   .input-error { border:2px solid red !important; }
-  /* Modal */
+
   #confirmationModal { 
     display:none; 
     position:fixed; 
@@ -46,6 +42,7 @@
     font-size:18px; 
     font-weight:bold; 
   }
+
   footer { text-align:center; margin-top:20px; font-size:14px; color:#555; }
 </style>
 </head>
@@ -60,18 +57,22 @@
   <h1>Late Call Entry Form</h1>
 
   <form id="lateCallForm" novalidate>
+
     <div class="input-container">
       <label for="date"><i class="fas fa-calendar-alt"></i> Late Call Date *</label>
       <input type="date" id="date" required>
     </div>
+
     <div class="input-container">
       <label for="name"><i class="fas fa-user"></i> Name *</label>
       <input type="text" id="name" required>
     </div>
+
     <div class="input-container">
       <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
-      <input type="number" id="corp" required min="0" step="1" placeholder="Enter Corporation Number">
+      <input type="number" id="corp" required min="0" step="1">
     </div>
+
     <div class="input-container">
       <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
       <select id="typeOfDuty" required>
@@ -80,6 +81,7 @@
         <option>Overtime</option>
       </select>
     </div>
+
     <div class="input-container">
       <label for="hub"><i class="fas fa-home"></i> HUB *</label>
       <select id="hub" required>
@@ -100,10 +102,12 @@
       </select>
       <input type="text" id="otherHub" placeholder="Please specify">
     </div>
+
     <div class="input-container">
       <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
       <input type="text" id="unit" required>
     </div>
+
     <div class="input-container">
       <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
       <select id="shift" required>
@@ -114,10 +118,18 @@
         <option>Event</option>
       </select>
     </div>
+
     <div class="input-container">
       <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
       <input type="time" id="timeout" required>
     </div>
+
+    <!-- UPDATED FIELD -->
+    <div class="input-container">
+      <label for="lateHours"><i class="fas fa-hourglass-half"></i> Number of Late Call Hours *</label>
+      <input type="number" id="lateHours" required min="1" step="1" placeholder="(e.g. 1, 2, 3)">
+    </div>
+
     <div class="input-container">
       <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
       <input type="text" id="trip" required>
@@ -127,7 +139,6 @@
   </form>
 </div>
 
-<!-- Confirmation Modal -->
 <div id="confirmationModal">
   <div class="modal-content">
     Late Call Details Submitted Successfully!
@@ -137,12 +148,10 @@
 <script type="module">
 import { submitLateCall } from './firebase.js';
 
-// Set date max to today
 const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('max', today);
 
-// Show/hide "Other Hub"
 document.getElementById('hub').addEventListener('change', function() {
   const otherHub = document.getElementById('otherHub');
   if (this.value === "Others") {
@@ -155,7 +164,6 @@ document.getElementById('hub').addEventListener('change', function() {
   }
 });
 
-// Highlight errors and focus
 function highlightErrors(form) {
   const fields = form.querySelectorAll('input, select');
   let firstError = null;
@@ -167,30 +175,31 @@ function highlightErrors(form) {
     }
   });
   if(firstError) firstError.focus();
-  return !firstError; // true if all valid
+  return !firstError;
 }
 
-// Form submission
 document.getElementById('lateCallForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   
-  // Validate form
   if(!highlightErrors(this)) return;
 
-  const dateSubmitted = new Date(); // Capture the exact date and time of submission
+  const dateSubmitted = new Date();
 
   const data = {
     date: dateInput.value,
     name: document.getElementById('name').value,
     corp: document.getElementById('corp').value,
     typeOfDuty: document.getElementById('typeOfDuty').value,
-    hub: document.getElementById('hub').value === "Others" ? document.getElementById('otherHub').value : document.getElementById('hub').value,
+    hub: document.getElementById('hub').value === "Others" 
+          ? document.getElementById('otherHub').value 
+          : document.getElementById('hub').value,
     unit: document.getElementById('unit').value,
     shift: document.getElementById('shift').value,
     timeout: document.getElementById('timeout').value,
+    lateHours: parseInt(document.getElementById('lateHours').value), // whole number only
     trip: document.getElementById('trip').value,
     status: 'Pending',
-    dateSubmitted: dateSubmitted.toISOString(),  // Store the date as ISO format (with 24-hour time)
+    dateSubmitted: dateSubmitted.toISOString(),
   };
 
   const success = await submitLateCall(data);
@@ -198,7 +207,6 @@ document.getElementById('lateCallForm').addEventListener('submit', async functio
     this.reset();
     document.getElementById('otherHub').style.display = "none";
 
-    // Show confirmation modal
     const modal = document.getElementById('confirmationModal');
     modal.style.display = 'flex';
     setTimeout(() => { modal.style.display = 'none'; }, 2500);
