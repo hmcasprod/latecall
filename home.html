@@ -200,7 +200,7 @@
                     <th>Hub</th>
                     <th>Unit</th>
                     <th>Shift</th>
-                    <th>Late Hours</th> <!-- ADDED -->
+                    <th>Late Hours</th>
                     <th>Trip</th>
                     <th>Time Out</th>
                     <th>Type of Duty</th>
@@ -281,23 +281,26 @@ async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
     tbody.innerHTML = '';
-    const from = document.getElementById('filterFrom').value;
-    const to = document.getElementById('filterTo').value;
+    const fromValue = document.getElementById('filterFrom').value;
+    const toValue = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
     const statusFilter = document.getElementById('filterStatus').value;
     const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
+    const from = fromValue ? new Date(fromValue) : null;
+    const to = toValue ? new Date(toValue) : null;
+
     let rows = [];
 
     data.forEach(r => {
-        const d = new Date(r.dateSubmitted); 
-        if (isNaN(d.getTime())) return;
+        const submittedDate = new Date(r.dateSubmitted); 
+        if (isNaN(submittedDate.getTime())) return;
 
         const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
-        if(from && new Date(from) > d) include = false;
-        if(to && new Date(to) < d) include = false;
+        if(from && submittedDate < from) include = false;
+        if(to && submittedDate > to) include = false;
         if(hub && r.hub !== hub) include = false;
         if(statusFilter && r.status !== statusFilter) include = false;
         if(shiftFilter && r.shift !== shiftFilter) include = false;
@@ -314,10 +317,10 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
-            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
-            const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            const formattedDate = submittedDate.toLocaleDateString('en-GB',{ year: 'numeric', month: 'short', day: '2-digit' });
+            const formattedTime = submittedDate.toLocaleTimeString('en-GB',{ hour12: false, hour: '2-digit', minute: '2-digit' });
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{ year: 'numeric', month: 'short', day: '2-digit' });
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -328,7 +331,7 @@ async function loadTable(){
                 <td>${r.hub}</td>
                 <td>${r.unit}</td>
                 <td>${r.shift}</td>
-                <td>${r.lateHours || 0}</td> <!-- ADDED -->
+                <td>${r.lateHours || 0}</td>
                 <td>${r.trip}</td>
                 <td>${r.timeout}</td>
                 <td>${r.typeOfDuty}</td>
