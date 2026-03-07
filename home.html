@@ -5,530 +5,310 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Supervisor Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
 <style>
-
-body{
-font-family:'Inter',sans-serif;
-margin:0;
-background:linear-gradient(to right,#eef2f3,#ffffff);
-color:#333;
-}
-
-.header-logos{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px 40px;
-background-color:#fff;
-box-shadow:0 2px 4px rgba(0,0,0,0.1);
-}
-
-.header-logos img{
-height:50px;
-}
-
-#loginPage{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.login-container{
-background:#fff;
-padding:50px 40px;
-border-radius:12px;
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
-width:100%;
-max-width:400px;
-text-align:center;
-display:flex;
-flex-direction:column;
-gap:15px;
-}
-
-.login-container h2{
-margin-bottom:25px;
-font-weight:700;
-}
-
-.login-container input{
-width:100%;
-padding:14px;
-border:1px solid #ddd;
-border-radius:6px;
-font-size:16px;
-}
-
-.login-container button{
-width:100%;
-padding:14px;
-background:#4CAF50;
-color:#fff;
-border:none;
-border-radius:6px;
-cursor:pointer;
-font-size:16px;
-}
-
-.error-message{
-color:red;
-font-size:14px;
-}
-
-#dashboardPage{
-display:none;
-padding:20px;
-padding-bottom:80px;
-}
-
-.top-bar{
-display:flex;
-justify-content:space-between;
-flex-wrap:wrap;
-gap:10px;
-margin-bottom:20px;
-}
-
-.top-bar input,
-.top-bar select,
-.top-bar button{
-padding:6px 10px;
-font-size:14px;
-}
-
-.top-bar button{
-background:#4CAF50;
-color:#fff;
-border:none;
-border-radius:4px;
-cursor:pointer;
-}
-
-.clear-filters-btn{
-background:#f44336;
-}
-
-.table-container{
-overflow-x:auto;
-background:#fff;
-padding:10px;
-border-radius:8px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:900px;
-}
-
-th,td{
-padding:10px;
-text-align:center;
-border:1px solid #ddd;
-}
-
-th{
-background:#f2f2f2;
-}
-
-.status-pending{
-background:#FFD700!important;
-font-weight:600;
-}
-
-.status-approved{
-background:#4CAF50!important;
-color:#fff;
-font-weight:600;
-}
-
-.status-rejected{
-background:#f44336!important;
-color:#fff;
-font-weight:600;
-}
-
-.action-btn{
-cursor:pointer;
-padding:5px 10px;
-border:none;
-border-radius:4px;
-margin:2px;
-}
-
-footer{
-position:fixed;
-bottom:0;
-width:100%;
-text-align:center;
-background:#fff;
-padding:10px;
-font-size:12px;
-box-shadow:0 -2px 5px rgba(0,0,0,0.1);
-}
-
+body { font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(to right, #eef2f3, #ffffff); color: #333; }
+.header-logos { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+.header-logos img {height: 50px;}
+#loginPage { display: flex; justify-content: center; align-items: center; height: 100vh; }
+.login-container { background: #fff; padding: 50px 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 100%; max-width: 400px; text-align: center; display: flex; flex-direction: column; gap: 15px; }
+.login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
+.login-container input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; transition: border 0.2s ease; }
+.login-container input:focus {border-color: #4CAF50; outline:none;}
+.login-container button { width: 100%; padding: 14px; background: #4CAF50; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:16px; margin-top:10px; transition: background 0.2s ease; }
+.login-container button:hover { background:#45a049; }
+.login-container .error-message { color:red; margin-top:10px; font-size:14px; }
+.remember-me label { display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer; margin:0; }
+.remember-me input {width:auto; height:auto;}
+.forgot-password {margin-top:15px;text-align:center;font-size:14px;}
+.forgot-password a {color:#007BFF;text-decoration:underline; cursor:pointer;}
+#dashboardPage { display:none; padding:20px; padding-bottom:80px;}
+.top-bar { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:20px;}
+.top-bar label { font-weight:600;}
+.top-bar input, .top-bar select, .top-bar button {padding:6px 10px; font-size:14px;}
+.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+.clear-filters-btn { background-color:#f44336;color:#fff;border:none;border-radius:4px;padding:6px 10px; cursor:pointer;font-size:14px;}
+.clear-filters-btn:hover { background-color:#e53935;}
+.table-container { overflow-x:auto; border-radius:8px; background:#fff; padding:10px;}
+table { width:100%; border-collapse:collapse; min-width:900px;}
+th, td { padding:10px; text-align:center; border:1px solid #ddd; }
+th { background:#f2f2f2; font-weight:600;}
+tr:nth-child(even) td { background:#fafafa; }
+.status-pending { background:#FFD700 !important; color:#000 !important; font-weight:600;}
+.status-approved { background:#4CAF50 !important; color:#fff !important; font-weight:600;}
+.status-rejected { background:#f44336 !important; color:#fff !important; font-weight:600;}
+.action-btn { cursor:pointer; padding:5px 10px; border:none; border-radius:4px; margin:2px;}
+footer { position: fixed; bottom:0; width:100%; text-align:center; background:#fff; padding:10px 0; font-size:12px; color:#555; box-shadow:0 -2px 5px rgba(0,0,0,0.1);}
+@media(max-width:900px){table{min-width:600px;} }
+@media(max-width:600px){.top-bar{flex-direction:column; align-items:flex-start;}}
 </style>
 </head>
-
 <body>
-
 <div class="header-logos">
-<img src="logo1.png">
-<img src="logo2.png">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
 </div>
-
-
-<!-- LOGIN -->
 
 <div id="loginPage">
-
-<div class="login-container">
-
-<h2>Supervisor Login</h2>
-
-<input type="text" id="username" placeholder="Username">
-
-<div style="position:relative">
-<input type="password" id="password" placeholder="Password">
-<span style="position:absolute;right:10px;top:12px;cursor:pointer" onclick="togglePassword()">👁️</span>
+    <div class="login-container">
+        <h2>Supervisor Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <div style="position:relative;">
+            <input type="password" id="password" placeholder="Password">
+            <span style="position:absolute; right:10px; top:12px; cursor:pointer;" onclick="togglePassword()">👁️</span>
+        </div>
+        <div class="remember-me">
+            <label>Remember Me <input type="checkbox" id="savePassword"></label>
+        </div>
+        <button id="loginBtn">Login</button>
+        <div id="errorMessage" class="error-message"></div>
+        <div class="forgot-password"><a onclick="forgotPassword()">Forgot Password?</a></div>
+    </div>
 </div>
-
-<label style="font-size:14px">
-Remember Me
-<input type="checkbox" id="savePassword">
-</label>
-
-<button id="loginBtn">Login</button>
-
-<div id="errorMessage" class="error-message"></div>
-
-</div>
-
-</div>
-
-
-<!-- DASHBOARD -->
 
 <div id="dashboardPage">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 id="managerName"></h2>
+        <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
+    </div>
 
-<div style="display:flex;justify-content:space-between;margin-bottom:20px">
-<h2 id="managerName"></h2>
+    <div class="top-bar">
+        <div>
+            <label>Date From:</label><input type="date" id="filterFrom">
+            <label>To:</label><input type="date" id="filterTo">
+            <label>Hub:</label>
+            <select id="filterHub">
+                <option value="">All</option>
+                <option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
+                <option>Hub 4</option><option>Hub 5</option><option>Hub 6</option>
+                <option>Hub 7</option><option>Hub 8</option>
+                <option>Events</option><option>SAS</option><option>Retrieval</option>
+                <option>Life Flight</option><option>Others</option>
+            </select>
+            <label>Status:</label>
+            <select id="filterStatus">
+                <option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option>
+            </select>
+            <label>Shift:</label>
+            <select id="filterShift">
+                <option value="">All</option><option>Day</option><option>Peak</option><option>Night</option><option>Event</option>
+            </select>
+            <label>Search:</label>
+            <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip">
+            <button id="filterBtn">Filter</button>
+            <button class="clear-filters-btn" onclick="clearFiltersAndReload()">Clear Filters</button>
+        </div>
+        <button onclick="exportToExcel()">Export Excel</button>
+    </div>
 
-<button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px">
-Logout
-</button>
-
+    <div class="table-container">
+        <table id="requestsTable">
+            <thead>
+                <tr>
+                    <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
+                    <th>Hub</th><th>Unit</th><th>Shift</th><th>Late Call Hours</th>
+                    <th>Trip</th><th>Time Out</th><th>Type of Duty</th><th>Status</th>
+                    <th>Action</th><th>Processed By</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
-
-
-<div class="top-bar">
-
-<div>
-
-<label>Date From:</label>
-<input type="date" id="filterFrom">
-
-<label>To:</label>
-<input type="date" id="filterTo">
-
-<label>Hub:</label>
-<select id="filterHub">
-<option value="">All</option>
-<option>Hub 1</option>
-<option>Hub 2</option>
-<option>Hub 3</option>
-<option>Hub 4</option>
-<option>Hub 5</option>
-<option>Hub 6</option>
-<option>Hub 7</option>
-<option>Hub 8</option>
-<option>Events</option>
-<option>SAS</option>
-<option>Retrieval</option>
-<option>Life Flight</option>
-<option>Others</option>
-</select>
-
-<label>Status:</label>
-<select id="filterStatus">
-<option value="">All</option>
-<option>Pending</option>
-<option>Approved</option>
-<option>Rejected</option>
-</select>
-
-<label>Shift:</label>
-<select id="filterShift">
-<option value="">All</option>
-<option>Day</option>
-<option>Peak</option>
-<option>Night</option>
-<option>Event</option>
-</select>
-
-<label>Search:</label>
-<input type="text" id="filterSearch">
-
-<button id="filterBtn">Filter</button>
-
-<button class="clear-filters-btn" id="clearFiltersBtn">
-Clear Filters
-</button>
-
-</div>
-
-<button onclick="exportToExcel()">Export Excel</button>
-
-</div>
-
-
-<div class="table-container">
-
-<table id="requestsTable">
-
-<thead>
-
-<tr>
-<th>Date Submitted</th>
-<th>Late Call Date</th>
-<th>Name</th>
-<th>Corp Number</th>
-<th>Hub</th>
-<th>Unit</th>
-<th>Shift</th>
-<th>Late Call Hours</th>
-<th>Trip</th>
-<th>Time Out</th>
-<th>Type of Duty</th>
-<th>Status</th>
-<th>Action</th>
-<th>Processed By</th>
-</tr>
-
-</thead>
-
-<tbody></tbody>
-
-</table>
-
-</div>
-
-</div>
-
 
 <script type="module">
-
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-let applyDateFilter=false;
+const supervisorsInit = [
+    {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
+    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
+];
+localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
-
-function togglePassword(){
-
-const pwd=document.getElementById('password');
-
-pwd.type=pwd.type==="password"?"text":"password";
-
-}
-
+function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
 
 function login(){
-
-const username=document.getElementById('username').value.trim();
-const password=document.getElementById('password').value.trim();
-
-if(username==="admin" && password==="admin"){
-
-localStorage.setItem('currentSupervisor',"admin");
-
-checkLogin();
-
-}
-else{
-
-document.getElementById('errorMessage').innerText="Invalid login";
-
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
+    const sup = supervisors.find(s=>s.username===username && s.password===password);
+    if(sup){
+        localStorage.setItem('currentSupervisor', JSON.stringify(sup));
+        if(document.getElementById('savePassword').checked){ localStorage.setItem('savedPassword', password); } 
+        else { localStorage.removeItem('savedPassword'); }
+        checkLogin();
+    } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
 
+function forgotPassword(){
+    const username = prompt("Enter your username to reset password:");
+    if(!username) return;
+    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
+    const supIndex = supervisors.findIndex(s=>s.username===username);
+    if(supIndex===-1){ alert("Username not found!"); return; }
+    const newPwd = prompt("Enter new password:"); if(!newPwd) return;
+    supervisors[supIndex].password=newPwd;
+    localStorage.setItem('supervisors', JSON.stringify(supervisors));
+    alert("Password reset successfully!");
 }
-
 
 function logout(){
-
-localStorage.removeItem('currentSupervisor');
-
-document.getElementById('loginPage').style.display="flex";
-document.getElementById('dashboardPage').style.display="none";
-
+    localStorage.removeItem('currentSupervisor');
+    document.getElementById('loginPage').style.display='flex';
+    document.getElementById('dashboardPage').style.display='none';
+    document.getElementById('username').value='';
+    document.getElementById('password').value='';
+    document.getElementById('errorMessage').innerText='';
+    document.querySelector('#requestsTable tbody').innerHTML='';
 }
-
 
 function checkLogin(){
-
-if(localStorage.getItem('currentSupervisor')){
-
-document.getElementById('loginPage').style.display="none";
-document.getElementById('dashboardPage').style.display="block";
-
-loadTable();
-
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    if(sup){
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('dashboardPage').style.display='block';
+        document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
+        loadTable();
+        startInactivityTimer();
+    }
 }
 
-}
-
-
+// Table loading with automatic filters except date
+let applyDateFilter = false;
 async function loadTable(){
+    const data = await getLateCalls();
+    const tbody = document.querySelector('#requestsTable tbody');
+    tbody.innerHTML = '';
+    const from = document.getElementById('filterFrom').value;
+    const to = document.getElementById('filterTo').value;
+    const hub = document.getElementById('filterHub').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const shiftFilter = document.getElementById('filterShift').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase();
 
-const data=await getLateCalls();
+    const rows = [];
+    data.forEach(r=>{
+        const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
+        const lateCallDate = new Date(r.lateCallDate); 
+        let include = true;
 
-const tbody=document.querySelector("#requestsTable tbody");
+        // Date filter only applies if Filter button clicked
+        if(applyDateFilter){
+            if(from && new Date(from) > d) include=false;
+            if(to && new Date(to) < d) include=false;
+        }
 
-tbody.innerHTML="";
+        // Automatic dropdown filters
+        if(hub){
+            if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
+            else if(hub!=="Others" && r.hub!==hub) include=false;
+        }
+        if(statusFilter && r.status!==statusFilter) include=false;
+        if(shiftFilter && r.shift!==shiftFilter) include=false;
 
-const from=document.getElementById("filterFrom").value;
-const to=document.getElementById("filterTo").value;
-const hub=document.getElementById("filterHub").value;
-const status=document.getElementById("filterStatus").value;
-const shift=document.getElementById("filterShift").value;
-const search=document.getElementById("filterSearch").value.toLowerCase();
+        // Automatic search
+        if(search){
+            const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
+            if(!text.includes(search)) include=false;
+        }
 
-data.forEach(r=>{
+        if(include){
+            const statusNormalized = (r.status||"").trim().toLowerCase();
+            const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":""; 
+            const actionButtons = statusNormalized==="pending"? 
+                `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
+                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
+            const formattedDate = d.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+            const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
+            const formattedDateTime = `${formattedDate} ${formattedTime}`;
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
+                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
+                <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
+                <td>${actionButtons}</td><td>${r.processedBy||''}</td>`;
+            rows.push(tr);
+        }
+    });
 
-let include=true;
-
-if(applyDateFilter){
-
-if(from && new Date(r.dateSubmitted)<new Date(from)) include=false;
-
-if(to && new Date(r.dateSubmitted)>new Date(to)) include=false;
-
+    rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
+    rows.forEach(row=>tbody.appendChild(row));
 }
 
-if(hub && r.hub!==hub) include=false;
-
-if(status && r.status!==status) include=false;
-
-if(shift && r.shift!==shift) include=false;
-
-if(search){
-
-const txt=(r.name+r.corp+r.trip+r.unit).toLowerCase();
-
-if(!txt.includes(search)) include=false;
-
-}
-
-if(include){
-
-const tr=document.createElement("tr");
-
-tr.innerHTML=`
-<td>${r.dateSubmitted}</td>
-<td>${r.lateCallDate}</td>
-<td>${r.name}</td>
-<td>${r.corp}</td>
-<td>${r.hub}</td>
-<td>${r.unit}</td>
-<td>${r.shift}</td>
-<td>${r.lateHours}</td>
-<td>${r.trip}</td>
-<td>${r.timeout}</td>
-<td>${r.typeOfDuty}</td>
-<td>${r.status}</td>
-<td></td>
-<td>${r.processedBy||""}</td>
-`;
-
-tbody.appendChild(tr);
-
-}
-
+// Automatic search and dropdown filters
+['filterHub','filterStatus','filterShift'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', ()=>{
+        applyDateFilter=false; 
+        loadTable();
+    });
 });
+document.getElementById('filterSearch').addEventListener('input', loadTable);
 
+// Filter button applies date
+document.getElementById('filterBtn').onclick = ()=>{
+    applyDateFilter=true;
+    loadTable();
 }
-
-
 
 function clearFiltersAndReload(){
+    // Reset all filter inputs
+    document.getElementById('filterFrom').value = '';
+    document.getElementById('filterTo').value = '';
+    document.getElementById('filterHub').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterShift').value = '';
+    document.getElementById('filterSearch').value = '';
 
-document.getElementById('filterFrom').value="";
-document.getElementById('filterTo').value="";
+    // Disable date filter
+    applyDateFilter = false;
 
-document.getElementById('filterHub').selectedIndex=0;
-document.getElementById('filterStatus').selectedIndex=0;
-document.getElementById('filterShift').selectedIndex=0;
-
-document.getElementById('filterSearch').value="";
-
-applyDateFilter=false;
-
-loadTable();
-
+    // Reload table after a very short delay to ensure inputs are reset
+    setTimeout(() => {
+        loadTable();
+    }, 10);
 }
-
-
 
 function exportToExcel(){
-
-const table=document.getElementById("requestsTable");
-
-let csv=[];
-
-for(let row of table.rows){
-
-let cols=[...row.cells].map(c=>c.innerText);
-
-csv.push(cols.join(","));
-
+    const table=document.getElementById('requestsTable');
+    const rows=table.querySelectorAll('tr');
+    const csvContent = Array.from(rows).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>c.innerText).join(",")).join("\n");
+    const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
+    const link=document.createElement("a");
+    link.href=URL.createObjectURL(blob);
+    link.download="dashboard_export.csv";
+    link.click();
 }
 
-const blob=new Blob([csv.join("\n")],{type:"text/csv"});
-
-const a=document.createElement("a");
-
-a.href=URL.createObjectURL(blob);
-
-a.download="dashboard_export.csv";
-
-a.click();
-
+// Inactivity
+let inactivityTimer;
+function startInactivityTimer(){
+    resetInactivityTimer();
+    document.onclick = resetInactivityTimer;
+    document.onmousemove = resetInactivityTimer;
+    document.onkeypress = resetInactivityTimer;
 }
+function resetInactivityTimer(){ clearTimeout(inactivityTimer); inactivityTimer=setTimeout(()=>{ alert("Logged out due to inactivity"); logout(); },5*60*1000); }
 
+document.getElementById('password').addEventListener('keydown', e=>{ if(e.key==='Enter'){ login(); } });
 
-
-document.getElementById("loginBtn").onclick=login;
-
-document.getElementById("filterBtn").onclick=()=>{
-
-applyDateFilter=true;
-
-loadTable();
-
-};
-
-document.getElementById("clearFiltersBtn").onclick=clearFiltersAndReload;
-
-document.getElementById("filterSearch").addEventListener("input",loadTable);
-
-["filterHub","filterStatus","filterShift"].forEach(id=>{
-
-document.getElementById(id).addEventListener("change",loadTable);
-
-});
-
-checkLogin();
-
+function init() {
+    checkLogin();
+    window.logout = logout;
+    window.loadTable = loadTable;
+    window.exportToExcel = exportToExcel;
+    window.approve = approve;
+    window.reject = reject;
+    window.forgotPassword = forgotPassword;
+    window.togglePassword = togglePassword;
+    window.login = login;
+    document.getElementById('loginBtn').onclick = login;
+}
+init();
 </script>
 
-
 <footer>
-
-© 2026 HMCAS Support Service Production  
+© 2026 HMCAS Support Service Production.<br>
 James Ross Camins. All rights reserved.
-
 </footer>
-
 </body>
 </html>
