@@ -193,7 +193,7 @@
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Late Call Date</th><th>Name</th><th>Corp Number</th>
+                    <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
                     <th>Status</th><th>Action</th><th>Processed By</th>
@@ -289,10 +289,11 @@ async function loadTable(){
     let rows = [];
 
     data.forEach(r => {
+        const d = new Date(r.dateSubmitted);
         const lateCallDate = new Date(r.lateCallDate);
 
-        if (isNaN(lateCallDate.getTime())) {
-            console.error("Invalid late call date:", r.lateCallDate);
+        if (isNaN(d.getTime()) || isNaN(lateCallDate.getTime())) {
+            console.error("Invalid date:", r.dateSubmitted, r.lateCallDate);
             return;
         }
 
@@ -315,6 +316,12 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
+            const formattedDate = d.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            });
+
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
                 year: 'numeric', 
                 month: 'short', 
@@ -323,7 +330,8 @@ async function loadTable(){
 
             const tr = document.createElement('tr');
             tr.innerHTML = ` 
-                <td>${formattedLateCallDate}</td> 
+                <td>${formattedDate}</td>
+                <td>${formattedLateCallDate}</td>
                 <td>${r.name}</td>
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
