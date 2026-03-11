@@ -129,26 +129,9 @@ const supervisorsInit = [
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
-let applyDateFilter = false;
-let inactivityTimer;
 
-// --- Inactivity ---
-function startInactivityTimer(){
-    resetInactivityTimer();
-    document.onclick = resetInactivityTimer;
-    document.onmousemove = resetInactivityTimer;
-    document.onkeypress = resetInactivityTimer;
-}
-function resetInactivityTimer(){ 
-    clearTimeout(inactivityTimer); 
-    inactivityTimer = setTimeout(()=>{
-        alert("Logged out due to inactivity");
-        window.logout();
-    },5*60*1000);
-}
-
-// --- Functions ---
 function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
+
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -161,6 +144,7 @@ function login(){
         checkLogin();
     } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
+
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -172,6 +156,7 @@ function forgotPassword(){
     localStorage.setItem('supervisors', JSON.stringify(supervisors));
     alert("Password reset successfully!");
 }
+
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -181,6 +166,7 @@ function logout(){
     document.getElementById('errorMessage').innerText='';
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
+
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -192,31 +178,11 @@ function checkLogin(){
     }
 }
 
-// --- Approve / Reject ---
-async function approve(id){
-    try {
-        await updateRequestStatus(id, "Approved", JSON.parse(localStorage.getItem('currentSupervisor')).fullName);
-        await loadTable();
-    } catch(e){
-        alert("Error approving request: "+e.message);
-    }
-}
-async function reject(id){
-    const reason = prompt("Enter reason for rejection:");
-    if(reason === null || reason.trim() === "") return;
-    try {
-        await updateRequestStatus(id, "Rejected", JSON.parse(localStorage.getItem('currentSupervisor')).fullName, reason);
-        await loadTable();
-    } catch(e){
-        alert("Error rejecting request: " + e.message);
-    }
-}
-
-// --- Table ---
+let applyDateFilter = false;
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
     const hub = document.getElementById('filterHub').value;
@@ -229,20 +195,24 @@ async function loadTable(){
         const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
         const lateCallDate = new Date(r.lateCallDate); 
         let include = true;
+
         if(applyDateFilter){
             if(from && new Date(from) > d) include=false;
             if(to && new Date(to) < d) include=false;
         }
+
         if(hub){
             if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
             else if(hub!=="Others" && r.hub!==hub) include=false;
         }
         if(statusFilter && r.status!==statusFilter) include=false;
         if(shiftFilter && r.shift!==shiftFilter) include=false;
+
         if(search){
             const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
             if(!text.includes(search)) include=false;
         }
+
         if(include){
             const statusNormalized = (r.status||"").trim().toLowerCase();
             const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":""; 
@@ -253,33 +223,41 @@ async function loadTable(){
             const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
-
-            const processedByText = r.processedBy 
-                ? `${r.processedBy} CN ${r.corp} ${formattedDateTime}` + (r.status==="Rejected" && r.reason ? `\nReason: ${r.reason}` : "")
-                : "";
-
             const tr = document.createElement('tr');
             tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
                 <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
-                <td>${actionButtons}</td><td style="white-space:pre-line;">${processedByText}</td>`;
+                <td>${actionButtons}</td><td>${r.processedByName ? `${r.processedByName} CN ${r.processedByCorp} <br> ${r.processedByDate} ${r.processedByTime} <br> ${r.rejectionReason || "N/A"}` : "N/A"}</td>`;
             rows.push(tr);
         }
     });
+
     rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// --- Filters & Export ---
-function clearFiltersAndReload(){
-    document.getElementById('filterFrom').value='';
-    document.getElementById('filterTo').value='';
-    document.getElementById('filterHub').selectedIndex=0;
-    document.getElementById('filterStatus').selectedIndex=0;
-    document.getElementById('filterShift').selectedIndex=0;
-    document.getElementById('filterSearch').value='';
-    applyDateFilter=false;
+['filterHub','filterStatus','filterShift'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', ()=>{
+        applyDateFilter=false; 
+        loadTable();
+    });
+});
+document.getElementById('filterSearch').addEventListener('input', loadTable);
+
+document.getElementById('filterBtn').onclick = ()=>{
+    applyDateFilter=true;
     loadTable();
+}
+
+function clearFiltersAndReload(){
+    document.getElementById('filterFrom').value = '';
+    document.getElementById('filterTo').value = '';
+    document.getElementById('filterHub').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterShift').value = '';
+    document.getElementById('filterSearch').value = '';
+    applyDateFilter = false;
+    setTimeout(() => loadTable(), 10);
 }
 
 function exportToExcel(){
@@ -293,25 +271,36 @@ function exportToExcel(){
     link.click();
 }
 
-// --- Event listeners ---
-window.logout = logout;
-window.checkLogin = checkLogin;
-window.loadTable = loadTable;
-window.clearFiltersAndReload = clearFiltersAndReload;
-window.exportToExcel = exportToExcel;
-window.login = login;
-window.forgotPassword = forgotPassword;
-window.togglePassword = togglePassword;
-window.approve = approve;
-window.reject = reject;
+let inactivityTimer;
+function startInactivityTimer(){
+    resetInactivityTimer();
+    document.onclick = resetInactivityTimer;
+    document.onmousemove = resetInactivityTimer;
+    document.onkeypress = resetInactivityTimer;
+}
 
-document.getElementById('loginBtn').onclick=login;
-document.getElementById('filterBtn').onclick=()=>{applyDateFilter=true; loadTable();}
-['filterHub','filterStatus','filterShift'].forEach(id=>document.getElementById(id).addEventListener('change', ()=>{applyDateFilter=false; loadTable();}));
-document.getElementById('filterSearch').addEventListener('input', loadTable);
-document.getElementById('password').addEventListener('keydown', e=>{ if(e.key==='Enter'){ login(); } });
+function resetInactivityTimer(){
+    clearTimeout(inactivityTimer); 
+    inactivityTimer = setTimeout(() => { alert("Logged out due to inactivity"); logout(); }, 5 * 60 * 1000);
+}
 
-checkLogin();
+document.getElementById('password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { login(); }
+});
+
+function init() {
+    checkLogin();
+    window.logout = logout;
+    window.loadTable = loadTable;
+    window.exportToExcel = exportToExcel;
+    window.approve = approve;
+    window.reject = reject;
+    window.forgotPassword = forgotPassword;
+    window.togglePassword = togglePassword;
+    window.login = login;
+    document.getElementById('loginBtn').onclick = login;
+}
+init();
 </script>
 </body>
 </html>
