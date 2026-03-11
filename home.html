@@ -43,13 +43,11 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
 </style>
 </head>
 <body>
-
 <div class="header-logos">
     <img src="logo1.png" alt="Logo 1">
     <img src="logo2.png" alt="Logo 2">
 </div>
 
-<!-- LOGIN PAGE -->
 <div id="loginPage">
     <div class="login-container">
         <h2>Supervisor Login</h2>
@@ -67,7 +65,6 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboardPage">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 id="managerName"></h2>
@@ -118,6 +115,11 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
     </div>
 </div>
 
+<footer>
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
+</footer>
+
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
@@ -128,9 +130,9 @@ const supervisorsInit = [
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 let applyDateFilter = false;
-
-// Inactivity timer
 let inactivityTimer;
+
+// --- Inactivity ---
 function startInactivityTimer(){
     resetInactivityTimer();
     document.onclick = resetInactivityTimer;
@@ -141,8 +143,8 @@ function resetInactivityTimer(){
     clearTimeout(inactivityTimer); 
     inactivityTimer = setTimeout(()=>{
         alert("Logged out due to inactivity");
-        logout();
-    },5*60*1000); // 5 minutes
+        window.logout();
+    },5*60*1000);
 }
 
 // --- Functions ---
@@ -179,7 +181,6 @@ function logout(){
     document.getElementById('errorMessage').innerText='';
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
-
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -268,20 +269,24 @@ function exportToExcel(){
     link.click();
 }
 
-// --- Event Listeners ---
+// --- Expose globally ---
+window.logout = logout;
+window.checkLogin = checkLogin;
+window.loadTable = loadTable;
+window.clearFiltersAndReload = clearFiltersAndReload;
+window.exportToExcel = exportToExcel;
+window.login = login;
+window.forgotPassword = forgotPassword;
+window.togglePassword = togglePassword;
+
 document.getElementById('loginBtn').onclick=login;
 document.getElementById('filterBtn').onclick=()=>{applyDateFilter=true; loadTable();}
 ['filterHub','filterStatus','filterShift'].forEach(id=>document.getElementById(id).addEventListener('change', ()=>{applyDateFilter=false; loadTable();}));
 document.getElementById('filterSearch').addEventListener('input', loadTable);
-
 document.getElementById('password').addEventListener('keydown', e=>{ if(e.key==='Enter'){ login(); } });
 
 checkLogin();
 </script>
 
-<footer>
-© 2026 HMCAS Support Service Production.<br>
-James Ross Camins. All rights reserved.
-</footer>
 </body>
 </html>
