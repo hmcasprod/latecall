@@ -30,7 +30,7 @@ body { font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(
 .clear-filters-btn:hover { background-color:#e53935;}
 .table-container { overflow-x:auto; border-radius:8px; background:#fff; padding:10px;}
 table { width:100%; border-collapse:collapse; min-width:900px;}
-th, td { padding:10px; text-align:center; border:1px solid #ddd; }
+th, td { padding:10px; text-align:center; border:1px solid #ddd; vertical-align:top; }
 th { background:#f2f2f2; font-weight:600;}
 tr:nth-child(even) td { background:#fafafa; }
 .status-pending { background:#FFD700 !important; color:#000 !important; font-weight:600;}
@@ -107,7 +107,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
                     <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th><th>Late Call Hours</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th><th>Status</th>
-                    <th>Action</th><th>Processed By</th><th>Rejection Reason</th>
+                    <th>Action</th><th>Processed By</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -253,11 +253,16 @@ async function loadTable(){
             const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+
+            const processedByText = r.processedBy 
+                ? `${r.processedBy} CN ${r.corp} ${formattedDateTime}` + (r.status==="Rejected" && r.reason ? `\nReason: ${r.reason}` : "")
+                : "";
+
             const tr = document.createElement('tr');
             tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
                 <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
-                <td>${actionButtons}</td><td>${r.processedBy||''}</td><td>${r.reason||''}</td>`;
+                <td>${actionButtons}</td><td style="white-space:pre-line;">${processedByText}</td>`;
             rows.push(tr);
         }
     });
