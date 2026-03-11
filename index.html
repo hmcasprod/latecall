@@ -17,6 +17,7 @@
     background-color: #f4f4f4;
     display: flex;
     flex-direction: column;
+    min-height: 100vh; /* Ensure body takes full height */
   }
 
   .logos {
@@ -64,6 +65,8 @@
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: 1; /* Allow the form to grow and take available space */
+    padding-bottom: 80px; /* Ensure form does not get hidden under footer */
   }
 
   .input-container {
@@ -149,9 +152,9 @@
   }
 
   footer:hover {
-    background-color: #4CAF50; /* Change to a color you prefer */
+    background-color: #4CAF50;
     color: white;
-    transform: translateY(-5px); /* Slightly lift the footer */
+    transform: translateY(-5px);
   }
 </style>
 </head>
