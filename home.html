@@ -193,7 +193,7 @@
         <table id="requestsTable">
             <thead>
                 <tr>
-                    <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
+                    <th>Late Call Date</th><th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
                     <th>Status</th><th>Action</th><th>Processed By</th>
@@ -289,18 +289,16 @@ async function loadTable(){
     let rows = [];
 
     data.forEach(r => {
-        const d = new Date(r.dateSubmitted); 
+        const lateCallDate = new Date(r.lateCallDate);
 
-        if (isNaN(d.getTime())) {
-            console.error("Invalid date:", r.dateSubmitted);
+        if (isNaN(lateCallDate.getTime())) {
+            console.error("Invalid late call date:", r.lateCallDate);
             return;
         }
 
-        const lateCallDate = new Date(r.lateCallDate); 
-
         let include = true;
-        if(from && new Date(from) > d) include = false;
-        if(to && new Date(to) < d) include = false;
+        if(from && new Date(from) > lateCallDate) include = false;
+        if(to && new Date(to) < lateCallDate) include = false;
         if(hub && r.hub !== hub) include = false;
         if(statusFilter && r.status !== statusFilter) include = false;
         if(shiftFilter && r.shift !== shiftFilter) include = false;
@@ -317,20 +315,6 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
-            const formattedDate = d.toLocaleDateString('en-GB', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: '2-digit' 
-            });
-
-            const formattedTime = d.toLocaleTimeString('en-GB', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-
-            const formattedDateTime = `${formattedDate} ${formattedTime}`;
-
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
                 year: 'numeric', 
                 month: 'short', 
@@ -339,8 +323,7 @@ async function loadTable(){
 
             const tr = document.createElement('tr');
             tr.innerHTML = ` 
-                <td>${formattedDateTime}</td>
-                <td>${formattedLateCallDate}</td>
+                <td>${formattedLateCallDate}</td> 
                 <td>${r.name}</td>
                 <td>${r.corp}</td>
                 <td>${r.hub}</td>
