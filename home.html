@@ -107,7 +107,7 @@ footer { position: fixed; bottom:0; width:100%; text-align:center; background:#f
                     <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th><th>Late Call Hours</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th><th>Status</th>
-                    <th>Action</th><th>Processed By</th>
+                    <th>Action</th><th>Processed By</th><th>Rejection Reason</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -192,6 +192,26 @@ function checkLogin(){
     }
 }
 
+// --- Approve / Reject ---
+async function approve(id){
+    try {
+        await updateRequestStatus(id, "Approved", JSON.parse(localStorage.getItem('currentSupervisor')).fullName);
+        await loadTable();
+    } catch(e){
+        alert("Error approving request: "+e.message);
+    }
+}
+async function reject(id){
+    const reason = prompt("Enter reason for rejection:");
+    if(reason === null || reason.trim() === "") return;
+    try {
+        await updateRequestStatus(id, "Rejected", JSON.parse(localStorage.getItem('currentSupervisor')).fullName, reason);
+        await loadTable();
+    } catch(e){
+        alert("Error rejecting request: " + e.message);
+    }
+}
+
 // --- Table ---
 async function loadTable(){
     const data = await getLateCalls();
@@ -237,7 +257,7 @@ async function loadTable(){
             tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
                 <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
-                <td>${actionButtons}</td><td>${r.processedBy||''}</td>`;
+                <td>${actionButtons}</td><td>${r.processedBy||''}</td><td>${r.reason||''}</td>`;
             rows.push(tr);
         }
     });
@@ -245,7 +265,7 @@ async function loadTable(){
     rows.forEach(row=>tbody.appendChild(row));
 }
 
-// --- Clear Filters ---
+// --- Filters & Export ---
 function clearFiltersAndReload(){
     document.getElementById('filterFrom').value='';
     document.getElementById('filterTo').value='';
@@ -257,7 +277,6 @@ function clearFiltersAndReload(){
     loadTable();
 }
 
-// --- Export ---
 function exportToExcel(){
     const table=document.getElementById('requestsTable');
     const rows=table.querySelectorAll('tr');
@@ -269,7 +288,7 @@ function exportToExcel(){
     link.click();
 }
 
-// --- Expose globally ---
+// --- Event listeners ---
 window.logout = logout;
 window.checkLogin = checkLogin;
 window.loadTable = loadTable;
@@ -278,6 +297,8 @@ window.exportToExcel = exportToExcel;
 window.login = login;
 window.forgotPassword = forgotPassword;
 window.togglePassword = togglePassword;
+window.approve = approve;
+window.reject = reject;
 
 document.getElementById('loginBtn').onclick=login;
 document.getElementById('filterBtn').onclick=()=>{applyDateFilter=true; loadTable();}
@@ -287,6 +308,5 @@ document.getElementById('password').addEventListener('keydown', e=>{ if(e.key===
 
 checkLogin();
 </script>
-
 </body>
 </html>
