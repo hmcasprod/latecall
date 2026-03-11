@@ -162,12 +162,10 @@
             <label>To:</label><input type="date" id="filterTo">
             <label>Hub:</label>
             <select id="filterHub">
-                <option value="">All</option>
-                <option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
+                <option value="">All</option><option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
                 <option>Hub 4</option><option>Hub 5</option><option>Hub 6</option>
-                <option>Hub 7</option><option>Hub 8</option>
-                <option>Events</option><option>SAS</option><option>Retrieval</option>
-                <option>Life Flight</option><option>Others</option>
+                <option>Hub 7</option><option>Hub 8</option><option>Events</option><option>SAS</option>
+                <option>Retrieval</option><option>Life Flight</option><option>Others</option>
             </select>
             <label>Status:</label>
             <select id="filterStatus">
@@ -197,6 +195,7 @@
                     <th>Hub</th><th>Unit</th><th>Shift</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
                     <th>Status</th><th>Action</th><th>Processed By</th>
+                    <th>Rejection Reason</th> <!-- New Rejection Reason Column -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -336,6 +335,9 @@ async function loadTable(){
                 day: '2-digit' 
             });
 
+            // Add the rejection reason if available
+            const rejectionReason = r.rejectionReason || '';
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${formattedDateTime}</td>
@@ -351,6 +353,7 @@ async function loadTable(){
                 <td class="${statusClass}">${r.status}</td>
                 <td>${actionButtons}</td>
                 <td>${r.processedBy || ''}</td>
+                <td>${rejectionReason}</td> <!-- Rejection reason column -->
             `;
             rows.push(tr);
         }
@@ -415,7 +418,8 @@ async function reject(id){
     });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
 
-    await updateRequestStatus(id,"Rejected",processedBy);
+    // Assuming 'r' is the request object and you store rejection reason in the request
+    await updateRequestStatus(id, "Rejected", processedBy, reason);
     loadTable();
 }
 
