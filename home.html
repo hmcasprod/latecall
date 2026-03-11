@@ -288,14 +288,14 @@ async function loadTable(){
     let rows = [];
 
     data.forEach(r => {
-        const d = new Date(r.dateSubmitted); 
+        const d = new Date(r.dateSubmitted);
 
         if (isNaN(d.getTime())) {
             console.error("Invalid date:", r.dateSubmitted);
             return;
         }
 
-        const lateCallDate = new Date(r.lateCallDate); 
+        const lateCallDate = new Date(r.lateCallDate);
 
         let include = true;
         if(from && new Date(from) > d) include = false;
@@ -367,12 +367,17 @@ async function loadTable(){
 
 // Clear all filters
 function clearFilters(){
+    // Reset all filters to "All"
     document.getElementById('filterFrom').value = '';
     document.getElementById('filterTo').value = '';
     document.getElementById('filterHub').value = '';
     document.getElementById('filterStatus').value = '';
     document.getElementById('filterShift').value = '';
+    
+    // Clear the search bar
     document.getElementById('filterSearch').value = '';
+
+    // Reload the table with the default filters
     loadTable();
 }
 
