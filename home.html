@@ -128,43 +128,56 @@ const supervisorsInit = [
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
-const predefinedHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
 
-function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
+const predefinedHubs = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"];
+
+function togglePassword(){ 
+    const pwd = document.getElementById('password'); 
+    pwd.type = pwd.type === "password" ? "text" : "password"; 
+}
 
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
     let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const sup = supervisors.find(s=>s.username===username && s.password===password);
-    if(sup){
+    const sup = supervisors.find(s => s.username === username && s.password === password);
+    if (sup) {
         localStorage.setItem('currentSupervisor', JSON.stringify(sup));
-        if(document.getElementById('savePassword').checked){ localStorage.setItem('savedPassword', password); } 
-        else { localStorage.removeItem('savedPassword'); }
+        if (document.getElementById('savePassword').checked) { 
+            localStorage.setItem('savedPassword', password); 
+        } else { 
+            localStorage.removeItem('savedPassword'); 
+        }
         checkLogin();
-    } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
+    } else { 
+        document.getElementById('errorMessage').innerText = "Invalid username or password!"; 
+    }
 }
 
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
-    if(!username) return;
+    if (!username) return;
     let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const supIndex = supervisors.findIndex(s=>s.username===username);
-    if(supIndex===-1){ alert("Username not found!"); return; }
-    const newPwd = prompt("Enter new password:"); if(!newPwd) return;
-    supervisors[supIndex].password=newPwd;
+    const supIndex = supervisors.findIndex(s => s.username === username);
+    if (supIndex === -1) { 
+        alert("Username not found!"); 
+        return; 
+    }
+    const newPwd = prompt("Enter new password:"); 
+    if (!newPwd) return;
+    supervisors[supIndex].password = newPwd;
     localStorage.setItem('supervisors', JSON.stringify(supervisors));
     alert("Password reset successfully!");
 }
 
 function logout(){
     localStorage.removeItem('currentSupervisor');
-    document.getElementById('loginPage').style.display='flex';
-    document.getElementById('dashboardPage').style.display='none';
-    document.getElementById('username').value='';
-    document.getElementById('password').value='';
-    document.getElementById('errorMessage').innerText='';
-    document.querySelector('#requestsTable tbody').innerHTML='';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('errorMessage').innerText = '';
+    document.querySelector('#requestsTable tbody').innerHTML = '';
 }
 
 function checkLogin(){
@@ -179,6 +192,7 @@ function checkLogin(){
 }
 
 let applyDateFilter = false;
+
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -191,61 +205,78 @@ async function loadTable(){
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
     const rows = [];
-    data.forEach(r=>{
-        const d = new Date(r.dateSubmitted); if(isNaN(d.getTime())) return;
-        const lateCallDate = new Date(r.lateCallDate); 
+
+    data.forEach(r => {
+        const d = new Date(r.dateSubmitted);
+        if (isNaN(d.getTime())) return;
+        const lateCallDate = new Date(r.lateCallDate);
         let include = true;
 
-        if(applyDateFilter){
-            if(from && new Date(from) > d) include=false;
-            if(to && new Date(to) < d) include=false;
+        if (applyDateFilter) {
+            if (from && new Date(from) > d) include = false;
+            if (to && new Date(to) < d) include = false;
         }
 
-        if(hub){
-            if(hub==="Others" && predefinedHubs.includes(r.hub)) include=false;
-            else if(hub!=="Others" && r.hub!==hub) include=false;
+        if (hub) {
+            if (hub === "Others" && predefinedHubs.includes(r.hub)) include = false;
+            else if (hub !== "Others" && r.hub !== hub) include = false;
         }
-        if(statusFilter && r.status!==statusFilter) include=false;
-        if(shiftFilter && r.shift!==shiftFilter) include=false;
+        if (statusFilter && r.status !== statusFilter) include = false;
+        if (shiftFilter && r.shift !== shiftFilter) include = false;
 
-        if(search){
+        if (search) {
             const text = `${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase();
-            if(!text.includes(search)) include=false;
+            if (!text.includes(search)) include = false;
         }
 
-        if(include){
-            const statusNormalized = (r.status||"").trim().toLowerCase();
-            const statusClass = statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":""; 
-            const actionButtons = statusNormalized==="pending"? 
+        if (include) {
+            const statusNormalized = (r.status || "").trim().toLowerCase();
+            const statusClass = statusNormalized === "pending" ? "status-pending" : statusNormalized === "approved" ? "status-approved" : statusNormalized === "rejected" ? "status-rejected" : "";
+            const actionButtons = statusNormalized === "pending" ?
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
-                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
-            const formattedDate = d.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
-            const formattedTime = d.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
+                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
+
+            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+            const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+
             const tr = document.createElement('tr');
             tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
-                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours||0}</td>
+                <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours || 0}</td>
                 <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
                 <td>${actionButtons}</td><td>${r.processedByName ? `${r.processedByName} CN ${r.processedByCorp} <br> ${r.processedByDate} ${r.processedByTime} <br> ${r.rejectionReason || "N/A"}` : "N/A"}</td>`;
             rows.push(tr);
         }
     });
 
-    rows.sort((a,b)=>new Date(b.cells[0].innerText)-new Date(a.cells[0].innerText));
-    rows.forEach(row=>tbody.appendChild(row));
+    rows.sort((a, b) => new Date(b.cells[0].innerText) - new Date(a.cells[0].innerText));
+    rows.forEach(row => tbody.appendChild(row));
 }
 
-['filterHub','filterStatus','filterShift'].forEach(id=>{
-    document.getElementById(id).addEventListener('change', ()=>{
-        applyDateFilter=false; 
+function approve(id) {
+    alert(`Approved request ID: ${id}`);
+    // Placeholder for actual approve logic
+}
+
+function reject(id) {
+    const reason = prompt("Please provide a reason for rejection:");
+    if (reason) {
+        alert(`Rejected request ID: ${id} with reason: ${reason}`);
+        // Placeholder for actual reject logic, save reason to database
+    }
+}
+
+['filterHub', 'filterStatus', 'filterShift'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+        applyDateFilter = false;
         loadTable();
     });
 });
 document.getElementById('filterSearch').addEventListener('input', loadTable);
 
-document.getElementById('filterBtn').onclick = ()=>{
-    applyDateFilter=true;
+document.getElementById('filterBtn').onclick = () => {
+    applyDateFilter = true;
     loadTable();
 }
 
@@ -260,26 +291,26 @@ function clearFiltersAndReload(){
     setTimeout(() => loadTable(), 10);
 }
 
-function exportToExcel(){
-    const table=document.getElementById('requestsTable');
-    const rows=table.querySelectorAll('tr');
-    const csvContent = Array.from(rows).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>c.innerText).join(",")).join("\n");
-    const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
-    const link=document.createElement("a");
-    link.href=URL.createObjectURL(blob);
-    link.download="dashboard_export.csv";
+function exportToExcel() {
+    const table = document.getElementById('requestsTable');
+    const rows = table.querySelectorAll('tr');
+    const csvContent = Array.from(rows).map(r => Array.from(r.querySelectorAll('th,td')).map(c => c.innerText).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "dashboard_export.csv";
     link.click();
 }
 
 let inactivityTimer;
-function startInactivityTimer(){
+function startInactivityTimer() {
     resetInactivityTimer();
     document.onclick = resetInactivityTimer;
     document.onmousemove = resetInactivityTimer;
     document.onkeypress = resetInactivityTimer;
 }
 
-function resetInactivityTimer(){
+function resetInactivityTimer() {
     clearTimeout(inactivityTimer); 
     inactivityTimer = setTimeout(() => { alert("Logged out due to inactivity"); logout(); }, 5 * 60 * 1000);
 }
