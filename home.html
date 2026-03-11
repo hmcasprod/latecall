@@ -11,35 +11,35 @@ body { font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(
 .header-logos img { height: 50px; }
 #loginPage { display: flex; justify-content: center; align-items: center; height: 100vh; }
 .login-container { background: #fff; padding: 50px 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 100%; max-width: 400px; text-align: center; display: flex; flex-direction: column; gap: 15px; }
-.login-container h2 { margin-bottom: 25px; color: #333; font-weight: 700; }
+.login-container h2 { margin-bottom:25px;color:#333;font-weight:700; }
 .login-container input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; transition: border 0.2s ease; }
-.login-container input:focus { border-color: #4CAF50; outline: none; }
-.login-container button { width: 100%; padding: 14px; background: #4CAF50; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: background 0.2s ease; }
-.login-container button:hover { background: #45a049; }
-.login-container .error-message { color: red; margin-top: 10px; font-size: 14px; }
-.remember-me label { display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; margin: 0; }
-.remember-me input { width: auto; height: auto; }
-.forgot-password { margin-top: 15px; text-align: center; font-size: 14px; }
-.forgot-password a { color: #007BFF; text-decoration: underline; cursor: pointer; }
-#dashboardPage { display: none; padding: 20px; padding-bottom: 80px; }
-.top-bar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.top-bar label { font-weight: 600; }
-.top-bar input, .top-bar select, .top-bar button { padding: 6px 10px; font-size: 14px; }
-.top-bar button { background: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-.clear-filters-btn { background-color: #f44336; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 14px; }
-.clear-filters-btn:hover { background-color: #e53935; }
-.table-container { overflow-x: auto; border-radius: 8px; background: #fff; padding: 10px; }
-table { width: 100%; border-collapse: collapse; min-width: 900px; }
-th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }
-th { background: #f2f2f2; font-weight: 600; }
-tr:nth-child(even) td { background: #fafafa; }
-.status-pending { background: #FFD700 !important; color: #000 !important; font-weight: 600; }
-.status-approved { background: #4CAF50 !important; color: #fff !important; font-weight: 600; }
-.status-rejected { background: #f44336 !important; color: #fff !important; font-weight: 600; }
-.action-btn { cursor: pointer; padding: 5px 10px; border: none; border-radius: 4px; margin: 2px; }
-footer { position: fixed; bottom: 0; width: 100%; text-align: center; background: #fff; padding: 10px 0; font-size: 12px; color: #555; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
-@media (max-width: 900px) { table { min-width: 600px; } }
-@media (max-width: 600px) { .top-bar { flex-direction: column; align-items: flex-start; } }
+.login-container input:focus { border-color: #4CAF50; outline:none; }
+.login-container button { width: 100%; padding: 14px; background: #4CAF50; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:16px; margin-top:10px; transition: background 0.2s ease; }
+.login-container button:hover { background:#45a049; }
+.login-container .error-message { color:red; margin-top:10px; font-size:14px; }
+.remember-me label { display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer; margin:0; }
+.remember-me input { width:auto; height:auto; }
+.forgot-password { margin-top:15px;text-align:center;font-size:14px; }
+.forgot-password a { color:#007BFF;text-decoration:underline; cursor:pointer; }
+#dashboardPage { display:none; padding:20px; padding-bottom:80px; }
+.top-bar { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.top-bar label { font-weight:600; }
+.top-bar input, .top-bar select, .top-bar button { padding:6px 10px; font-size:14px; }
+.top-bar button { background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer; }
+.clear-filters-btn { background-color:#f44336;color:#fff;border:none;border-radius:4px;padding:6px 10px; cursor:pointer;font-size:14px; }
+.clear-filters-btn:hover { background-color:#e53935; }
+.table-container { overflow-x:auto; border-radius:8px; background:#fff; padding:10px; }
+table { width:100%; border-collapse:collapse; min-width:900px; }
+th, td { padding:10px; text-align:center; border:1px solid #ddd; }
+th { background:#f2f2f2; font-weight:600; }
+tr:nth-child(even) td { background:#fafafa; }
+.status-pending { background:#FFD700 !important; color:#000 !important; font-weight:600; }
+.status-approved { background:#4CAF50 !important; color:#fff !important; font-weight:600; }
+.status-rejected { background:#f44336 !important; color:#fff !important; font-weight:600; }
+.action-btn { cursor:pointer; padding:5px 10px; border:none; border-radius:4px; margin:2px; }
+footer { position: fixed; bottom:0; width:100%; text-align:center; background:#fff; padding:10px 0; font-size:12px; color:#555; box-shadow:0 -2px 5px rgba(0,0,0,0.1); }
+@media(max-width:900px){ table{ min-width:600px; } }
+@media(max-width:600px){ .top-bar{ flex-direction:column; align-items:flex-start; } }
 </style>
 </head>
 <body>
@@ -80,9 +80,9 @@ footer { position: fixed; bottom: 0; width: 100%; text-align: center; background
                 <option value="">All</option>
                 <option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
                 <option>Hub 4</option><option>Hub 5</option><option>Hub 6</option>
-                <option>Hub 7</option><option>Hub 8</option><option>Events</option>
-                <option>SAS</option><option>Retrieval</option><option>Life Flight</option>
-                <option>Others</option>
+                <option>Hub 7</option><option>Hub 8</option>
+                <option>Events</option><option>SAS</option><option>Retrieval</option>
+                <option>Life Flight</option><option>Others</option>
             </select>
             <label>Status:</label>
             <select id="filterStatus">
@@ -116,8 +116,8 @@ footer { position: fixed; bottom: 0; width: 100%; text-align: center; background
 </div>
 
 <footer>
-    © 2026 HMCAS Support Service Production.<br>
-    James Ross Camins. All rights reserved.
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
 </footer>
 
 <script type="module">
@@ -222,6 +222,7 @@ async function approve(id) {
 async function reject(id) {
     const reason = prompt("Enter reason for rejection:");
     if (reason === null || reason.trim() === "") return;
+
     try {
         await updateRequestStatus(id, "Rejected", JSON.parse(localStorage.getItem('currentSupervisor')).fullName, reason);
         await loadTable();
@@ -267,23 +268,28 @@ async function loadTable() {
             const actionButtons = statusNormalized === "pending" ?
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
                  <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
+
             const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
             const formattedTime = d.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
             const formattedDateTime = `${formattedDate} ${formattedTime}`;
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
             
-            const processedBy = `${r.processedBy || 'Unknown Supervisor'} CN ${r.processedByCN || 'Unknown'} ${formattedDateTime}`;
-            const rejectionReason = r.reason || 'N/A';
-            
+            const processedBy = r.processedBy ? `${r.processedBy} CN ${r.corp}` : "";
+            const rejectionReason = r.reason ? r.reason : "";
+
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
+            tr.innerHTML = `
+                <td>${formattedDateTime}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td>
                 <td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.lateHours || 0}</td>
-                <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td><td class="${statusClass}">${r.status}</td>
-                <td>${actionButtons}</td><td>${processedBy}</td><td>${rejectionReason}</td>`;
+                <td>${r.trip}</td><td>${r.timeout}</td><td>${r.typeOfDuty}</td>
+                <td class="${statusClass}">${r.status}</td>
+                <td>${actionButtons}</td>
+                <td>${processedBy}</td>
+                <td>${rejectionReason}</td>
+            `;
             rows.push(tr);
         }
     });
-
     rows.sort((a, b) => new Date(b.cells[0].innerText) - new Date(a.cells[0].innerText));
     rows.forEach(row => tbody.appendChild(row));
 }
@@ -324,12 +330,10 @@ window.approve = approve;
 window.reject = reject;
 
 document.getElementById('loginBtn').onclick = login;
-document.getElementById('filterBtn').onclick = () => { applyDateFilter = true; loadTable(); }
-['filterHub', 'filterStatus', 'filterShift'].forEach(id => document.getElementById(id).addEventListener('change', () => { applyDateFilter = false; loadTable(); }));
-document.getElementById('filterSearch').addEventListener('input', loadTable);
-document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') { login(); } });
+document.getElementById('filterBtn').onclick = () => { applyDateFilter = true; loadTable(); };
 
 checkLogin();
+
 </script>
 </body>
 </html>
