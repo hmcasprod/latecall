@@ -207,73 +207,22 @@
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Supervisor accounts
-const supervisorsInit = [
-    {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
-    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
-];
-localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+function clearFilters() {
+    // Reset all filters to their default values
+    document.getElementById('filterFrom').value = '';
+    document.getElementById('filterTo').value = '';
+    document.getElementById('filterHub').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterShift').value = '';
+    
+    // Clear the search bar
+    document.getElementById('filterSearch').value = '';
 
-// Show/Hide password
-function togglePassword(){
-    const pwd = document.getElementById('password');
-    pwd.type = pwd.type==="password"?"text":"password";
+    // Reload the table with the default filters
+    loadTable();
 }
 
-// Login function
-function login(){
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const sup = supervisors.find(s=>s.username===username && s.password===password);
-    if(sup){
-        localStorage.setItem('currentSupervisor', JSON.stringify(sup));
-        if(document.getElementById('savePassword').checked){
-            localStorage.setItem('savedPassword', password);
-        } else { localStorage.removeItem('savedPassword'); }
-        checkLogin();
-    } else {
-        document.getElementById('errorMessage').innerText="Invalid username or password!";
-    }
-}
-
-// Forgot password
-function forgotPassword(){
-    const username = prompt("Enter your username to reset password:");
-    if(!username) return;
-    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const supIndex = supervisors.findIndex(s=>s.username===username);
-    if(supIndex===-1){ alert("Username not found!"); return; }
-    const newPwd = prompt("Enter new password:"); if(!newPwd) return;
-    supervisors[supIndex].password=newPwd;
-    localStorage.setItem('supervisors', JSON.stringify(supervisors));
-    alert("Password reset successfully!");
-}
-
-// Logout
-function logout(){
-    localStorage.removeItem('currentSupervisor');
-    document.getElementById('loginPage').style.display='flex';
-    document.getElementById('dashboardPage').style.display='none';
-    document.getElementById('username').value='';
-    document.getElementById('password').value='';
-    document.getElementById('errorMessage').innerText='';
-    document.querySelector('#requestsTable tbody').innerHTML='';
-}
-
-// Check login
-function checkLogin(){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    if(sup){
-        document.getElementById('loginPage').style.display='none';
-        document.getElementById('dashboardPage').style.display='block';
-        document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
-        loadTable();
-        startInactivityTimer();
-    }
-}
-
-// Load table (status coloring fixed)
+// Load table data
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -364,119 +313,6 @@ async function loadTable(){
 
     rows.forEach(row => tbody.appendChild(row));
 }
-
-// Clear all filters
-function clearFilters(){
-    // Reset all filters to "All"
-    document.getElementById('filterFrom').value = '';
-    document.getElementById('filterTo').value = '';
-    document.getElementById('filterHub').value = '';
-    document.getElementById('filterStatus').value = '';
-    document.getElementById('filterShift').value = '';
-    
-    // Clear the search bar
-    document.getElementById('filterSearch').value = '';
-
-    // Reload the table with the default filters
-    loadTable();
-}
-
-// Approve/Reject
-async function approve(id){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    
-    const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit'
-    });
-    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime})`;
-
-    await updateRequestStatus(id,"Approved",processedBy);
-    loadTable();
-}
-
-async function reject(id){
-    const reason = prompt("Reason for rejection:");
-    if(!reason) return;
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    
-    const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit'
-    });
-    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
-
-    await updateRequestStatus(id,"Rejected",processedBy);
-    loadTable();
-}
-
-// Export to Excel
-function exportToExcel(){
-    const table=document.getElementById('requestsTable');
-    const rows=table.querySelectorAll('tr');
-    const csvContent = Array.from(rows)
-        .map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>c.innerText).join(",")) 
-        .join("\n");
-    const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"}); 
-    const link=document.createElement("a");
-    link.href=URL.createObjectURL(blob);
-    link.download="dashboard_export.csv";
-    link.click();
-}
-
-// Inactivity auto logout
-let inactivityTimer;
-function startInactivityTimer(){
-    resetInactivityTimer();
-    document.onclick = resetInactivityTimer;
-    document.onmousemove = resetInactivityTimer;
-    document.onkeypress = resetInactivityTimer;
-}
-
-function resetInactivityTimer(){
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(() => { 
-        alert("Logged out due to inactivity"); 
-        logout(); 
-    }, 5 * 60 * 1000);
-}
-
-// Allow Enter key login
-document.getElementById('password').addEventListener('keydown', e => {
-    if(e.key === 'Enter'){ login(); }
-});
-
-// Add event listeners for filtering by hub and status
-document.getElementById('filterHub').addEventListener('change', loadTable);
-document.getElementById('filterStatus').addEventListener('change', loadTable);
-
-// Initial check
-checkLogin();
-
-// Expose functions to HTML
-window.logout = logout;
-window.loadTable = loadTable;
-window.exportToExcel = exportToExcel;
-window.approve = approve;
-window.reject = reject;
-window.forgotPassword = forgotPassword;
-window.togglePassword = togglePassword;
-window.login = login;
-document.getElementById('loginBtn').onclick = login;
 </script>
 
 <footer>
