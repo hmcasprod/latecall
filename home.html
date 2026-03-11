@@ -276,11 +276,11 @@ function checkLogin(){
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
-    tbody.innerHTML = '';
+    tbody.innerHTML = '';  // Clear existing table rows
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
-    const hub = document.getElementById('filterHub').value;
-    const statusFilter = document.getElementById('filterStatus').value;
+    const hub = document.getElementById('filterHub').value; // Hub filter value
+    const statusFilter = document.getElementById('filterStatus').value; // Status filter value
     const shiftFilter = document.getElementById('filterShift').value;
     const search = document.getElementById('filterSearch').value.toLowerCase();
 
@@ -297,11 +297,21 @@ async function loadTable(){
         const lateCallDate = new Date(r.lateCallDate); 
 
         let include = true;
+
+        // Apply date filters
         if(from && new Date(from) > d) include = false;
         if(to && new Date(to) < d) include = false;
+
+        // Apply Hub filter
         if(hub && r.hub !== hub) include = false;
+
+        // Apply Status filter
         if(statusFilter && r.status !== statusFilter) include = false;
+
+        // Apply Shift filter
         if(shiftFilter && r.shift !== shiftFilter) include = false;
+
+        // Apply Search filter
         if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include = false;
 
         if(include){
@@ -359,12 +369,14 @@ async function loadTable(){
         }
     });
 
+    // Sort the rows by date
     rows.sort((a, b) => {
         const dateA = new Date(a.cells[0].innerText);  
         const dateB = new Date(b.cells[0].innerText);  
         return dateB - dateA; 
     });
 
+    // Append all rows to the table
     rows.forEach(row => tbody.appendChild(row));
 }
 
@@ -418,8 +430,7 @@ async function reject(id){
     });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
 
-    // Assuming 'r' is the request object and you store rejection reason in the request
-    await updateRequestStatus(id, "Rejected", processedBy, reason);
+    await updateRequestStatus(id,"Rejected",processedBy, reason);
     loadTable();
 }
 
