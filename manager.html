@@ -133,7 +133,6 @@ James Ross Camins. All rights reserved.
 </footer>
 
 <script type="module">
-
 import { getLateCalls } from './firebase.js';
 
 let allRequests=[]; 
@@ -164,11 +163,17 @@ function displayManagerInfo(){
   document.getElementById('managerName').innerText = "Manager Name - CN123";
 }
 
+// Load data from Firebase
 async function loadData(){
-  allRequests = await getLateCalls();
-  filterDashboard();
+  try {
+    allRequests = await getLateCalls();
+    filterDashboard();
+  } catch(e) {
+    console.error("Error loading data:", e);
+  }
 }
 
+// Quick date buttons
 function setQuickDate(option){
     const startInput = document.getElementById("startDate");
     const endInput = document.getElementById("endDate");
@@ -181,11 +186,13 @@ function setQuickDate(option){
     filterDashboard();
 }
 
+// Status cards
 function filterByStatus(status){
     currentStatusFilter = status;
     filterDashboard();
 }
 
+// Main filter
 function filterDashboard(){
   const hub=document.getElementById("hubSelector").value;
   const startDate=document.getElementById("startDate").value;
@@ -200,20 +207,21 @@ function filterDashboard(){
   );
   if(startDate) data=data.filter(r=>new Date(r.dateSubmitted)>=new Date(startDate));
   if(endDate) data=data.filter(r=>new Date(r.dateSubmitted)<=new Date(endDate+"T23:59:59"));
-  if(currentStatusFilter) data=data.filter(r=>(r.status||"").toLowerCase()===currentStatusFilter);
+  if(currentStatusFilter) data=data.filter(r=>(r.status||"").toLowerCase()===currentStatusFilter.toLowerCase());
 
   updateDashboard(data);
 }
 
+// Update dashboard numbers, charts, and table
 function updateDashboard(data){
   let approved=0,pending=0,rejected=0,late=0;
   const hubs={},shifts={},dates={};
 
   data.forEach(r=>{
     const status=(r.status||"").toLowerCase();
-    if(status==="approved")approved++;
-    if(status==="pending")pending++;
-    if(status==="rejected")rejected++;
+    if(status==="approved") approved++;
+    if(status==="pending") pending++;
+    if(status==="rejected") rejected++;
     late+=parseFloat(r.lateHours||0);
     hubs[r.hub]=(hubs[r.hub]||0)+1;
     shifts[r.shift]=(shifts[r.shift]||0)+1;
@@ -259,6 +267,7 @@ function updateTable(data){
   });
 }
 
+// Charts
 function createStatusChart(a,p,r){
   if(statusChart) statusChart.destroy();
   statusChart=new Chart(document.getElementById("statusChart"),{
@@ -289,6 +298,7 @@ function createTrendChart(data){
   });
 }
 
+// Export PDF
 async function exportDashboardPDF(){
   const { jsPDF } = window.jspdf;
   const canvas=await html2canvas(document.querySelector(".container"));
@@ -300,6 +310,7 @@ async function exportDashboardPDF(){
   pdf.save("dashboard.pdf");
 }
 
+// Event listeners
 document.getElementById("resetFilters").addEventListener("click", () => {
   currentStatusFilter = "";
   document.getElementById("hubSelector").value = "";
@@ -308,12 +319,12 @@ document.getElementById("resetFilters").addEventListener("click", () => {
   document.getElementById("staffSearch").value = "";
   filterDashboard();
 });
-
 document.getElementById("hubSelector").addEventListener("change",filterDashboard);
 document.getElementById("startDate").addEventListener("change",filterDashboard);
 document.getElementById("endDate").addEventListener("change",filterDashboard);
 document.getElementById("staffSearch").addEventListener("input",filterDashboard);
 
+// Initialize
 displayManagerInfo();
 loadData();
 
