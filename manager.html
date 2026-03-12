@@ -22,10 +22,20 @@ body{
   background:white;
   padding:10px 20px;
   display:flex;
+  justify-content:space-between;
   align-items:center;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  flex-wrap:wrap;
 }
-.header img{ height:50px; margin-right:10px; }
+.header-left, .header-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header-left img, .header-right img{
+  height:50px;
+  object-fit:contain;
+}
 .container{ max-width:1300px; margin:auto; padding:20px; }
 .manager-info{
   background:#fff;
@@ -111,6 +121,10 @@ footer{
   text-align:center;
   padding:8px;
   font-size:12px;
+  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+}
+@media(max-width:600px){
+  .filter-box, .quick-date{ flex-direction:column; align-items:flex-start; }
 }
 </style>
 </head>
@@ -118,8 +132,10 @@ footer{
 <body>
 
 <div class="header">
-  <img src="logo1.png" alt="Logo 1">
-  <img src="logo2.png" alt="Logo 2">
+  <div class="header-left">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
+  </div>
 </div>
 
 <div class="container">
@@ -160,9 +176,9 @@ footer{
 
 <div class="quick-date">
   <button onclick="setQuickDate('today')">Today</button>
-  <button onclick="setQuickDate('week')">Last 7 Days</button>
-  <button onclick="setQuickDate('month')">Last 30 Days</button>
-  <button onclick="setQuickDate('year')">This Year</button>
+  <button onclick="setQuickDate(7)">Last 7 Days</button>
+  <button onclick="setQuickDate(15)">Last 15 Days</button>
+  <button onclick="setQuickDate(30)">Last 30 Days</button>
 </div>
 
 <div class="cards">
@@ -202,7 +218,8 @@ footer{
 </div>
 
 <footer>
-© 2026 HMCAS Support Service Production
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
 </footer>
 
 <script type="module">
@@ -212,10 +229,9 @@ import { getLateCalls } from './firebase.js';
 let allRequests=[]; 
 let statusChart, hubChart, shiftChart, trendChart;
 
-// Format date/time as DD/MMM/YY 24H
 function formatDateTime(dateStr){
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2,'0');
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const month = monthNames[d.getMonth()];
     const year = String(d.getFullYear()).slice(2);
@@ -224,17 +240,15 @@ function formatDateTime(dateStr){
     return `${day} ${month} ${year} ${hours}:${minutes}`;
 }
 
-// Format date only DD/MMM/YY
 function formatDateOnly(dateStr){
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2,'0');
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const month = monthNames[d.getMonth()];
     const year = String(d.getFullYear()).slice(2);
     return `${day} ${month} ${year}`;
 }
 
-// Display Manager Info
 function displayManagerInfo(){
   const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
   if(sup){
@@ -242,28 +256,24 @@ function displayManagerInfo(){
   }
 }
 
-// Load Data from Firebase
 async function loadData(){
   allRequests = await getLateCalls();
   filterDashboard();
 }
 
-// Quick Date Buttons
 function setQuickDate(option){
-  const startInput=document.getElementById("startDate");
-  const endInput=document.getElementById("endDate");
-  const today=new Date();
-  let start, end;
-  if(option==="today"){ start=today; end=today; }
-  if(option==="week"){ start=new Date(); start.setDate(today.getDate()-6); end=today; }
-  if(option==="month"){ start=new Date(); start.setDate(today.getDate()-29); end=today; }
-  if(option==="year"){ start=new Date(today.getFullYear(),0,1); end=today; }
-  startInput.value=start.toISOString().split('T')[0];
-  endInput.value=end.toISOString().split('T')[0];
-  filterDashboard();
+    const startInput = document.getElementById("startDate");
+    const endInput = document.getElementById("endDate");
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    let start;
+    if(option==='today'){ start = new Date(today); }
+    else { start = new Date(today); start.setDate(today.getDate()-(option-1)); }
+    startInput.value = start.toISOString().split('T')[0];
+    endInput.value = today.toISOString().split('T')[0];
+    filterDashboard();
 }
 
-// Filter dashboard
 function filterDashboard(){
   const hub=document.getElementById("hubSelector").value;
   const startDate=document.getElementById("startDate").value;
@@ -271,7 +281,6 @@ function filterDashboard(){
   const search=document.getElementById("staffSearch").value.toLowerCase();
 
   let data=[...allRequests];
-
   if(hub) data=data.filter(r=>r.hub===hub);
   if(search) data=data.filter(r=>
     (r.name||"").toLowerCase().includes(search) ||
@@ -283,7 +292,6 @@ function filterDashboard(){
   updateDashboard(data);
 }
 
-// Update cards, charts, table
 function updateDashboard(data){
   let approved=0,pending=0,rejected=0,late=0;
   const hubs={},shifts={},dates={};
@@ -296,7 +304,7 @@ function updateDashboard(data){
     late+=parseFloat(r.lateHours||0);
     hubs[r.hub]=(hubs[r.hub]||0)+1;
     shifts[r.shift]=(shifts[r.shift]||0)+1;
-    const d=formatDateOnly(r.dateSubmitted); 
+    const d=formatDateOnly(r.dateSubmitted);
     dates[d]=(dates[d]||0)+1;
   });
 
@@ -313,7 +321,6 @@ function updateDashboard(data){
   updateTable(data);
 }
 
-// Update table
 function updateTable(data){
   const tbody=document.querySelector("#dataTable tbody");
   tbody.innerHTML="";
@@ -339,7 +346,6 @@ function updateTable(data){
   });
 }
 
-// Charts
 function createStatusChart(a,p,r){
   if(statusChart) statusChart.destroy();
   statusChart=new Chart(document.getElementById("statusChart"),{
@@ -370,7 +376,6 @@ function createTrendChart(data){
   });
 }
 
-// Export PDF
 async function exportDashboardPDF(){
   const { jsPDF } = window.jspdf;
   const canvas=await html2canvas(document.querySelector(".container"));
@@ -380,7 +385,6 @@ async function exportDashboardPDF(){
   pdf.save("dashboard.pdf");
 }
 
-// Reset Filters
 document.getElementById("resetFilters").addEventListener("click", () => {
   document.getElementById("hubSelector").value = "";
   document.getElementById("startDate").value = "";
@@ -389,7 +393,6 @@ document.getElementById("resetFilters").addEventListener("click", () => {
   filterDashboard();
 });
 
-// Event listeners
 document.getElementById("hubSelector").addEventListener("change",filterDashboard);
 document.getElementById("startDate").addEventListener("change",filterDashboard);
 document.getElementById("endDate").addEventListener("change",filterDashboard);
