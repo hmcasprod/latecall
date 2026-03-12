@@ -38,9 +38,12 @@ footer{position:fixed;bottom:0;width:100%;background:#fff;text-align:center;padd
 
 <body>
 
+<!-- Header with logo1 left, logo2 right -->
 <div class="header">
   <div class="header-left">
     <img src="logo1.png" alt="Logo 1">
+  </div>
+  <div class="header-right">
     <img src="logo2.png" alt="Logo 2">
   </div>
 </div>
@@ -49,7 +52,7 @@ footer{position:fixed;bottom:0;width:100%;background:#fff;text-align:center;padd
 
 <div class="manager-info">
   <h2>Manager's View</h2>
-  <p id="managerName"></p>
+  <p id="managerName">Manager Name - CN123</p>
 </div>
 
 <div class="filter-box">
@@ -158,10 +161,7 @@ function formatDateOnly(dateStr){
 }
 
 function displayManagerInfo(){
-  const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-  if(sup){
-    document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
-  }
+  document.getElementById('managerName').innerText = "Manager Name - CN123";
 }
 
 async function loadData(){
