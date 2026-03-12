@@ -334,7 +334,7 @@ async function exportDashboardPDF(){
 
 // Event listeners
 document.querySelectorAll(".cards .card").forEach(c=>{
-  if(c.dataset.status !== undefined) c.addEventListener("click",()=>filterByStatus(c.dataset.status));
+  if(c.dataset.status !== Hub) c.addEventListener("click",()=>filterByStatus(c.dataset.status));
 });
 document.querySelectorAll(".quick-date button").forEach(btn=>{
   btn.addEventListener("click",()=>setQuickDate(btn.dataset.days));
@@ -362,3 +362,4 @@ loadData();
 
 </body>
 </html>
+
