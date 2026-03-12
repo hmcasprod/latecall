@@ -137,7 +137,6 @@ let statusChart, hubChart, shiftChart, trendChart;
 let currentStatusFilter="";
 let currentQuickDate="";
 
-// Format functions
 function formatDateTime(dateStr){
   const d=new Date(dateStr);
   const day=String(d.getDate()).padStart(2,'0');
@@ -157,7 +156,6 @@ function formatDateOnly(dateStr){
   return `${day} ${month} ${year}`;
 }
 
-// Load Firebase data
 async function loadData(){
   try {
     allRequests = await getLateCalls();
@@ -165,7 +163,6 @@ async function loadData(){
   } catch(e) { console.error("Error loading data:", e); }
 }
 
-// Quick date buttons
 function setQuickDate(option){
   currentQuickDate = option;
   highlightQuickDate();
@@ -180,7 +177,6 @@ function setQuickDate(option){
   filterDashboard();
 }
 
-// Highlight quick date
 function highlightQuickDate(){
   document.querySelectorAll(".quick-date button").forEach(btn=>{
     if(btn.dataset.days===currentQuickDate) btn.classList.add("active");
@@ -188,14 +184,12 @@ function highlightQuickDate(){
   });
 }
 
-// Status card filter
 function filterByStatus(status){
   currentStatusFilter = status;
   highlightStatusCard();
   filterDashboard();
 }
 
-// Highlight active card
 function highlightStatusCard(){
   document.querySelectorAll(".cards .card").forEach(c=>{
     if(c.dataset.status === currentStatusFilter) c.classList.add("active");
@@ -203,7 +197,6 @@ function highlightStatusCard(){
   });
 }
 
-// Main filter
 function filterDashboard(){
   const hubSelect=document.getElementById("hubSelector").value;
   const startDate=document.getElementById("startDate").value;
@@ -212,7 +205,6 @@ function filterDashboard(){
 
   let data=[...allRequests];
 
-  // HUB filter with "Others"
   if(hubSelect){
     if(hubSelect==='Others'){
       const knownHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
@@ -233,7 +225,6 @@ function filterDashboard(){
   updateDashboard(data);
 }
 
-// Update dashboard
 function updateDashboard(data){
   let approved=0,pending=0,rejected=0,late=0;
   const hubs={},shifts={},dates={};
@@ -264,7 +255,6 @@ function updateDashboard(data){
   updateTable(data);
 }
 
-// Table
 function updateTable(data){
   const tbody=document.querySelector("#dataTable tbody");
   tbody.innerHTML="";
@@ -289,7 +279,6 @@ function updateTable(data){
   });
 }
 
-// Charts
 function createStatusChart(a,p,r){
   if(statusChart) statusChart.destroy();
   statusChart=new Chart(document.getElementById("statusChart"),{
@@ -297,14 +286,26 @@ function createStatusChart(a,p,r){
     data:{ labels:["Approved","Pending","Rejected"], datasets:[{data:[a,p,r],backgroundColor:["#4CAF50","#FFD700","#f44336"]}] }
   });
 }
+
 function createHubChart(data){
   if(hubChart) hubChart.destroy();
+  const labels = Object.keys(data).map(k => k ? k : "HUB");
+  const values = Object.values(data);
   hubChart=new Chart(document.getElementById("hubChart"),{
     type:"bar",
-    data:{ labels:Object.keys(data), datasets:[{data:Object.values(data),backgroundColor:"#2196F3"}] },
-    options:{ onClick:(e,el)=>{ if(el.length){ const hub=Object.keys(data)[el[0].index]; document.getElementById("hubSelector").value=hub; filterDashboard(); } } }
+    data:{ labels: labels, datasets:[{data: values, backgroundColor:"#2196F3"}] },
+    options:{
+      onClick: (e, el) => {
+        if(el.length){
+          const hub = labels[el[0].index];
+          document.getElementById("hubSelector").value = hub==="HUB" ? "" : hub;
+          filterDashboard();
+        }
+      }
+    }
   });
 }
+
 function createShiftChart(data){
   if(shiftChart) shiftChart.destroy();
   shiftChart=new Chart(document.getElementById("shiftChart"),{
@@ -312,6 +313,7 @@ function createShiftChart(data){
     data:{ labels:Object.keys(data), datasets:[{data:Object.values(data)}] }
   });
 }
+
 function createTrendChart(data){
   if(trendChart) trendChart.destroy();
   trendChart=new Chart(document.getElementById("trendChart"),{
@@ -320,15 +322,29 @@ function createTrendChart(data){
   });
 }
 
-// Export PDF
+// PDF Export with multi-page support
 async function exportDashboardPDF(){
   const { jsPDF } = window.jspdf;
-  const canvas=await html2canvas(document.querySelector(".container"));
-  const img=canvas.toDataURL("image/png");
-  const pdf=new jsPDF("landscape","pt","a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  pdf.addImage(img,"PNG",0,0,pageWidth,pageHeight);
+  const container = document.querySelector(".container");
+  const canvas = await html2canvas(container, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF("p", "pt", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+  const imgProps = { width: canvas.width, height: canvas.height };
+  const ratio = pdfWidth / imgProps.width;
+  const imgWidth = imgProps.width * ratio;
+  const imgHeight = imgProps.height * ratio;
+  let heightLeft = imgHeight;
+  let position = 0;
+  while(heightLeft > 0){
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+    if(heightLeft > 0) {
+      pdf.addPage();
+      position = -heightLeft;
+    }
+  }
   pdf.save("dashboard.pdf");
 }
 
@@ -362,5 +378,3 @@ loadData();
 
 </body>
 </html>
-
-
