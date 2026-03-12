@@ -237,7 +237,8 @@ font-size:12px;
 
 <thead>
 <tr>
-<th>Date</th>
+<th>Date Submitted</th>
+<th>Late Call Date</th>
 <th>Name</th>
 <th>Corp</th>
 <th>Hub</th>
@@ -397,6 +398,7 @@ if(status==="rejected")statusClass="status-rejected";
 
 tr.innerHTML=`
 <td>${new Date(r.dateSubmitted).toLocaleString()}</td>
+<td>${r.lateCallDate ? new Date(r.lateCallDate).toLocaleDateString() : ""}</td>
 <td>${r.name}</td>
 <td>${r.corp}</td>
 <td>${r.hub}</td>
@@ -444,13 +446,9 @@ datasets:[{data:Object.values(data),backgroundColor:"#2196F3"}]
 options:{
 onClick:(e,el)=>{
 if(el.length){
-
 const hub=Object.keys(data)[el[0].index];
-
 document.getElementById("hubSelector").value=hub;
-
 filterDashboard();
-
 }
 }
 }
@@ -515,9 +513,7 @@ pdf.save("dashboard.pdf");
 }
 
 document.getElementById("hubSelector").addEventListener("change",filterDashboard);
-
 document.getElementById("dateFilter").addEventListener("change",filterDashboard);
-
 document.getElementById("staffSearch").addEventListener("input",filterDashboard);
 
 loadData();
