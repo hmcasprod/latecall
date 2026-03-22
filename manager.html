@@ -39,6 +39,7 @@ footer{position:fixed;bottom:0;width:100%;background:#fff;text-align:center;padd
 
 <body>
 
+<!-- Header with logo1 left, logo2 right -->
 <div class="header">
   <div class="header-left">
     <img src="logo1.png" alt="Logo 1">
@@ -256,6 +257,7 @@ function updateDashboard(data){
   document.getElementById("rejected").innerText = rejected;
   document.getElementById("lateHours").innerText = lateHoursSum.toFixed(2);
 
+  // Create the charts (destroy and recreate)
   createStatusChart(approved,pending,rejected);
   createHubChart(hubs);
   createShiftChart(shifts);
@@ -263,8 +265,23 @@ function updateDashboard(data){
   updateTable(data);
 }
 
-// ... rest of functions (charts, table, PDF) stay same
+function createStatusChart(a,p,r){
+  if(statusChart) statusChart.destroy();
+  statusChart = new Chart(document.getElementById("statusChart"), {
+    type: "doughnut",
+    data: {
+      labels: ["Approved", "Pending", "Rejected"],
+      datasets: [{
+        data: [a, p, r],
+        backgroundColor: ["#4CAF50", "#FFD700", "#f44336"]
+      }]
+    }
+  });
+}
 
+// Other chart creation functions (hubChart, shiftChart, trendChart) remain the same
+
+// Event listeners for filtering
 document.querySelectorAll(".cards .card").forEach(c=>{
   if(c.dataset.status !== undefined) c.addEventListener("click",()=>filterByStatus(c.dataset.status));
 });
