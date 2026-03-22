@@ -89,7 +89,7 @@ footer{position:fixed;bottom:0;width:100%;background:#fff;text-align:center;padd
 </div>
 
 <div class="cards">
-  <div class="card" data-status=""><h3>Total</h3><p id="total">0</p></div>
+  <div class="card" data-status="total"><h3>Total</h3><p id="total">0</p></div>
   <div class="card" data-status="approved"><h3>Approved</h3><p id="approved">0</p></div>
   <div class="card" data-status="pending"><h3>Pending</h3><p id="pending">0</p></div>
   <div class="card" data-status="rejected"><h3>Rejected</h3><p id="rejected">0</p></div>
@@ -185,14 +185,15 @@ function highlightQuickDate(){
 }
 
 function filterByStatus(status){
-  currentStatusFilter = status;
+  if(status==="total") currentStatusFilter="approved"; // total = approved only
+  else currentStatusFilter = status;
   highlightStatusCard();
   filterDashboard();
 }
 
 function highlightStatusCard(){
   document.querySelectorAll(".cards .card").forEach(c=>{
-    if(c.dataset.status === currentStatusFilter) c.classList.add("active");
+    if(c.dataset.status === currentStatusFilter || (c.dataset.status==="total" && currentStatusFilter==="approved")) c.classList.add("active");
     else c.classList.remove("active");
   });
 }
@@ -226,7 +227,8 @@ function filterDashboard(){
 }
 
 function updateDashboard(data){
-  let approved=0,pending=0,rejected=0,late=0;
+  let approved=0, pending=0, rejected=0;
+  let totalLateApproved=0;
   const hubs={},shifts={},dates={};
 
   data.forEach(r=>{
@@ -234,7 +236,7 @@ function updateDashboard(data){
     if(status==="approved") approved++;
     if(status==="pending") pending++;
     if(status==="rejected") rejected++;
-    late+=parseFloat(r.lateHours||0);
+    if(status==="approved") totalLateApproved += parseFloat(r.lateHours||0);
     const hubName = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"].includes(r.hub)? r.hub : "Others";
     hubs[hubName]=(hubs[hubName]||0)+1;
     shifts[r.shift]=(shifts[r.shift]||0)+1;
@@ -242,11 +244,11 @@ function updateDashboard(data){
     dates[d]=(dates[d]||0)+1;
   });
 
-  document.getElementById("total").innerText=data.length;
-  document.getElementById("approved").innerText=approved;
-  document.getElementById("pending").innerText=pending;
-  document.getElementById("rejected").innerText=rejected;
-  document.getElementById("lateHours").innerText=late.toFixed(2);
+  document.getElementById("total").innerText = totalLateApproved.toFixed(2); // total = approved late hours
+  document.getElementById("approved").innerText = approved;
+  document.getElementById("pending").innerText = pending;
+  document.getElementById("rejected").innerText = rejected;
+  document.getElementById("lateHours").innerText = totalLateApproved.toFixed(2);
 
   createStatusChart(approved,pending,rejected);
   createHubChart(hubs);
