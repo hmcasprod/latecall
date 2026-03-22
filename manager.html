@@ -301,9 +301,7 @@
       try {
         allRequests = await getLateCalls();
         filterDashboard();
-      } catch (e) {
-        console.error("Error loading data:", e);
-      }
+      } catch (e) { console.error("Error loading data:", e); }
     }
 
     function setQuickDate(option) {
@@ -380,20 +378,14 @@
 
       data.forEach(r => {
         const status = (r.status || "").toLowerCase();
-        const lateHours = parseFloat(r.lateHours || 0);
 
-        if (status === "approved") {
-          approved++;
-          lateApproved += lateHours;
-        }
-        if (status === "pending") {
-          pending++;
-          latePending += lateHours;
-        }
-        if (status === "rejected") {
-          rejected++;
-          lateRejected += lateHours;
-        }
+        if (status === "approved") approved++;
+        if (status === "pending") pending++;
+        if (status === "rejected") rejected++;
+
+        if (status === "approved") lateApproved += parseFloat(r.lateHours || 0);
+        if (status === "pending") latePending += parseFloat(r.lateHours || 0);
+        if (status === "rejected") lateRejected += parseFloat(r.lateHours || 0);
 
         const hubName = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"].includes(r.hub) ? r.hub : "Others";
         hubs[hubName] = (hubs[hubName] || 0) + 1;
@@ -406,15 +398,13 @@
       document.getElementById("approved").innerText = approved;
       document.getElementById("pending").innerText = pending;
       document.getElementById("rejected").innerText = rejected;
-      document.getElementById("lateHours").innerText = (lateApproved + latePending + lateRejected).toFixed(2);
 
-      // Show late hours based on selected status
-      if (currentStatusFilter === "approved") {
-        document.getElementById("lateHours").innerText = lateApproved.toFixed(2);
-      } else if (currentStatusFilter === "pending") {
+      if (currentStatusFilter === "pending") {
         document.getElementById("lateHours").innerText = latePending.toFixed(2);
       } else if (currentStatusFilter === "rejected") {
         document.getElementById("lateHours").innerText = lateRejected.toFixed(2);
+      } else {
+        document.getElementById("lateHours").innerText = lateApproved.toFixed(2);
       }
 
       createStatusChart(approved, pending, rejected);
