@@ -7,7 +7,6 @@
   <title>Manager Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -217,7 +216,7 @@
 
       <input type="text" id="staffSearch" placeholder="Search Name / Corp">
 
-      <button onclick="exportDashboardPDF()">Export PDF</button>
+      <!-- Removed Export Button-->
       <button id="resetFilters">Reset Filters</button>
     </div>
 
@@ -272,242 +271,7 @@
   <script type="module">
     import { getLateCalls } from './firebase.js';
 
-    let allRequests = [];
-    let statusChart, hubChart, shiftChart, trendChart;
-    let currentStatusFilter = "";
-    let currentQuickDate = "";
-
-    function formatDateTime(dateStr) {
-      const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[d.getMonth()];
-      const year = String(d.getFullYear()).slice(2);
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${day} ${month} ${year} ${hours}:${minutes}`;
-    }
-
-    function formatDateOnly(dateStr) {
-      const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[d.getMonth()];
-      const year = String(d.getFullYear()).slice(2);
-      return `${day} ${month} ${year}`;
-    }
-
-    async function loadData() {
-      try {
-        allRequests = await getLateCalls();
-        filterDashboard();
-      } catch (e) {
-        console.error("Error loading data:", e);
-      }
-    }
-
-    function setQuickDate(option) {
-      currentQuickDate = option;
-      highlightQuickDate();
-      const startInput = document.getElementById("startDate");
-      const endInput = document.getElementById("endDate");
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      let start;
-      if (option === 'today') {
-        start = new Date(today);
-      } else {
-        start = new Date(today);
-        start.setDate(today.getDate() - (option - 1));
-      }
-      startInput.value = start.toISOString().split('T')[0];
-      endInput.value = today.toISOString().split('T')[0];
-      filterDashboard();
-    }
-
-    function highlightQuickDate() {
-      document.querySelectorAll(".quick-date button").forEach(btn => {
-        if (btn.dataset.days === currentQuickDate) btn.classList.add("active");
-        else btn.classList.remove("active");
-      });
-    }
-
-    function filterByStatus(status) {
-      currentStatusFilter = status;
-      highlightStatusCard();
-      filterDashboard();
-    }
-
-    function highlightStatusCard() {
-      document.querySelectorAll(".cards .card").forEach(c => {
-        if (c.dataset.status === currentStatusFilter) c.classList.add("active");
-        else c.classList.remove("active");
-      });
-    }
-
-    function filterDashboard() {
-      const hubSelect = document.getElementById("hubSelector").value;
-      const startDate = document.getElementById("startDate").value;
-      const endDate = document.getElementById("endDate").value;
-      const search = document.getElementById("staffSearch").value.toLowerCase();
-
-      let data = [...allRequests];
-
-      if (hubSelect) {
-        if (hubSelect === 'Others') {
-          const knownHubs = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"];
-          data = data.filter(r => !knownHubs.includes(r.hub));
-        } else {
-          data = data.filter(r => r.hub === hubSelect);
-        }
-      }
-
-      if (search) data = data.filter(r =>
-        (r.name || "").toLowerCase().includes(search) ||
-        (r.corp || "").toString().includes(search)
-      );
-      if (startDate) data = data.filter(r => new Date(r.dateSubmitted) >= new Date(startDate));
-      if (endDate) data = data.filter(r => new Date(r.dateSubmitted) <= new Date(endDate + "T23:59:59"));
-      if (currentStatusFilter) data = data.filter(r => (r.status || "").toLowerCase() === currentStatusFilter.toLowerCase());
-
-      updateDashboard(data);
-    }
-
-    function updateDashboard(data) {
-      let approved = 0, pending = 0, rejected = 0;
-      let lateApproved = 0, latePending = 0, lateRejected = 0;
-      const hubs = {}, shifts = {}, dates = {};
-
-      data.forEach(r => {
-        const status = (r.status || "").toLowerCase();
-
-        if (status === "approved") approved++;
-        if (status === "pending") pending++;
-        if (status === "rejected") rejected++;
-
-        if (status === "approved") lateApproved += parseFloat(r.lateHours || 0);
-        if (status === "pending") latePending += parseFloat(r.lateHours || 0);
-        if (status === "rejected") lateRejected += parseFloat(r.lateHours || 0);
-
-        const hubName = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"].includes(r.hub) ? r.hub : "Others";
-        hubs[hubName] = (hubs[hubName] || 0) + 1;
-        shifts[r.shift] = (shifts[r.shift] || 0) + 1;
-        const d = formatDateOnly(r.dateSubmitted);
-        dates[d] = (dates[d] || 0) + 1;
-      });
-
-      document.getElementById("total").innerText = data.length;
-      document.getElementById("approved").innerText = approved;
-      document.getElementById("pending").innerText = pending;
-      document.getElementById("rejected").innerText = rejected;
-
-      if (currentStatusFilter === "pending") {
-        document.getElementById("lateHours").innerText = latePending.toFixed(2);
-      } else if (currentStatusFilter === "rejected") {
-        document.getElementById("lateHours").innerText = lateRejected.toFixed(2);
-      } else {
-        document.getElementById("lateHours").innerText = lateApproved.toFixed(2);
-      }
-
-      createStatusChart(approved, pending, rejected);
-      createHubChart(hubs);
-      createShiftChart(shifts);
-      createTrendChart(dates);
-      updateTable(data);
-    }
-
-    function updateTable(data) {
-      const tbody = document.querySelector("#dataTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(r => {
-        const tr = document.createElement("tr");
-        let statusClass = "";
-        const status = (r.status || "").toLowerCase();
-        if (status === "approved") statusClass = "status-approved";
-        if (status === "pending") statusClass = "status-pending";
-        if (status === "rejected") statusClass = "status-rejected";
-        tr.innerHTML = `
-          <td>${formatDateTime(r.dateSubmitted)}</td>
-          <td>${r.lateCallDate ? formatDateOnly(r.lateCallDate) : ""}</td>
-          <td>${r.name}</td>
-          <td>${r.corp}</td>
-          <td>${r.hub}</td>
-          <td>${r.shift}</td>
-          <td>${r.lateHours || 0}</td>
-          <td class="${statusClass}">${r.status}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function createStatusChart(a, p, r) {
-      if (statusChart) statusChart.destroy();
-      statusChart = new Chart(document.getElementById("statusChart"), {
-        type: "doughnut",
-        data: {
-          labels: ["Approved", "Pending", "Rejected"],
-          datasets: [{
-            data: [a, p, r],
-            backgroundColor: ["#4CAF50", "#FFD700", "#f44336"]
-          }]
-        }
-      });
-    }
-
-    function createHubChart(data) {
-      if (hubChart) hubChart.destroy();
-      const labels = Object.keys(data).map(k => k ? k : "HUB");
-      const values = Object.values(data);
-      hubChart = new Chart(document.getElementById("hubChart"), {
-        type: "bar",
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: "#2196F3"
-          }]
-        },
-        options: {
-          onClick: (e, el) => {
-            if (el.length) {
-              const hub = labels[el[0].index];
-              document.getElementById("hubSelector").value = hub === "HUB" ? "" : hub;
-              filterDashboard();
-            }
-          }
-        }
-      });
-    }
-
-    function createShiftChart(data) {
-      if (shiftChart) shiftChart.destroy();
-      shiftChart = new Chart(document.getElementById("shiftChart"), {
-        type: "pie",
-        data: {
-          labels: Object.keys(data),
-          datasets: [{
-            data: Object.values(data)
-          }]
-        }
-      });
-    }
-
-    function createTrendChart(data) {
-      if (trendChart) trendChart.destroy();
-      trendChart = new Chart(document.getElementById("trendChart"), {
-        type: "line",
-        data: {
-          labels: Object.keys(data),
-          datasets: [{
-            label: "Requests",
-            data: Object.values(data),
-            borderColor: "#4CAF50",
-            tension: 0.3
-          }]
-        }
-      });
-    }
-
+    // Function to export dashboard as PDF
     async function exportDashboardPDF() {
       const { jsPDF } = window.jspdf;
       const container = document.querySelector(".container");
@@ -540,33 +304,12 @@
         heightLeft -= pdfHeight;
       }
 
-      // Download the generated PDF
+      // This triggers the 'Save as' dialog box.
       pdf.save("dashboard.pdf");
     }
 
-    document.querySelectorAll(".cards .card").forEach(c => {
-      if (c.dataset.status !== undefined) c.addEventListener("click", () => filterByStatus(c.dataset.status));
-    });
-    document.querySelectorAll(".quick-date button").forEach(btn => {
-      btn.addEventListener("click", () => setQuickDate(btn.dataset.days));
-    });
-    document.getElementById("resetFilters").addEventListener("click", () => {
-      currentStatusFilter = "";
-      currentQuickDate = "";
-      document.getElementById("hubSelector").value = "";
-      document.getElementById("startDate").value = "";
-      document.getElementById("endDate").value = "";
-      document.getElementById("staffSearch").value = "";
-      highlightStatusCard();
-      highlightQuickDate();
-      filterDashboard();
-    });
-    document.getElementById("hubSelector").addEventListener("change", filterDashboard);
-    document.getElementById("startDate").addEventListener("change", filterDashboard);
-    document.getElementById("endDate").addEventListener("change", filterDashboard);
-    document.getElementById("staffSearch").addEventListener("input", filterDashboard);
-
-    loadData();
+    // Event listener for exporting the dashboard
+    document.getElementById('exportButton').addEventListener('click', exportDashboardPDF);
 
   </script>
 
