@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.10.0/pptxgen.min.js"></script> <!-- Added PptxGenJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -217,7 +218,7 @@
 
       <input type="text" id="staffSearch" placeholder="Search Name / Corp">
 
-      <button onclick="exportDashboardPDF()">Export PDF</button>
+      <button onclick="exportDashboardPPT()">Export PPT</button> <!-- Changed to Export PPT -->
       <button id="resetFilters">Reset Filters</button>
     </div>
 
@@ -508,42 +509,32 @@
       });
     }
 
-    async function exportDashboardPDF() {
-      const { jsPDF } = window.jspdf;
-      const container = document.querySelector(".container");
+    // Function to export dashboard to PPT
+    async function exportDashboardPPT() {
+      const pptx = new PptxGenJS();
+      pptx.setLayout("LAYOUT_WIDE"); // You can change the layout if needed
 
+      const slide = pptx.addSlide();
+      
       // Capture the content of the container as a canvas
+      const container = document.querySelector(".container");
       const canvas = await html2canvas(container, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
 
-      // Create a new PDF instance
-      const pdf = new jsPDF("p", "pt", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      // Add the captured image to the slide
+      slide.addImage({
+        data: imgData,
+        x: 0,
+        y: 0,
+        w: "100%",
+        h: "100%",
+      });
 
-      // Get the dimensions of the image
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      // Add the image to the PDF
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pdfHeight;
-
-      // If the content is taller than a single page, add additional pages
-      while (heightLeft > 0) {
-        pdf.addPage();
-        position = -heightLeft + pdfHeight;
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight;
-      }
-
-      // Download the generated PDF
-      pdf.save("dashboard.pdf");
+      // Save the PPT
+      pptx.writeFile({ fileName: "dashboard.pptx" });
     }
 
+    // Event listeners
     document.querySelectorAll(".cards .card").forEach(c => {
       if (c.dataset.status !== undefined) c.addEventListener("click", () => filterByStatus(c.dataset.status));
     });
@@ -573,4 +564,3 @@
 </body>
 
 </html>
-
