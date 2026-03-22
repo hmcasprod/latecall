@@ -322,29 +322,33 @@ function createTrendChart(data){
   });
 }
 
-// PDF Export with multi-page support
-async function exportDashboardPDF(){
+// Fixed PDF Export with multi-page support
+async function exportDashboardPDF() {
   const { jsPDF } = window.jspdf;
   const container = document.querySelector(".container");
   const canvas = await html2canvas(container, { scale: 2 });
   const imgData = canvas.toDataURL("image/png");
+
   const pdf = new jsPDF("p", "pt", "a4");
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = pdf.internal.pageSize.getHeight();
-  const imgProps = { width: canvas.width, height: canvas.height };
-  const ratio = pdfWidth / imgProps.width;
-  const imgWidth = imgProps.width * ratio;
-  const imgHeight = imgProps.height * ratio;
+
+  const imgWidth = pdfWidth;
+  const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
   let heightLeft = imgHeight;
   let position = 0;
-  while(heightLeft > 0){
+
+  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+  heightLeft -= pdfHeight;
+
+  while (heightLeft > 0) {
+    pdf.addPage();
+    position = -heightLeft + pdfHeight;
     pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
     heightLeft -= pdfHeight;
-    if(heightLeft > 0) {
-      pdf.addPage();
-      position = -heightLeft;
-    }
   }
+
   pdf.save("dashboard.pdf");
 }
 
@@ -378,7 +382,3 @@ loadData();
 
 </body>
 </html>
-
-
-
-can you make the export functional
