@@ -301,7 +301,9 @@
       try {
         allRequests = await getLateCalls();
         filterDashboard();
-      } catch (e) { console.error("Error loading data:", e); }
+      } catch (e) {
+        console.error("Error loading data:", e);
+      }
     }
 
     function setQuickDate(option) {
@@ -509,22 +511,28 @@
     async function exportDashboardPDF() {
       const { jsPDF } = window.jspdf;
       const container = document.querySelector(".container");
+
+      // Capture the content of the container as a canvas
       const canvas = await html2canvas(container, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
 
+      // Create a new PDF instance
       const pdf = new jsPDF("p", "pt", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
+      // Get the dimensions of the image
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
       let heightLeft = imgHeight;
       let position = 0;
 
+      // Add the image to the PDF
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
 
+      // If the content is taller than a single page, add additional pages
       while (heightLeft > 0) {
         pdf.addPage();
         position = -heightLeft + pdfHeight;
@@ -532,6 +540,7 @@
         heightLeft -= pdfHeight;
       }
 
+      // Download the generated PDF
       pdf.save("dashboard.pdf");
     }
 
