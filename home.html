@@ -207,20 +207,17 @@
 <script type="module">
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
-// Supervisor accounts
 const supervisorsInit = [
     {username:"jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234"},
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-// Show/Hide password
 function togglePassword(){
     const pwd = document.getElementById('password');
     pwd.type = pwd.type==="password"?"text":"password";
 }
 
-// Login function
 function login(){
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
@@ -237,7 +234,6 @@ function login(){
     }
 }
 
-// Forgot password
 function forgotPassword(){
     const username = prompt("Enter your username to reset password:");
     if(!username) return;
@@ -250,7 +246,6 @@ function forgotPassword(){
     alert("Password reset successfully!");
 }
 
-// Logout
 function logout(){
     localStorage.removeItem('currentSupervisor');
     document.getElementById('loginPage').style.display='flex';
@@ -261,7 +256,6 @@ function logout(){
     document.querySelector('#requestsTable tbody').innerHTML='';
 }
 
-// Check login
 function checkLogin(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
@@ -274,7 +268,6 @@ function checkLogin(){
     }
 }
 
-// Load table (status coloring fixed)
 async function loadTable(){
     const data = await getLateCalls();
     const tbody = document.querySelector('#requestsTable tbody');
@@ -316,10 +309,16 @@ async function loadTable(){
                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
+            // Date Submitted with time 24H format
             const formattedDate = d.toLocaleDateString('en-GB', { 
                 year: 'numeric', 
                 month: 'short', 
                 day: '2-digit' 
+            }) + ' ' + d.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
             });
 
             const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
@@ -357,7 +356,6 @@ async function loadTable(){
     rows.forEach(row => tbody.appendChild(row));
 }
 
-// Clear all filters
 function clearFilters(){
     document.getElementById('filterFrom').value = '';
     document.getElementById('filterTo').value = '';
@@ -368,10 +366,8 @@ function clearFilters(){
     loadTable();
 }
 
-// Approve/Reject
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString('en-GB', {
         year: 'numeric',
@@ -384,7 +380,6 @@ async function approve(id){
         minute: '2-digit'
     });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime})`;
-
     await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
@@ -393,7 +388,6 @@ async function reject(id){
     const reason = prompt("Reason for rejection:");
     if(!reason) return;
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString('en-GB', {
         year: 'numeric',
@@ -406,12 +400,10 @@ async function reject(id){
         minute: '2-digit'
     });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
-
     await updateRequestStatus(id,"Rejected",processedBy);
     loadTable();
 }
 
-// Export to Excel
 function exportToExcel(){
     const table=document.getElementById('requestsTable');
     const rows=table.querySelectorAll('tr');
@@ -425,7 +417,6 @@ function exportToExcel(){
     link.click();
 }
 
-// Inactivity auto logout
 let inactivityTimer;
 function startInactivityTimer(){
     resetInactivityTimer();
@@ -442,19 +433,15 @@ function resetInactivityTimer(){
     }, 5 * 60 * 1000);
 }
 
-// Allow Enter key login
 document.getElementById('password').addEventListener('keydown', e => {
     if(e.key === 'Enter'){ login(); }
 });
 
-// Add event listeners for filtering by hub and status
 document.getElementById('filterHub').addEventListener('change', loadTable);
 document.getElementById('filterStatus').addEventListener('change', loadTable);
 
-// Initial check
 checkLogin();
 
-// Expose functions to HTML
 window.logout = logout;
 window.loadTable = loadTable;
 window.exportToExcel = exportToExcel;
