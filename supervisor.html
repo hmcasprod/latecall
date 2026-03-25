@@ -196,7 +196,7 @@
                     <th>Date Submitted</th><th>Late Call Date</th><th>Name</th><th>Corp Number</th>
                     <th>Hub</th><th>Unit</th><th>Shift</th>
                     <th>Trip</th><th>Time Out</th><th>Type of Duty</th>
-                    <th>Status</th><th>Action</th><th>Processed By</th>
+                    <th>Status</th><th>Action</th><th>Processed By</th><th>Late Call Hours</th> <!-- Added column -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -326,6 +326,13 @@ async function loadTable(){
                 day: '2-digit' 
             });
 
+            // Calculate Late Call Hours
+            let lateCallHours = 0;
+            if (!isNaN(d.getTime()) && !isNaN(lateCallDate.getTime())) {
+                const timeDifference = lateCallDate - d; // Difference in milliseconds
+                lateCallHours = (timeDifference / (1000 * 60 * 60)).toFixed(2); // Convert to hours
+            }
+
             const tr = document.createElement('tr');
             tr.innerHTML = ` 
                 <td>${formattedDate}</td>
@@ -341,6 +348,7 @@ async function loadTable(){
                 <td class="${statusClass}">${r.status}</td>
                 <td>${actionButtons}</td>
                 <td>${r.processedBy || ''}</td>
+                <td>${lateCallHours}</td> <!-- Added Late Call Hours -->
             `;
             rows.push(tr);
         }
@@ -459,4 +467,3 @@ document.getElementById('loginBtn').onclick = login;
 
 </body>
 </html>
-
