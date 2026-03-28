@@ -100,19 +100,19 @@ h1 {
 
 /* FOOTER */
 footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background-color: #333;
-            color: #e0e0e0;
-            font-size: 14px;
-        }
-        footer:hover {
-            background-color: #4CAF50;
-            color: white;
+    text-align: center;
+    padding: 12px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    font-size: 13px;
+    color: #374151;
+}
+
+footer:hover {
+    background: #4CAF50;
+    color: #ffffff;
+    transition: 0.3s;
+}
 
 /* MOBILE OPTIMIZATION */
 @media (max-width: 768px) {
@@ -162,7 +162,7 @@ footer {
 <div class="dashboard">
 
     <!-- LEFT -->
-    <div class="card" onclick="comingSoon()">
+    <div class="card" onclick="goToStatus()">
         <i class="fas fa-search"></i>
         <h2>Check Late Call Request Status</h2>
     </div>
@@ -186,8 +186,8 @@ function goToEntry() {
     window.location.href = "https://hmcasprod.github.io/latecall/";
 }
 
-function comingSoon() {
-    alert("Coming Soon 🚧");
+function goToStatus() {
+    window.location.href = "https://hmcasprod.github.io/latecall/status.html";
 }
 </script>
 
