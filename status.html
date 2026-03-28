@@ -1,188 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>View Late Call Request</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-<style>
-    body { font-family: 'Roboto', sans-serif; margin:0; padding:0; background:#2c2f38; color:#e0e0e0; display:flex; flex-direction:column; min-height:100vh; }
-    .logos { display:flex; justify-content:center; align-items:center; margin-bottom:20px; flex-wrap:wrap; padding:10px; background:#333; box-shadow:0 2px 4px rgba(0,0,0,0.2);}
-    .logos img {width:250px; height:90px; object-fit:contain; margin:0 15px;}
-    .search-container { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:15px; background:#3a3f47; box-shadow:0 10px 25px rgba(0,0,0,0.3); border-radius:12px; width:90%; max-width:400px; margin:20px auto; flex-grow:1;}
-    .search-container h2 { color:#e0e0e0; margin-bottom:15px; font-weight:700; font-size:18px; text-align:center;}
-    .search-container input { width:100%; padding:12px; font-size:16px; border:1px solid #444; border-radius:6px; margin-bottom:15px; background:#444; color:#e0e0e0;}
-    .search-container .button-group { display:flex; width:100%; gap:10px; margin-bottom:15px;}
-    .search-container button { flex:1; padding:12px; background:#4CAF50; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer;}
-    .search-container button:hover { background:#45a049;}
-    .search-container .clear-btn { background:#f44336; }
-    .search-container .clear-btn:hover { background:#d32f2f;}
-    .error-message { color:#f44336; font-size:14px; margin-top:10px; text-align:center; display:none;}
-    .results-container { margin-top:20px; width:100%; display:none;}
-    .results-container table { width:100%; border-collapse:collapse;}
-    .results-container th, .results-container td { padding:10px; text-align:center; border:1px solid #555; font-size:14px; color:#e0e0e0;}
-    .results-container th { background:#444; color:#fff;}
-    .results-container td { background:#333;}
-    .note-row td { text-align:left; font-style:italic; color:#FFD700; background:#3a3f47;}
-    footer { position:fixed; bottom:0; left:0; width:100%; text-align:center; padding:10px; background:#333; color:#e0e0e0; font-size:14px;}
-    footer:hover { background:#4CAF50; color:white;}
-    @media(max-width:480px){ .search-container h2{font-size:16px;} .results-container table{font-size:12px;} footer{font-size:10px; padding:8px 0;} .logos img{height:35px;} }
-</style>
-</head>
-<body>
-
-<div class="logos">
-    <img src="logo1.png" alt="Logo 1">
-    <img src="logo2.png" alt="Logo 2">
-</div>
-
-<div class="search-container">
-    <h2>Search by Corporation Number & Late Call Date</h2>
-    <input type="text" id="corpSearch" placeholder="Enter Corporation Number">
-    <input type="date" id="dateSearch" max="">
-    <div class="button-group">
-        <button id="searchBtn">Search</button>
-        <button id="clearBtn" class="clear-btn">Clear</button>
-    </div>
-    <div id="errorMessage" class="error-message"></div>
-
-    <div id="results" class="results-container">
-        <h3>Search Results</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Late Call Date</th>
-                    <th>Hub</th>
-                    <th>Unit</th>
-                    <th>Shift</th>
-                    <th>Late Call Hour/s</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="resultsTable"></tbody>
-        </table>
-    </div>
-</div>
-
-<script type="module">
-// Firebase imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-
-// Replace with your Firebase config
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Set max date to today
-const dateInput = document.getElementById('dateSearch');
-dateInput.max = new Date().toISOString().split("T")[0];
-
-const searchBtn = document.getElementById('searchBtn');
-const clearBtn = document.getElementById('clearBtn');
-
-searchBtn.addEventListener('click', searchData);
-clearBtn.addEventListener('click', clearData);
-
-function formatDateToString(dateStr) {
-    const options = { day: '2-digit', month: 'short', year: 'numeric' };
-    return new Date(dateStr).toLocaleDateString('en-GB', options); // "08 Mar 2026"
-}
-
-async function searchData() {
-    const corpSearch = document.getElementById('corpSearch').value.trim();
-    const dateSearch = dateInput.value;
-    const errorMessage = document.getElementById('errorMessage');
-    const resultsContainer = document.getElementById('results');
-    const resultsTable = document.getElementById('resultsTable');
-
-    errorMessage.style.display = 'none';
-    resultsContainer.style.display = 'none';
-    resultsTable.innerHTML = '';
-
-    if (!corpSearch || !dateSearch) {
-        errorMessage.innerText = "Please enter Corporation Number and Date of Late Call.";
-        errorMessage.style.display = 'block';
-        return;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - Table Only</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #eef2f3, #ffffff);
+      padding-bottom: 60px;
     }
 
-    const formattedDate = formatDateToString(dateSearch);
+    .header {
+      background: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      flex-wrap: wrap;
+    }
 
-    try {
+    .header-left,
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-left img,
+    .header-right img {
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .filter-box {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input,
+    select {
+      padding: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f2f2f2;
+    }
+
+    .status-approved {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .status-pending {
+      background: #FFD700;
+    }
+
+    .status-rejected {
+      background: #f44336;
+      color: white;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      text-align: center;
+      padding: 8px;
+      font-size: 12px;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 600px) {
+      .filter-box {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="header-left">
+      <img src="logo1.png" alt="Logo 1">
+    </div>
+    <div class="header-right">
+      <img src="logo2.png" alt="Logo 2">
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="filter-box">
+      <input type="text" id="corpSearch" placeholder="Enter Corporation Number">
+      <input type="date" id="dateSearch">
+      <button id="searchBtn">Search</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+
+    <div class="table-box">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Late Call Date</th>
+            <th>Hub</th>
+            <th>Unit</th>
+            <th>Shift</th>
+            <th>Late Hours</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 HMCAS Support Service Production.<br>
+    James Ross Camins. All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const corpInput = document.getElementById("corpSearch");
+    const dateInput = document.getElementById("dateSearch");
+    const searchBtn = document.getElementById("searchBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const tbody = document.querySelector("#dataTable tbody");
+
+    // Format date to "08 Mar 2026"
+    function formatDateToString(dateStr) {
+      const options = { day: '2-digit', month: 'short', year: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('en-GB', options);
+    }
+
+    async function fetchData() {
+      tbody.innerHTML = "";
+      const corp = corpInput.value.trim();
+      const date = dateInput.value;
+
+      if (!corp || !date) {
+        alert("Please enter Corporation Number and Date.");
+        return;
+      }
+
+      const formattedDate = formatDateToString(date);
+
+      try {
         const lateCallsCol = collection(db, "lateCalls");
         const q = query(
-            lateCallsCol,
-            where("corp", "==", corpSearch),
-            where("lateCallDate", "==", formattedDate)
+          lateCallsCol,
+          where("corp", "==", corp),
+          where("lateCallDate", "==", formattedDate)
         );
 
         const snapshot = await getDocs(q);
-        console.log("Docs found:", snapshot.docs.length);
 
         if (snapshot.empty) {
-            errorMessage.innerText = "No results found for this Corporation Number and Date.";
-            errorMessage.style.display = 'block';
-            return;
+          tbody.innerHTML = `<tr><td colspan="6">No records found.</td></tr>`;
+          return;
         }
 
-        resultsContainer.style.display = 'block';
-
         snapshot.docs.forEach(doc => {
-            const r = doc.data();
-            const tr = document.createElement('tr');
+          const r = doc.data();
+          const tr = document.createElement("tr");
 
-            let statusColor;
-            switch((r.status||'').toLowerCase()){
-                case 'pending': statusColor = 'yellow'; break;
-                case 'approved': statusColor = 'green'; break;
-                case 'rejected': statusColor = 'red'; break;
-                default: statusColor = '#e0e0e0';
-            }
+          let statusClass = "";
+          switch ((r.status || "").toLowerCase()) {
+            case "approved": statusClass = "status-approved"; break;
+            case "pending": statusClass = "status-pending"; break;
+            case "rejected": statusClass = "status-rejected"; break;
+          }
 
-            tr.innerHTML = `
-                <td>${r.lateCallDate || ''}</td>
-                <td>${r.hub || ''}</td>
-                <td>${r.unit || ''}</td>
-                <td>${r.shift || ''}</td>
-                <td>${r.lateCallHours || ''}</td>
-                <td style="color:${statusColor}; font-weight:bold;">${r.status || ''}</td>
-            `;
-            resultsTable.appendChild(tr);
+          tr.innerHTML = `
+            <td>${r.lateCallDate || ''}</td>
+            <td>${r.hub || ''}</td>
+            <td>${r.unit || ''}</td>
+            <td>${r.shift || ''}</td>
+            <td>${r.lateCallHours || ''}</td>
+            <td class="${statusClass}">${r.status || ''}</td>
+          `;
 
-            if ((r.status||'').toLowerCase() === 'rejected') {
-                const noteTr = document.createElement('tr');
-                noteTr.classList.add('note-row');
-                noteTr.innerHTML = `<td colspan="6">Note: Approach the Hub Supervisor on duty.</td>`;
-                resultsTable.appendChild(noteTr);
-            }
+          tbody.appendChild(tr);
         });
-    } catch(err) {
+      } catch (err) {
         console.error(err);
-        errorMessage.innerText = "Error fetching data from Firebase. Check console for details.";
-        errorMessage.style.display = 'block';
+        alert("Error fetching data. Check console for details.");
+      }
     }
-}
 
-function clearData() {
-    document.getElementById('corpSearch').value = '';
-    dateInput.value = '';
-    document.getElementById('resultsTable').innerHTML = '';
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('errorMessage').style.display = 'none';
-}
-</script>
-
-<footer>
-    © 2026 HMCAS Support Service Production.<br>
-    James Ross Camins. All rights reserved.
-</footer>
+    searchBtn.addEventListener("click", fetchData);
+    clearBtn.addEventListener("click", () => {
+      corpInput.value = "";
+      dateInput.value = "";
+      tbody.innerHTML = "";
+    });
+  </script>
 </body>
 </html>
