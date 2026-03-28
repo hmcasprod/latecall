@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Late Call Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* HEADER */
+.logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0 10px;
+    flex-wrap: wrap;
+}
+
+.logos img {
+    width: 220px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 10px;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px 0 30px;
+    font-weight: 700;
+}
+
+/* DASHBOARD */
+.dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex: 1;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+/* CARD */
+.card {
+    width: 320px;
+    height: 190px;
+    background: #ffffff;
+    color: #111827;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* ICON */
+.card i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #4CAF50;
+}
+
+/* HOVER */
+.card:hover {
+    transform: translateY(-8px) scale(1.04);
+    background: #4CAF50;
+    color: #ffffff;
+    box-shadow: 
+        0 15px 35px rgba(0,0,0,0.6),
+        0 0 20px rgba(76, 175, 80, 0.7);
+}
+
+.card:hover i {
+    color: #ffffff;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    padding: 0 10px;
+}
+
+/* FOOTER */
+footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        footer:hover {
+            background-color: #4CAF50;
+            color: white;
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+
+    .dashboard {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .card {
+        width: 90%;
+        max-width: 350px;
+        height: 160px;
+    }
+
+    .card i {
+        font-size: 32px;
+    }
+
+    .card h2 {
+        font-size: 18px;
+    }
+
+    .logos img {
+        width: 160px;
+        height: 60px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="logos">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
+</div>
+
+<h1>Late Call Dashboard</h1>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+    <!-- LEFT -->
+    <div class="card" onclick="comingSoon()">
+        <i class="fas fa-search"></i>
+        <h2>Check Late Call Request Status</h2>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card" onclick="goToEntry()">
+        <i class="fas fa-file-alt"></i>
+        <h2>Late Call Entry</h2>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
+</footer>
+
+<script>
+function goToEntry() {
+    window.location.href = "https://hmcasprod.github.io/latecall/";
+}
+
+function comingSoon() {
+    alert("Coming Soon 🚧");
+}
+</script>
+
+</body>
+</html>
