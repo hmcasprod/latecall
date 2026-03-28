@@ -67,7 +67,7 @@
 <script type="module">
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
 // Replace with your Firebase config
 const firebaseConfig = {
@@ -92,6 +92,11 @@ const clearBtn = document.getElementById('clearBtn');
 searchBtn.addEventListener('click', searchData);
 clearBtn.addEventListener('click', clearData);
 
+function formatDateToString(dateStr) {
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('en-GB', options); // "08 Mar 2026"
+}
+
 async function searchData() {
     const corpSearch = document.getElementById('corpSearch').value.trim();
     const dateSearch = dateInput.value;
@@ -109,20 +114,14 @@ async function searchData() {
         return;
     }
 
+    const formattedDate = formatDateToString(dateSearch);
+
     try {
         const lateCallsCol = collection(db, "lateCalls");
-
-        // Convert input date to Firestore timestamps
-        const startDate = new Date(dateSearch);
-        startDate.setHours(0,0,0,0);
-        const endDate = new Date(dateSearch);
-        endDate.setHours(23,59,59,999);
-
         const q = query(
             lateCallsCol,
             where("corp", "==", corpSearch),
-            where("lateCallDate", ">=", Timestamp.fromDate(startDate)),
-            where("lateCallDate", "<=", Timestamp.fromDate(endDate))
+            where("lateCallDate", "==", formattedDate)
         );
 
         const snapshot = await getDocs(q);
@@ -138,8 +137,7 @@ async function searchData() {
 
         snapshot.docs.forEach(doc => {
             const r = doc.data();
-            const dateObj = r.lateCallDate.toDate(); // convert Firestore Timestamp
-            const formattedDate = dateObj.toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
+            const tr = document.createElement('tr');
 
             let statusColor;
             switch((r.status||'').toLowerCase()){
@@ -149,9 +147,8 @@ async function searchData() {
                 default: statusColor = '#e0e0e0';
             }
 
-            const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${formattedDate}</td>
+                <td>${r.lateCallDate || ''}</td>
                 <td>${r.hub || ''}</td>
                 <td>${r.unit || ''}</td>
                 <td>${r.shift || ''}</td>
@@ -179,8 +176,7 @@ function clearData() {
     dateInput.value = '';
     document.getElementById('resultsTable').innerHTML = '';
     document.getElementById('results').style.display = 'none';
-    const errorMessage = document.getElementById('errorMessage');
-    errorMessage.style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
 }
 </script>
 
@@ -190,5 +186,3 @@ function clearData() {
 </footer>
 </body>
 </html>
-
-TEST
