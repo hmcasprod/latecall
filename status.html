@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HMCAS Late Call Dashboard</title>
+<title>HMCAS Late Call Inquiry</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 <style>
 body {
@@ -68,6 +68,7 @@ body {
     gap: 10px;
     margin-bottom: 15px;
 }
+
 .button-group button {
     flex: 1;
     padding: 12px;
@@ -77,10 +78,26 @@ body {
     border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
 .button-group button:hover { background: #45a049; }
-.clear-btn { background: #f44336; }
-.clear-btn:hover { background: #d32f2f; }
+
+/* Red Clear Button */
+.button-group .clear-btn {
+    background-color: #f44336; /* bright red */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* smooth hover */
+}
+
+.button-group .clear-btn:hover {
+    background-color: #d32f2f; /* darker red on hover */
+}
 
 .error-message { color: #f44336; font-size: 14px; margin-top: 10px; text-align: center; display: none; }
 
@@ -125,7 +142,7 @@ footer:hover { background-color: #4CAF50; color: white; }
     </div>
 
     <div id="errorMessage" class="error-message">
-        Unable to find, kindly input correct Date of late call and Corporation Number
+        Unable to find information. Kindly input correct Corporation Number starting with "0" and late call date.
     </div>
 
     <div id="results" class="results-container">
