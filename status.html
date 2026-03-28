@@ -41,8 +41,8 @@
     <input type="text" id="corpSearch" placeholder="Enter Corporation Number">
     <input type="date" id="dateSearch" max="">
     <div class="button-group">
-        <button onclick="searchData()">Search</button>
-        <button class="clear-btn" onclick="clearData()">Clear</button>
+        <button id="searchBtn">Search</button>
+        <button id="clearBtn" class="clear-btn">Clear</button>
     </div>
     <div id="errorMessage" class="error-message"></div>
 
@@ -83,16 +83,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Set max date to today
-document.getElementById('dateSearch').max = new Date().toISOString().split("T")[0];
+const dateInput = document.getElementById('dateSearch');
+dateInput.max = new Date().toISOString().split("T")[0];
 
-// Search function
+const searchBtn = document.getElementById('searchBtn');
+const clearBtn = document.getElementById('clearBtn');
+
+searchBtn.addEventListener('click', searchData);
+clearBtn.addEventListener('click', clearData);
+
 async function searchData() {
     const corpSearch = document.getElementById('corpSearch').value.trim();
-    const dateSearch = document.getElementById('dateSearch').value;
+    const dateSearch = dateInput.value;
     const errorMessage = document.getElementById('errorMessage');
     const resultsContainer = document.getElementById('results');
     const resultsTable = document.getElementById('resultsTable');
 
+    // Reset display
     errorMessage.style.display = 'none';
     resultsContainer.style.display = 'none';
     resultsTable.innerHTML = '';
@@ -119,6 +126,7 @@ async function searchData() {
         }
 
         resultsContainer.style.display = 'block';
+
         snapshot.docs.forEach(doc => {
             const r = doc.data();
             const formattedDate = new Date(r.lateCallDate).toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
@@ -158,10 +166,11 @@ async function searchData() {
 
 function clearData() {
     document.getElementById('corpSearch').value = '';
-    document.getElementById('dateSearch').value = '';
-    document.getElementById('results').style.display = 'none';
+    dateInput.value = '';
     document.getElementById('resultsTable').innerHTML = '';
-    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('results').style.display = 'none';
+    const errorMessage = document.getElementById('errorMessage');
+    errorMessage.style.display = 'none';
 }
 </script>
 
