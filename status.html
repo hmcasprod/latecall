@@ -1,180 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Late Call Request</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #2c2f38;
-            color: #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            padding: 10px;
-            background-color: #333;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .logos img { width: 250px; height: 90px; object-fit: contain; margin: 0 15px; }
-        .search-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            background-color: #3a3f47;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            margin: 20px auto;
-            flex-grow: 1;
-        }
-        h2 { color: #e0e0e0; margin-bottom: 15px; font-weight: 700; font-size: 18px; text-align: center; }
-        input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #444; border-radius: 6px; margin-bottom: 15px; background-color: #444; color: #e0e0e0; }
-        .button-group { display: flex; width: 100%; gap: 10px; margin-bottom: 15px; }
-        button { flex: 1; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
-        button:hover { background: #45a049; }
-        .clear-btn { background: #f44336; }
-        .clear-btn:hover { background: #d32f2f; }
-        .error-message { color: #f44336; font-size: 14px; margin-top: 10px; text-align: center; display: none; }
-        .results-container { margin-top: 20px; width: 100%; display: none; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: center; border: 1px solid #555; font-size: 14px; color: #e0e0e0; }
-        th { background-color: #444; color: #fff; }
-        td { background-color: #333; }
-        .note-row td { text-align: left; font-style: italic; background-color: #222; color: #ffcc00; border-top: none; }
-        footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 10px; background-color: #333; color: #e0e0e0; font-size: 14px; }
-        footer:hover { background-color: #4CAF50; color: white; }
-        @media (max-width: 480px) { h2 { font-size: 16px; } table { font-size: 12px; } footer { font-size: 10px; padding: 8px 0; } .logos img { height: 35px; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Late Call Request</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #2c2f38;
+        color: #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    .logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        padding: 10px;
+        background-color: #333;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .logos img {
+        width: 250px;
+        height: 90px;
+        object-fit: contain;
+        margin: 0 15px;
+    }
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        background-color: #3a3f47;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        margin: 20px auto;
+        flex-grow: 1;
+    }
+    .search-container h2 {
+        color: #e0e0e0;
+        margin-bottom: 15px;
+        font-weight: 700;
+        font-size: 18px;
+        text-align: center;
+    }
+    .search-container input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #444;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        background-color: #444;
+        color: #e0e0e0;
+    }
+    .search-container .button-group {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .search-container button {
+        flex: 1;
+        padding: 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .search-container button:hover {
+        background: #45a049;
+    }
+    .search-container .clear-btn {
+        background: #f44336;
+    }
+    .search-container .clear-btn:hover {
+        background: #d32f2f;
+    }
+    .error-message {
+        color: #f44336;
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: center;
+        display: none;
+    }
+    .results-container {
+        margin-top: 20px;
+        width: 100%;
+        display: none;
+    }
+    .results-container table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .results-container th, .results-container td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #555;
+        font-size: 14px;
+        color: #e0e0e0;
+    }
+    .results-container th {
+        background-color: #444;
+        color: #fff;
+    }
+    .results-container td {
+        background-color: #333;
+    }
+    .note-row td {
+        text-align: left;
+        color: #FFD700;
+        font-weight: bold;
+        background-color: #3a3f47;
+    }
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        background-color: #333;
+        color: #e0e0e0;
+        font-size: 14px;
+    }
+    footer:hover {
+        background-color: #4CAF50;
+        color: white;
+    }
+    @media (max-width: 480px) {
+        .search-container h2 { font-size: 16px; }
+        .results-container table { font-size: 12px; }
+        footer { font-size: 10px; padding: 8px 0; }
+        .logos img { height: 35px; }
+    }
+</style>
 </head>
 <body>
-    <div class="logos">
-        <img src="logo1.png" alt="Logo 1">
-        <img src="logo2.png" alt="Logo 2">
+
+<div class="logos">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
+</div>
+
+<div class="search-container">
+    <h2>Search by Corporation Number & Late Call Date</h2>
+    <input type="text" id="corpSearch" placeholder="Enter Corporation Number">
+    <input type="date" id="dateSearch">
+    <div class="button-group">
+        <button onclick="searchData()">Search</button>
+        <button class="clear-btn" onclick="clearData()">Clear</button>
     </div>
 
-    <div class="search-container">
-        <h2>Search by Corporation Number & Late Call Date</h2>
-        <input type="text" id="corpSearch" placeholder="Enter Corporation Number">
-        <input type="date" id="dateSearch">
-        <div class="button-group">
-            <button onclick="searchData()">Search</button>
-            <button class="clear-btn" onclick="clearData()">Clear</button>
-        </div>
-
-        <div id="errorMessage" class="error-message">
-            Unable to find, kindly input correct Date of late call and Corporation Number
-        </div>
-
-        <div id="results" class="results-container">
-            <h3>Search Results</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Late Call Date</th>
-                        <th>Hub</th>
-                        <th>Unit</th>
-                        <th>Shift</th>
-                        <th>Late Call Hour/s</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="resultsTable"></tbody>
-            </table>
-        </div>
+    <div id="errorMessage" class="error-message">
+        Unable to find, kindly input correct Date of late call and Corporation Number
     </div>
 
-    <script>
-        // Set max date to today
-        const dateInput = document.getElementById('dateSearch');
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.setAttribute('max', today);
+    <div id="results" class="results-container">
+        <h3>Search Results</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Late Call Date</th>
+                    <th>Hub</th>
+                    <th>Unit</th>
+                    <th>Shift</th>
+                    <th>Late Call Hour/s</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable"></tbody>
+        </table>
+    </div>
+</div>
 
-        const sampleData = [
-            { corp: "045357", lateCallDate: "2026-03-25", hub: "Hub 1", unit: "Unit A", shift: "Day", lateCallHours: 2, status: "Pending" },
-            { corp: "045357", lateCallDate: "2026-03-24", hub: "Hub 2", unit: "Unit B", shift: "Night", lateCallHours: 1, status: "Approved" },
-            { corp: "045358", lateCallDate: "2026-03-26", hub: "Hub 3", unit: "Unit C", shift: "Day", lateCallHours: 3, status: "Rejected" }
-        ];
+<!-- Firebase -->
+<script type="module">
+// ----- Firebase Setup -----
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js";
 
-        function searchData() {
-            const corpSearch = document.getElementById('corpSearch').value.trim();
-            const dateSearch = document.getElementById('dateSearch').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const resultsContainer = document.getElementById('results');
-            const resultsTable = document.getElementById('resultsTable');
+// Replace these with your Firebase credentials
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
 
-            errorMessage.style.display = 'none';
-            resultsContainer.style.display = 'none';
-            resultsTable.innerHTML = '';
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-            if (!corpSearch.startsWith("0") || dateSearch === "") {
-                errorMessage.style.display = 'block';
-                return;
-            }
+// ----- Search Function -----
+const dateInput = document.getElementById('dateSearch');
+const today = new Date().toISOString().split('T')[0];
+dateInput.setAttribute('max', today);
 
-            const filteredData = sampleData.filter(r => r.corp === corpSearch && r.lateCallDate === dateSearch);
+async function searchData() {
+    const corpSearch = document.getElementById('corpSearch').value.trim();
+    const dateSearch = document.getElementById('dateSearch').value;
+    const errorMessage = document.getElementById('errorMessage');
+    const resultsContainer = document.getElementById('results');
+    const resultsTable = document.getElementById('resultsTable');
 
-            if (filteredData.length === 0) {
-                errorMessage.style.display = 'block';
-            } else {
-                resultsContainer.style.display = 'block';
-                filteredData.forEach(r => {
-                    const formattedDate = new Date(r.lateCallDate).toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
+    errorMessage.style.display = 'none';
+    resultsContainer.style.display = 'none';
+    resultsTable.innerHTML = '';
 
-                    let statusColor;
-                    switch(r.status.toLowerCase()) {
-                        case 'pending': statusColor = 'yellow'; break;
-                        case 'approved': statusColor = 'green'; break;
-                        case 'rejected': statusColor = 'red'; break;
-                        default: statusColor = '#e0e0e0';
-                    }
+    if (!corpSearch.startsWith("0") || dateSearch === "") {
+        errorMessage.style.display = 'block';
+        return;
+    }
 
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${formattedDate}</td>
-                        <td>${r.hub}</td>
-                        <td>${r.unit}</td>
-                        <td>${r.shift}</td>
-                        <td>${r.lateCallHours}</td>
-                        <td style="color: ${statusColor}; font-weight: bold;">${r.status}</td>
-                    `;
-                    resultsTable.appendChild(tr);
+    try {
+        const q = query(collection(db, "lateCalls"), 
+            where("corp", "==", corpSearch), 
+            where("lateCallDate", "==", dateSearch)
+        );
+        const snapshot = await getDocs(q);
+        const filteredData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                    if (r.status.toLowerCase() === 'rejected') {
-                        const noteTr = document.createElement('tr');
-                        noteTr.classList.add('note-row');
-                        noteTr.innerHTML = `<td colspan="6">Note: Approach the Hub Supervisor on duty.</td>`;
-                        resultsTable.appendChild(noteTr);
-                    }
-                });
-            }
+        if (filteredData.length === 0) {
+            errorMessage.style.display = 'block';
+        } else {
+            resultsContainer.style.display = 'block';
+            filteredData.forEach(r => {
+                const formattedDate = new Date(r.lateCallDate).toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
+                let statusColor;
+                switch(r.status.toLowerCase()) {
+                    case 'pending': statusColor = 'yellow'; break;
+                    case 'approved': statusColor = 'green'; break;
+                    case 'rejected': statusColor = 'red'; break;
+                    default: statusColor = '#e0e0e0';
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${r.hub}</td>
+                    <td>${r.unit}</td>
+                    <td>${r.shift}</td>
+                    <td>${r.lateCallHours}</td>
+                    <td style="color: ${statusColor}; font-weight: bold;">${r.status}</td>
+                `;
+                resultsTable.appendChild(tr);
+
+                if (r.status.toLowerCase() === 'rejected') {
+                    const noteTr = document.createElement('tr');
+                    noteTr.classList.add('note-row');
+                    noteTr.innerHTML = `<td colspan="6">Note: Approach the Hub Supervisor on duty.</td>`;
+                    resultsTable.appendChild(noteTr);
+                }
+            });
         }
+    } catch (err) {
+        console.error(err);
+        errorMessage.innerText = "Error fetching data from Firebase";
+        errorMessage.style.display = 'block';
+    }
+}
 
-        function clearData() {
-            document.getElementById('corpSearch').value = '';
-            document.getElementById('dateSearch').value = '';
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('resultsTable').innerHTML = '';
-            document.getElementById('errorMessage').style.display = 'none';
-        }
-    </script>
+function clearData() {
+    document.getElementById('corpSearch').value = '';
+    document.getElementById('dateSearch').value = '';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('resultsTable').innerHTML = '';
+    document.getElementById('errorMessage').style.display = 'none';
+}
+</script>
 
-    <footer>
-        © 2026 HMCAS Support Service Production.<br>
-        James Ross Camins. All rights reserved.
-    </footer>
+<footer>
+    © 2026 HMCAS Support Service Production.<br>
+    James Ross Camins. All rights reserved.
+</footer>
+
 </body>
 </html>
