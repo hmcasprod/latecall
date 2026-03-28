@@ -1,263 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Late Call Search Tool</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      background: linear-gradient(to right, #eef2f3, #ffffff);
-      padding-bottom: 60px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HMCAS Late Call Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2c2f38;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
-    .header {
-      background: white;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      flex-wrap: wrap;
-    }
+.logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    padding: 10px;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.logos img { width: 250px; height: 90px; object-fit: contain; margin: 0 15px; }
 
-    .header-left,
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 18px;
-    }
+.search-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #3a3f47;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto 20px auto;
+}
 
-    .header-left img,
-    .header-right img {
-      height: 50px;
-      object-fit: contain;
-    }
+.search-container h2 {
+    color: #e0e0e0;
+    margin-bottom: 15px;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+}
 
-    .container {
-      max-width: 1300px;
-      margin: auto;
-      padding: 20px;
-    }
+.search-container input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    background-color: #444;
+    color: #e0e0e0;
+}
 
-    .filter-box {
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.button-group {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.button-group button {
+    flex: 1;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.button-group button:hover { background: #45a049; }
+.clear-btn { background: #f44336; }
+.clear-btn:hover { background: #d32f2f; }
 
-    button {
-      padding: 6px 12px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+.error-message { color: #f44336; font-size: 14px; margin-top: 10px; text-align: center; display: none; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+.results-container { 
+    margin-top: 20px; 
+    width: 100%; 
+    display: none; 
+    overflow-x: auto;
+}
+.results-container table { width: 100%; border-collapse: collapse; }
+.results-container th, .results-container td { padding: 10px; text-align: center; border: 1px solid #555; font-size: 14px; color: #e0e0e0; }
+.results-container th { background-color: #444; color: #fff; }
+.results-container td { background-color: #333; }
+.note-row td { text-align: left; font-style: italic; background-color: #222; color: #ffcc00; border-top: none; }
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 6px;
-      text-align: center;
-      font-size: 13px;
-    }
+footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 10px; background-color: #333; color: #e0e0e0; font-size: 14px; }
+footer:hover { background-color: #4CAF50; color: white; }
 
-    th {
-      background: #f2f2f2;
-    }
-
-    .status-approved {
-      background: #4CAF50;
-      color: white;
-    }
-
-    .status-pending {
-      background: #FFD700;
-    }
-
-    .status-rejected {
-      background: #f44336;
-      color: white;
-    }
-
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #fff;
-      text-align: center;
-      padding: 8px;
-      font-size: 12px;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (max-width: 600px) {
-      .filter-box {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-  </style>
+@media (max-width: 480px) {
+    h2 { font-size: 16px; } 
+    table { font-size: 12px; } 
+    footer { font-size: 10px; padding: 8px 0; } 
+    .logos img { height: 35px; } 
+}
+</style>
 </head>
-
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-left">
-      <img src="logo1.png" alt="Logo 1">
-      <span>HMCAS Late Call Dashboard</span>
-    </div>
-    <div class="header-right">
-      <img src="logo2.png" alt="Logo 2">
-    </div>
-  </div>
+<div class="logos">
+    <img src="logo1.png" alt="Logo 1">
+    <img src="logo2.png" alt="Logo 2">
+</div>
 
-  <div class="container">
-
-    <!-- FILTERS -->
-    <div class="filter-box">
-      <label>From:</label>
-      <input type="date" id="startDate">
-      <label>To:</label>
-      <input type="date" id="endDate">
-
-      <input type="text" id="corpSearch" placeholder="Search Corporation Number">
-
-      <button id="resetFilters">Reset Filters</button>
+<div class="search-container">
+    <h2>Search by Corporation Number & Late Call Date</h2>
+    <input type="text" id="corpSearch" placeholder="Enter Corporation Number">
+    <input type="date" id="dateSearch">
+    
+    <div class="button-group">
+        <button id="searchBtn">Search</button>
+        <button class="clear-btn" id="clearBtn">Clear</button>
     </div>
 
-    <!-- TABLE -->
-    <div class="chart-box">
-      <h3>Requests Table</h3>
-      <table id="dataTable">
-        <thead>
-          <tr>
-            <th>Date Submitted</th>
-            <th>Late Call Date</th>
-            <th>Name</th>
-            <th>Corp</th>
-            <th>Hub</th>
-            <th>Shift</th>
-            <th>Late Hours</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div id="errorMessage" class="error-message">
+        Unable to find, kindly input correct Date of late call and Corporation Number
     </div>
 
-  </div>
+    <div id="results" class="results-container">
+        <h3>Search Results</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Late Call Date</th>
+                    <th>Hub</th>
+                    <th>Unit</th>
+                    <th>Shift</th>
+                    <th>Late Call Hour/s</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable"></tbody>
+        </table>
+    </div>
+</div>
 
-  <!-- FOOTER -->
-  <footer>
+<footer>
     © 2026 HMCAS Support Service Production.<br>
     James Ross Camins. All rights reserved.
-  </footer>
+</footer>
 
-  <script type="module">
+<script type="module">
     import { getLateCalls } from './firebase.js';
 
     let allRequests = [];
 
-    function formatDateTime(dateStr) {
-      const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[d.getMonth()];
-      const year = String(d.getFullYear()).slice(2);
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${day} ${month} ${year} ${hours}:${minutes}`;
+    async function loadData() {
+        try {
+            allRequests = await getLateCalls();
+        } catch (e) {
+            console.error("Error loading data:", e);
+        }
     }
+
+    const dateInput = document.getElementById('dateSearch');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('max', today);
 
     function formatDateOnly(dateStr) {
-      const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[d.getMonth()];
-      const year = String(d.getFullYear()).slice(2);
-      return `${day} ${month} ${year}`;
+        const d = new Date(dateStr);
+        const day = String(d.getDate()).padStart(2,'0');
+        const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        const month = monthNames[d.getMonth()];
+        const year = String(d.getFullYear()).slice(2);
+        return `${day} ${month} ${year}`;
     }
 
-    async function loadData() {
-      try {
-        allRequests = await getLateCalls();
-        filterDashboard();
-      } catch (e) {
-        console.error("Error loading data:", e);
-      }
+    function filterData() {
+        const corpSearch = document.getElementById('corpSearch').value.trim();
+        const dateSearch = document.getElementById('dateSearch').value;
+        const errorMessage = document.getElementById('errorMessage');
+        const resultsContainer = document.getElementById('results');
+        const resultsTable = document.getElementById('resultsTable');
+
+        errorMessage.style.display = 'none';
+        resultsContainer.style.display = 'none';
+        resultsTable.innerHTML = '';
+
+        if (!corpSearch || !dateSearch) {
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        const filtered = allRequests.filter(r => r.corp === corpSearch && r.lateCallDate === dateSearch);
+
+        if (filtered.length === 0) {
+            errorMessage.style.display = 'block';
+        } else {
+            resultsContainer.style.display = 'block';
+            filtered.forEach(r => {
+                const formattedDate = formatDateOnly(r.lateCallDate);
+                let statusColor;
+                switch(r.status.toLowerCase()) {
+                    case 'pending': statusColor='yellow'; break;
+                    case 'approved': statusColor='green'; break;
+                    case 'rejected': statusColor='red'; break;
+                    default: statusColor='#e0e0e0';
+                }
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${r.hub}</td>
+                    <td>${r.unit || ''}</td>
+                    <td>${r.shift}</td>
+                    <td>${r.lateCallHours || 0}</td>
+                    <td style="color:${statusColor}; font-weight:bold;">${r.status}</td>
+                `;
+                resultsTable.appendChild(tr);
+
+                if(r.status.toLowerCase() === 'rejected') {
+                    const noteTr = document.createElement('tr');
+                    noteTr.classList.add('note-row');
+                    noteTr.innerHTML = `<td colspan="6">Note: Approach the Hub Supervisor on duty.</td>`;
+                    resultsTable.appendChild(noteTr);
+                }
+            });
+        }
     }
 
-    function filterDashboard() {
-      const startDate = document.getElementById("startDate").value;
-      const endDate = document.getElementById("endDate").value;
-      const corpSearch = document.getElementById("corpSearch").value.toLowerCase();
-
-      let data = [...allRequests];
-
-      if (corpSearch) data = data.filter(r => (r.corp || "").toString().includes(corpSearch));
-      if (startDate) data = data.filter(r => new Date(r.dateSubmitted) >= new Date(startDate));
-      if (endDate) data = data.filter(r => new Date(r.dateSubmitted) <= new Date(endDate + "T23:59:59"));
-
-      updateTable(data);
+    function clearData() {
+        document.getElementById('corpSearch').value = '';
+        document.getElementById('dateSearch').value = '';
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('resultsTable').innerHTML = '';
+        document.getElementById('errorMessage').style.display = 'none';
     }
 
-    function updateTable(data) {
-      const tbody = document.querySelector("#dataTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(r => {
-        const tr = document.createElement("tr");
-        let statusClass = "";
-        const status = (r.status || "").toLowerCase();
-        if (status === "approved") statusClass = "status-approved";
-        if (status === "pending") statusClass = "status-pending";
-        if (status === "rejected") statusClass = "status-rejected";
-        tr.innerHTML = `
-          <td>${formatDateTime(r.dateSubmitted)}</td>
-          <td>${r.lateCallDate ? formatDateOnly(r.lateCallDate) : ""}</td>
-          <td>${r.name}</td>
-          <td>${r.corp}</td>
-          <td>${r.hub}</td>
-          <td>${r.shift}</td>
-          <td>${r.lateHours || 0}</td>
-          <td class="${statusClass}">${r.status}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    document.getElementById("corpSearch").addEventListener("input", filterDashboard);
-    document.getElementById("startDate").addEventListener("change", filterDashboard);
-    document.getElementById("endDate").addEventListener("change", filterDashboard);
-    document.getElementById("resetFilters").addEventListener("click", () => {
-      document.getElementById("startDate").value = "";
-      document.getElementById("endDate").value = "";
-      document.getElementById("corpSearch").value = "";
-      filterDashboard();
-    });
+    document.getElementById('searchBtn').addEventListener('click', filterData);
+    document.getElementById('clearBtn').addEventListener('click', clearData);
 
     loadData();
-  </script>
+</script>
 
 </body>
-
 </html>
