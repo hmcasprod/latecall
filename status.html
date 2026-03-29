@@ -83,9 +83,8 @@ body {
 
 .button-group button:hover { background: #45a049; }
 
-/* Red Clear Button */
 .button-group .clear-btn {
-    background-color: #f44336;
+    background-color: #f44336; 
     color: white;
     border: none;
     border-radius: 6px;
@@ -96,7 +95,7 @@ body {
 }
 
 .button-group .clear-btn:hover {
-    background-color: #d32f2f;
+    background-color: #d32f2f; 
 }
 
 .error-message { color: #f44336; font-size: 14px; margin-top: 10px; text-align: center; display: none; }
@@ -170,101 +169,97 @@ footer:hover { background-color: #4CAF50; color: white; }
 </footer>
 
 <script type="module">
-    import { getLateCalls } from './firebase.js';
+import { getLateCalls } from './firebase.js';
 
-    let allRequests = [];
+let allRequests = [];
 
-    async function loadData() {
-        try {
-            allRequests = await getLateCalls();
-        } catch (e) {
-            console.error("Error loading data:", e);
-        }
+async function loadData() {
+    try {
+        allRequests = await getLateCalls();
+    } catch (e) {
+        console.error("Error loading data:", e);
+    }
+}
+
+const dateInput = document.getElementById('dateSearch');
+const today = new Date().toISOString().split('T')[0];
+dateInput.setAttribute('max', today);
+
+function formatDateOnly(dateStr) {
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2,'0');
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const month = monthNames[d.getMonth()];
+    const year = String(d.getFullYear()).slice(2);
+    return `${day} ${month} ${year}`;
+}
+
+function filterData() {
+    const corpSearch = document.getElementById('corpSearch').value.trim();
+    const dateSearch = document.getElementById('dateSearch').value;
+    const errorMessage = document.getElementById('errorMessage');
+    const resultsContainer = document.getElementById('results');
+    const resultsTable = document.getElementById('resultsTable');
+
+    errorMessage.style.display = 'none';
+    resultsContainer.style.display = 'none';
+    resultsTable.innerHTML = '';
+
+    if (!corpSearch || !dateSearch) {
+        errorMessage.style.display = 'block';
+        return;
     }
 
-    const dateInput = document.getElementById('dateSearch');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('max', today);
+    const filtered = allRequests.filter(r => r.corp === corpSearch && r.lateCallDate === dateSearch);
 
-    function formatDateOnly(dateStr) {
-        const d = new Date(dateStr);
-        const day = String(d.getDate()).padStart(2,'0');
-        const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-        const month = monthNames[d.getMonth()];
-        const year = String(d.getFullYear()).slice(2);
-        return `${day} ${month} ${year}`;
+    if (filtered.length === 0) {
+        errorMessage.style.display = 'block';
+    } else {
+        resultsContainer.style.display = 'block';
+        filtered.forEach(r => {
+            const formattedDate = formatDateOnly(r.lateCallDate);
+            let statusColor;
+            switch(r.status.toLowerCase()) {
+                case 'pending': statusColor='yellow'; break;
+                case 'approved': statusColor='green'; break;
+                case 'rejected': statusColor='red'; break;
+                default: statusColor='#e0e0e0';
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formattedDate}</td>
+                <td>${r.hub}</td>
+                <td>${r.unit || ''}</td>
+                <td>${r.shift}</td>
+                <td>${r.lateCallHours || 0}</td>
+                <td style="color:${statusColor}; font-weight:bold;">${r.status}</td>
+                <td>${r.tripNumber || '-'} / ${r.reason || '-'}</td>
+            `;
+            resultsTable.appendChild(tr);
+
+            if(r.status.toLowerCase() === 'rejected') {
+                const noteTr = document.createElement('tr');
+                noteTr.classList.add('note-row');
+                const rejectionNote = r.rejectionReason || r.reasonForLateCall || "Please contact Hub Supervisor for details.";
+                noteTr.innerHTML = `<td colspan="7">Note: ${rejectionNote}</td>`;
+                resultsTable.appendChild(noteTr);
+            }
+        });
     }
+}
 
-    function filterData() {
-        const corpSearch = document.getElementById('corpSearch').value.trim();
-        const dateSearch = document.getElementById('dateSearch').value;
-        const errorMessage = document.getElementById('errorMessage');
-        const resultsContainer = document.getElementById('results');
-        const resultsTable = document.getElementById('resultsTable');
+function clearData() {
+    document.getElementById('corpSearch').value = '';
+    document.getElementById('dateSearch').value = '';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('resultsTable').innerHTML = '';
+    document.getElementById('errorMessage').style.display = 'none';
+}
 
-        errorMessage.style.display = 'none';
-        resultsContainer.style.display = 'none';
-        resultsTable.innerHTML = '';
+document.getElementById('searchBtn').addEventListener('click', filterData);
+document.getElementById('clearBtn').addEventListener('click', clearData);
 
-        if (!corpSearch || !dateSearch) {
-            errorMessage.style.display = 'block';
-            return;
-        }
-
-        const filtered = allRequests.filter(r => r.corp === corpSearch && r.lateCallDate === dateSearch);
-
-        if (filtered.length === 0) {
-            errorMessage.style.display = 'block';
-        } else {
-            resultsContainer.style.display = 'block';
-            filtered.forEach(r => {
-                const formattedDate = formatDateOnly(r.lateCallDate);
-                let statusColor;
-                switch(r.status?.toLowerCase()) {
-                    case 'pending': statusColor='yellow'; break;
-                    case 'approved': statusColor='green'; break;
-                    case 'rejected': statusColor='red'; break;
-                    default: statusColor='#e0e0e0';
-                }
-
-                // Ensure we handle multiple possible property names for trip/reason
-                const trip = r.trip || r.tripNumber || '-';
-                const reason = r.reason || r.reasonForLateCall || '-';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td>${r.hub}</td>
-                    <td>${r.unit || ''}</td>
-                    <td>${r.shift}</td>
-                    <td>${r.lateCallHours || 0}</td>
-                    <td style="color:${statusColor}; font-weight:bold;">${r.status}</td>
-                    <td>${trip} / ${reason}</td>
-                `;
-                resultsTable.appendChild(tr);
-
-                if(r.status?.toLowerCase() === 'rejected') {
-                    const noteTr = document.createElement('tr');
-                    noteTr.classList.add('note-row');
-                    noteTr.innerHTML = `<td colspan="7">Note: Approach the Hub Supervisor on duty.</td>`;
-                    resultsTable.appendChild(noteTr);
-                }
-            });
-        }
-    }
-
-    function clearData() {
-        document.getElementById('corpSearch').value = '';
-        document.getElementById('dateSearch').value = '';
-        document.getElementById('results').style.display = 'none';
-        document.getElementById('resultsTable').innerHTML = '';
-        document.getElementById('errorMessage').style.display = 'none';
-    }
-
-    document.getElementById('searchBtn').addEventListener('click', filterData);
-    document.getElementById('clearBtn').addEventListener('click', clearData);
-
-    loadData();
+loadData();
 </script>
 
 </body>
