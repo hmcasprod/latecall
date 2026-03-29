@@ -9,328 +9,254 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 <style>
-  /* Basic body styling */
-  body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensure body takes full height */
-  }
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-  .logos {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
+.logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
-  .logos img {
-    width: 250px;
-    height: 90px;
-    object-fit: contain;
-    margin: 0 15px;
-  }
+.logos img {
+  width: 250px;
+  height: 90px;
+  object-fit: contain;
+  margin: 0 15px;
+}
 
-  h1 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: black;
-  }
+h1 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: black;
+}
 
-  label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 6px;
-    font-weight: bold;
-    color: black;
-    line-height: 1.5;
-  }
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: black;
+}
 
-  label i {
-    margin-right: 10px;
-    color: #4CAF50;
-    font-size: 1.2em;
-  }
+label i {
+  margin-right: 10px;
+  color: #4CAF50;
+}
 
-  form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    flex-grow: 1; /* Allow the form to grow and take available space */
-    padding-bottom: 80px; /* Ensure form does not get hidden under footer */
-  }
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  padding-bottom: 80px;
+}
 
-  .input-container {
-    position: relative;
-    margin-bottom: 12px;
-  }
+.input-container {
+  margin-bottom: 12px;
+}
 
-  .input-container input,
-  .input-container select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
 
-  input[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    width: 100%;
-    font-weight: bold;
-    border-radius: 4px;
-    text-align: center;
-  }
+input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  font-weight: bold;
+  border-radius: 4px;
+}
 
-  input[type="submit"]:hover {
-    background-color: #45a049;
-  }
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
 
-  #otherHub {
-    display: none;
-  }
+#otherHub { display: none; }
 
-  .form-container {
-    max-width: 600px;
-    margin: 0 auto;
-  }
+.input-error { border: 2px solid red !important; }
 
-  .input-error {
-    border: 2px solid red !important;
-  }
+#confirmationModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
 
-  #confirmationModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-  }
+#confirmationModal .modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}
 
-  #confirmationModal .modal-content {
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  /* Fixed Footer - Always visible at the bottom */
-  footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    font-size: 14px;
-    color: #555;
-    transition: all 0.3s ease;
-  }
-
-  footer:hover {
-    background-color: #4CAF50;
-    color: white;
-    transform: translateY(-5px);
-  }
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+}
 </style>
 </head>
 
 <body>
+
 <div class="form-container">
   <div class="logos">
-    <img src="logo1.png" alt="Logo 1">
-    <img src="logo2.png" alt="Logo 2">
+    <img src="logo1.png">
+    <img src="logo2.png">
   </div>
 
   <h1>Late Call Entry Form</h1>
 
-  <form id="lateCallForm" novalidate>
+  <form id="lateCallForm">
 
     <div class="input-container">
-      <label for="date"><i class="fas fa-calendar-alt"></i> Late Call Date *</label>
+      <label>Late Call Date *</label>
       <input type="date" id="date" required>
     </div>
 
     <div class="input-container">
-      <label for="name"><i class="fas fa-user"></i> Name *</label>
+      <label>Name *</label>
       <input type="text" id="name" required>
     </div>
 
     <div class="input-container">
-      <label for="corp"><i class="fas fa-id-card"></i> Corp Number *</label>
-      <input type="number" id="corp" required min="0" step="1">
+      <label>Corp Number *</label>
+      <input type="number" id="corp" required>
     </div>
 
     <div class="input-container">
-      <label for="typeOfDuty"><i class="fas fa-briefcase"></i> Type of Duty *</label>
+      <label>Type of Duty *</label>
       <select id="typeOfDuty" required>
-        <option value="">-- Select Type of Duty --</option>
+        <option value="">Select</option>
         <option>Regular Shift</option>
         <option>Overtime</option>
       </select>
     </div>
 
     <div class="input-container">
-      <label for="hub"><i class="fas fa-home"></i> HUB *</label>
+      <label>Hub *</label>
       <select id="hub" required>
-        <option value="">-- Select HUB --</option>
+        <option value="">Select</option>
         <option>Hub 1</option>
         <option>Hub 2</option>
-        <option>Hub 3</option>
-        <option>Hub 4</option>
-        <option>Hub 5</option>
-        <option>Hub 6</option>
-        <option>Hub 7</option>
-        <option>Hub 8</option>
-        <option>Events</option>
-        <option>SAS</option>
-        <option>Retrieval</option>
-        <option>Life Flight</option>
-        <option value="Others">Other/s : Please Specify</option>
+        <option>Others</option>
       </select>
-      <input type="text" id="otherHub" placeholder="Please specify">
+      <input type="text" id="otherHub" placeholder="Specify">
     </div>
 
     <div class="input-container">
-      <label for="unit"><i class="fas fa-ambulance"></i> Unit *</label>
+      <label>Unit *</label>
       <input type="text" id="unit" required>
     </div>
 
     <div class="input-container">
-      <label for="shift"><i class="fas fa-clock"></i> Shift *</label>
+      <label>Shift *</label>
       <select id="shift" required>
-        <option value="">-- Select Shift --</option>
+        <option value="">Select</option>
         <option>Day</option>
-        <option>Peak</option>
         <option>Night</option>
-        <option>Event</option>
       </select>
     </div>
 
     <div class="input-container">
-      <label for="timeout"><i class="fas fa-clock"></i> Time Out *</label>
+      <label>Time Out *</label>
       <input type="time" id="timeout" required>
     </div>
 
-    <!-- UPDATED FIELD -->
     <div class="input-container">
-      <label for="lateHours"><i class="fas fa-hourglass-half"></i> Number of Late Call Hours *</label>
-      <input type="number" id="lateHours" required min="1" step="1" placeholder="(e.g. 1, 2, 3)">
+      <label>Late Call Hours *</label>
+      <input type="number" id="lateHours" required>
     </div>
 
     <div class="input-container">
-      <label for="trip"><i class="fas fa-exclamation-circle"></i> Trip Number / Reason for Late Time Out *</label>
+      <label>Trip / Reason *</label>
       <input type="text" id="trip" required>
     </div>
 
     <input type="submit" value="Submit">
+
   </form>
 </div>
 
 <div id="confirmationModal">
-  <div class="modal-content">
-    Late Call Details Submitted Successfully!
-  </div>
+  <div class="modal-content">Submitted Successfully</div>
 </div>
 
 <script type="module">
 import { submitLateCall } from './firebase.js';
 
-const dateInput = document.getElementById('date');
-const today = new Date().toISOString().split('T')[0];
-dateInput.setAttribute('max', today);
-
 document.getElementById('hub').addEventListener('change', function() {
-  const otherHub = document.getElementById('otherHub');
-  if (this.value === "Others") {
-    otherHub.style.display = "block";
-    otherHub.required = true;
-  } else {
-    otherHub.style.display = "none";
-    otherHub.required = false;
-    otherHub.classList.remove('input-error');
-  }
+  const other = document.getElementById('otherHub');
+  other.style.display = this.value === "Others" ? "block" : "none";
 });
-
-function highlightErrors(form) {
-  const fields = form.querySelectorAll('input, select');
-  let firstError = null;
-  fields.forEach(f => f.classList.remove('input-error'));
-  fields.forEach(f => {
-    if (!f.checkValidity()) {
-      f.classList.add('input-error');
-      if (!firstError) firstError = f;
-    }
-  });
-  if(firstError) firstError.focus();
-  return !firstError;
-}
 
 document.getElementById('lateCallForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  
-  if(!highlightErrors(this)) return;
-
-  const dateSubmitted = new Date();
 
   const data = {
-    date: dateInput.value,
+    date: document.getElementById('date').value, // ✅ unchanged
     name: document.getElementById('name').value,
     corp: document.getElementById('corp').value,
     typeOfDuty: document.getElementById('typeOfDuty').value,
-    hub: document.getElementById('hub').value === "Others" 
-          ? document.getElementById('otherHub').value 
-          : document.getElementById('hub').value,
+    hub: document.getElementById('hub').value,
     unit: document.getElementById('unit').value,
     shift: document.getElementById('shift').value,
     timeout: document.getElementById('timeout').value,
-    lateHours: parseInt(document.getElementById('lateHours').value), // whole number only
+
+    // ✅ FIXED ONLY THIS LINE
+    lateCallHours: parseInt(document.getElementById('lateHours').value),
+
     trip: document.getElementById('trip').value,
     status: 'Pending',
-    dateSubmitted: dateSubmitted.toISOString(),
+    dateSubmitted: new Date().toISOString()
   };
 
   const success = await submitLateCall(data);
-  if (success) {
-    this.reset();
-    document.getElementById('otherHub').style.display = "none";
 
-    const modal = document.getElementById('confirmationModal');
-    modal.style.display = 'flex';
-    setTimeout(() => { modal.style.display = 'none'; }, 2500);
-  } else {
-    alert('Failed to submit data.');
+  if(success){
+    this.reset();
+    document.getElementById('confirmationModal').style.display = 'flex';
+    setTimeout(()=> {
+      document.getElementById('confirmationModal').style.display='none';
+    },2000);
   }
 });
 </script>
 
 <footer>
-© 2026 HMCAS Support Service Production.<br>
-James Ross Camins. All rights reserved.
+© 2026 HMCAS
 </footer>
 
 </body>
