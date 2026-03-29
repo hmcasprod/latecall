@@ -85,18 +85,18 @@ body {
 
 /* Red Clear Button */
 .button-group .clear-btn {
-    background-color: #f44336; /* bright red */
+    background-color: #f44336;
     color: white;
     border: none;
     border-radius: 6px;
     padding: 12px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* smooth hover */
+    transition: background-color 0.3s ease;
 }
 
 .button-group .clear-btn:hover {
-    background-color: #d32f2f; /* darker red on hover */
+    background-color: #d32f2f;
 }
 
 .error-message { color: #f44336; font-size: 14px; margin-top: 10px; text-align: center; display: none; }
@@ -156,7 +156,7 @@ footer:hover { background-color: #4CAF50; color: white; }
                     <th>Shift</th>
                     <th>Late Call Hour/s</th>
                     <th>Status</th>
-                    <th>Trip Number / Reason</th> <!-- New column -->
+                    <th>Trip Number / Reason</th>
                 </tr>
             </thead>
             <tbody id="resultsTable"></tbody>
@@ -220,12 +220,17 @@ footer:hover { background-color: #4CAF50; color: white; }
             filtered.forEach(r => {
                 const formattedDate = formatDateOnly(r.lateCallDate);
                 let statusColor;
-                switch(r.status.toLowerCase()) {
+                switch(r.status?.toLowerCase()) {
                     case 'pending': statusColor='yellow'; break;
                     case 'approved': statusColor='green'; break;
                     case 'rejected': statusColor='red'; break;
                     default: statusColor='#e0e0e0';
                 }
+
+                // Ensure we handle multiple possible property names for trip/reason
+                const trip = r.trip || r.tripNumber || '-';
+                const reason = r.reason || r.reasonForLateCall || '-';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${formattedDate}</td>
@@ -234,14 +239,14 @@ footer:hover { background-color: #4CAF50; color: white; }
                     <td>${r.shift}</td>
                     <td>${r.lateCallHours || 0}</td>
                     <td style="color:${statusColor}; font-weight:bold;">${r.status}</td>
-                    <td>${r.tripNumber || '-'} / ${r.reason || '-'}</td> <!-- New column -->
+                    <td>${trip} / ${reason}</td>
                 `;
                 resultsTable.appendChild(tr);
 
-                if(r.status.toLowerCase() === 'rejected') {
+                if(r.status?.toLowerCase() === 'rejected') {
                     const noteTr = document.createElement('tr');
                     noteTr.classList.add('note-row');
-                    noteTr.innerHTML = `<td colspan="7">Note: Approach the Hub Supervisor on duty.</td>`; // Updated colspan
+                    noteTr.innerHTML = `<td colspan="7">Note: Approach the Hub Supervisor on duty.</td>`;
                     resultsTable.appendChild(noteTr);
                 }
             });
