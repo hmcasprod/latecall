@@ -1,121 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supervisor Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    background: linear-gradient(to right, #eef2f3, #ffffff);
-    color: #333;
-}
-.header-logos {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.header-logos img {height: 50px;}
-#loginPage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.login-container {
-    background: #fff;
-    padding: 50px 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
-.login-container input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border 0.2s ease;
-}
-.login-container input:focus {border-color: #4CAF50;outline: none;}
-.login-container button {
-    width: 100%;
-    padding: 14px;
-    background: #4CAF50;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-    transition: background 0.2s ease;
-}
-.login-container button:hover {background: #45a049;}
-.login-container .error-message {color: red;margin-top: 10px;font-size: 14px;}
-.remember-me label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    margin: 0;
-}
-.remember-me input {width:auto;height:auto;}
-.forgot-password {margin-top:15px;text-align:center;font-size:14px;}
-.forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
-#dashboardPage {
-    display:none;
-    padding:20px;
-    padding-bottom:80px;
-}
-.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.top-bar label {font-weight:600;}
-.top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
-.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
-.clear-filters-btn {
-    background-color: #f44336;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 14px;
-}
-.clear-filters-btn:hover {background-color: #e53935;}
-.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
-table {width:100%;border-collapse:collapse;min-width:900px;}
-th, td {padding:10px;text-align:center;border:1px solid #ddd;}
-th {background:#f2f2f2;font-weight:600;}
-tr:nth-child(even) td {background:#fafafa;}
-.status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
-.status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
-.status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
-.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    background: #fff;
-    padding: 10px 0;
-    font-size: 12px;
-    color: #555;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-}
-@media(max-width:900px){table{min-width:600px;} }
-@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #eef2f3, #ffffff);
+            color: #333;
+        }
+        .header-logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-logos img {height: 50px;}
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #fff;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
+        .login-container input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.2s ease;
+        }
+        .login-container input:focus {border-color: #4CAF50;outline: none;}
+        .login-container button {
+            width: 100%;
+            padding: 14px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.2s ease;
+        }
+        .login-container button:hover {background: #45a049;}
+        .login-container .error-message {color: red;margin-top: 10px;font-size: 14px;}
+        .remember-me label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 0;
+        }
+        .remember-me input {width:auto;height:auto;}
+        .forgot-password {margin-top:15px;text-align:center;font-size:14px;}
+        .forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
+        #dashboardPage {
+            display:none;
+            padding:20px;
+            padding-bottom:80px;
+        }
+        .top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+        .top-bar label {font-weight:600;}
+        .top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
+        .top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+        .clear-filters-btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .clear-filters-btn:hover {
+            background-color: #e53935;
+        }
+        .table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
+        table {width:100%;border-collapse:collapse;min-width:900px;}
+        th, td {padding:10px;text-align:center;border:1px solid #ddd;}
+        th {background:#f2f2f2;font-weight:600;}
+        tr:nth-child(even) td {background:#fafafa;}
+        .status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
+        .status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
+        .status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
+        .action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background: #fff;
+            padding: 10px 0;
+            font-size: 12px;
+            color: #555;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        @media(max-width:900px){table{min-width:600px;} }
+        @media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;} }
+    </style>
 </head>
 <body>
 <div class="header-logos">
@@ -153,6 +155,7 @@ footer {
         <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
     </div>
 
+    <!-- Filters -->
     <div class="top-bar">
         <div>
             <label>Date From:</label><input type="date" id="filterFrom">
@@ -220,9 +223,9 @@ const supervisorsInit = [
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-function togglePassword(){ 
-    const pwd = document.getElementById('password'); 
-    pwd.type = pwd.type==="password"?"text":"password"; 
+function togglePassword(){
+    const pwd = document.getElementById('password');
+    pwd.type = pwd.type==="password"?"text":"password";
 }
 
 function login(){
@@ -291,7 +294,11 @@ async function loadTable(){
     data.forEach(r => {
         const d = new Date(r.dateSubmitted);
         const lateCallDate = new Date(r.lateCallDate);
-        if (isNaN(d.getTime()) || isNaN(lateCallDate.getTime())) return;
+
+        if (isNaN(d.getTime()) || isNaN(lateCallDate.getTime())) {
+            console.error("Invalid date:", r.dateSubmitted, r.lateCallDate);
+            return;
+        }
 
         let include = true;
         if(from && new Date(from) > lateCallDate) include = false;
@@ -309,15 +316,29 @@ async function loadTable(){
 
             const actionButtons = statusNormalized === "pending" ? 
                 `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
-                 <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
+                <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` 
              : "";
 
-            const formattedDate = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' }) + ' ' +
-                                  d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12:false });
-            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
+            // Date Submitted with time 24H format
+            const formattedDate = d.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            }) + ' ' + d.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
 
+            const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            });
+
+            // Create a row with the updated column order
             const tr = document.createElement('tr');
-            tr.innerHTML = `
+            tr.innerHTML = ` 
                 <td>${formattedDate}</td>
                 <td>${formattedLateCallDate}</td>
                 <td>${r.name}</td>
@@ -333,16 +354,11 @@ async function loadTable(){
                 <td>${actionButtons}</td>
                 <td>${r.processedBy || ''}</td>
             `;
-            tbody.appendChild(tr);
-
-            // If rejected, show rejection reason in a note row
-            if(statusNormalized === "rejected" && r.rejectionReason){
-                const noteTr = document.createElement('tr');
-                noteTr.innerHTML = `<td colspan="14" style="text-align:left;padding-left:20px;font-style:italic;background:#ffe6e6;">Note: ${r.rejectionReason}</td>`;
-                tbody.appendChild(noteTr);
-            }
+            rows.push(tr);
         }
     });
+
+    rows.forEach(row => tbody.appendChild(row));
 }
 
 function clearFilters(){
@@ -358,10 +374,18 @@ function clearFilters(){
 async function approve(id){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'2-digit'});
-    const formattedTime = currentDate.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
+    const formattedDate = currentDate.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+    });
+    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+    });
     const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime})`;
-    await updateRequestStatus(id,"Approved",processedBy, null);
+    await updateRequestStatus(id,"Approved",processedBy);
     loadTable();
 }
 
@@ -370,11 +394,18 @@ async function reject(id){
     if(!reason) return;
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'2-digit'});
-    const formattedTime = currentDate.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'});
-    const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime})`;
-    // Pass reason separately
-    await updateRequestStatus(id,"Rejected",processedBy, reason);
+    const formattedDate = currentDate.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+    });
+    const formattedTime = currentDate.toLocaleTimeString('en-GB', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const processedBy = `${sup.fullName} CN ${sup.corp} (${formattedDate} ${formattedTime}) - ${reason}`;
+    await updateRequestStatus(id,"Rejected",processedBy);
     loadTable();
 }
 
@@ -414,9 +445,23 @@ document.getElementById('password').addEventListener('keydown', e => {
 document.getElementById('filterHub').addEventListener('change', loadTable);
 document.getElementById('filterStatus').addEventListener('change', loadTable);
 
-document.getElementById('loginBtn').addEventListener('click', login);
-
 checkLogin();
+
+window.logout = logout;
+window.loadTable = loadTable;
+window.exportToExcel = exportToExcel;
+window.approve = approve;
+window.reject = reject;
+window.forgotPassword = forgotPassword;
+window.togglePassword = togglePassword;
+window.login = login;
+document.getElementById('loginBtn').onclick = login;
 </script>
+
+<footer>
+    © 2026 HMCAS Support Service Production.<br>
+    James Ross Camins. All rights reserved.
+</footer>
+
 </body>
 </html>
