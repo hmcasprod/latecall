@@ -153,7 +153,7 @@ function login(){
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
   let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-  const sup = supervisors.find(s=>s.username===username && s.password===password);
+  const sup = supervisors.find(s => s.username.toLowerCase() === username.toLowerCase() && s.password === password);
   if(sup){
       localStorage.setItem('currentSupervisor', JSON.stringify(sup));
       if(document.getElementById('savePassword').checked){ localStorage.setItem('savedPassword', password);}
