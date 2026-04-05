@@ -8,206 +8,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.10.0/pptxgen.min.js"></script> <!-- Added PptxGenJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.10.0/pptxgen.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      background: linear-gradient(to right, #eef2f3, #ffffff);
-      padding-bottom: 60px;
-    }
-
-    .header {
-      background: white;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      flex-wrap: wrap;
-    }
-
-    .header-left,
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-left img,
-    .header-right img {
-      height: 50px;
-      object-fit: contain;
-    }
-
-    .container {
-      max-width: 1300px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .filter-box {
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
-      text-align: center;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .card p {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 5px 0 0;
-    }
-
-    .card.active {
-      border: 2px solid #2196F3;
-      transform: scale(1.05);
-    }
-
-    .quick-date button {
-      background: #2196F3;
-      margin-right: 5px;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .quick-date button.active {
-      border: 2px solid #2196F3;
-      transform: scale(1.05);
-    }
-
-    .charts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .chart-box {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    button {
-      padding: 6px 12px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 6px;
-      text-align: center;
-      font-size: 13px;
-    }
-
-    th {
-      background: #f2f2f2;
-    }
-
-    .status-approved {
-      background: #4CAF50;
-      color: white;
-    }
-
-    .status-pending {
-      background: #FFD700;
-    }
-
-    .status-rejected {
-      background: #f44336;
-      color: white;
-    }
-
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #fff;
-      text-align: center;
-      padding: 8px;
-      font-size: 12px;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (max-width: 600px) {
-      .filter-box,
-      .quick-date {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
+    body { font-family: 'Inter', sans-serif; margin:0; background: linear-gradient(to right,#eef2f3,#ffffff); padding-bottom:60px; }
+    .header { background:white; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); flex-wrap:wrap; }
+    .header-left,.header-right{ display:flex; align-items:center; gap:10px; }
+    .header-left img,.header-right img{ height:50px; object-fit:contain; }
+    .container{ max-width:1300px; margin:auto; padding:20px; }
+    .filter-box{ background:#fff; padding:15px; border-radius:10px; box-shadow:0 5px 12px rgba(0,0,0,0.08); margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px; margin-bottom:20px; }
+    .card{ background:white; padding:15px; border-radius:10px; box-shadow:0 5px 12px rgba(0,0,0,0.08); text-align:center; cursor:pointer; transition:0.2s; }
+    .card p{ font-size:24px; font-weight:700; margin:5px 0 0; }
+    .card.active{ border:2px solid #2196F3; transform:scale(1.05); }
+    .quick-date button{ background:#2196F3; margin-right:5px; color:white; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; transition:0.2s; }
+    .quick-date button.active{ border:2px solid #2196F3; transform:scale(1.05); }
+    .charts{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:20px; }
+    .chart-box{ background:white; padding:15px; border-radius:10px; box-shadow:0 5px 12px rgba(0,0,0,0.08); }
+    button{ padding:6px 12px; border:none; background:#4CAF50; color:white; border-radius:6px; cursor:pointer; }
+    table{ width:100%; border-collapse:collapse; }
+    th,td{ border:1px solid #ddd; padding:6px; text-align:center; font-size:13px; }
+    th{ background:#f2f2f2; }
+    .status-approved{ background:#4CAF50; color:white; }
+    .status-pending{ background:#FFD700; }
+    .status-rejected{ background:#f44336; color:white; }
+    footer{ position:fixed; bottom:0; width:100%; background:#fff; text-align:center; padding:8px; font-size:12px; box-shadow:0 -2px 5px rgba(0,0,0,0.1); }
+    @media(max-width:600px){ .filter-box,.quick-date{ flex-direction:column; align-items:flex-start; } }
   </style>
 </head>
 
 <body>
-
   <div class="header">
-    <div class="header-left">
-      <img src="logo1.png" alt="Logo 1">
-    </div>
-    <div class="header-right">
-      <img src="logo2.png" alt="Logo 2">
-    </div>
+    <div class="header-left"><img src="logo1.png" alt="Logo 1"></div>
+    <div class="header-right"><img src="logo2.png" alt="Logo 2"></div>
   </div>
 
   <div class="container">
-
     <div class="filter-box">
       <label>Hub:</label>
       <select id="hubSelector">
         <option value="">All</option>
-        <option>Hub 1</option>
-        <option>Hub 2</option>
-        <option>Hub 3</option>
-        <option>Hub 4</option>
-        <option>Hub 5</option>
-        <option>Hub 6</option>
-        <option>Hub 7</option>
-        <option>Hub 8</option>
-        <option>Events</option>
-        <option>SAS</option>
-        <option>Retrieval</option>
-        <option>Life Flight</option>
+        <option>Hub 1</option><option>Hub 2</option><option>Hub 3</option>
+        <option>Hub 4</option><option>Hub 5</option><option>Hub 6</option>
+        <option>Hub 7</option><option>Hub 8</option><option>Events</option>
+        <option>SAS</option><option>Retrieval</option><option>Life Flight</option>
         <option>Others</option>
       </select>
 
@@ -218,7 +63,7 @@
 
       <input type="text" id="staffSearch" placeholder="Search Name / Corp">
 
-      <button onclick="exportDashboardPPT()">Export PPT</button> <!-- Changed to Export PPT -->
+      <button onclick="exportDashboardPPT()">Export PPT</button>
       <button id="resetFilters">Reset Filters</button>
     </div>
 
@@ -262,305 +107,119 @@
         <tbody></tbody>
       </table>
     </div>
-
   </div>
 
   <footer>
-    © 2026 HMCAS Support Service Production.<br>
-    James Ross Camins. All rights reserved.
+    © 2026 HMCAS Support Service Production.<br>James Ross Camins. All rights reserved.
   </footer>
 
   <script type="module">
     import { getLateCalls } from './firebase.js';
+    let allRequests=[], statusChart, hubChart, shiftChart, trendChart, currentStatusFilter="", currentQuickDate="";
 
-    let allRequests = [];
-    let statusChart, hubChart, shiftChart, trendChart;
-    let currentStatusFilter = "";
-    let currentQuickDate = "";
+    function formatDateTime(dateStr){ const d=new Date(dateStr); const day=String(d.getDate()).padStart(2,'0'); const monthNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; const month=monthNames[d.getMonth()]; const year=String(d.getFullYear()).slice(2); const hours=String(d.getHours()).padStart(2,'0'); const minutes=String(d.getMinutes()).padStart(2,'0'); return `${day} ${month} ${year} ${hours}:${minutes}`; }
+    function formatDateOnly(dateStr){ const d=new Date(dateStr); const day=String(d.getDate()).padStart(2,'0'); const monthNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; const month=monthNames[d.getMonth()]; const year=String(d.getFullYear()).slice(2); return `${day} ${month} ${year}`; }
 
-    function formatDateTime(dateStr) {
-      const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[d.getMonth()];
-      const year = String(d.getFullYear()).slice(2);
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${day} ${month} ${year} ${hours}:${minutes}`;
-    }
+    async function loadData(){ allRequests=await getLateCalls(); filterDashboard(); }
 
-    function formatDateOnly(dateStr) {
-      const d = new Date(dateStr);
-      const day = String(d.getDate()).padStart(2, '0');
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = monthNames[d.getMonth()];
-      const year = String(d.getFullYear()).slice(2);
-      return `${day} ${month} ${year}`;
-    }
+    function setQuickDate(option){ currentQuickDate=option; highlightQuickDate(); const startInput=document.getElementById("startDate"); const endInput=document.getElementById("endDate"); const today=new Date(); today.setHours(0,0,0,0); let start;if(option==='today'){start=new Date(today);}else{start=new Date(today);start.setDate(today.getDate()-(option-1));} startInput.value=start.toISOString().split('T')[0]; endInput.value=today.toISOString().split('T')[0]; filterDashboard(); }
+    function highlightQuickDate(){ document.querySelectorAll(".quick-date button").forEach(btn=>{ btn.classList.toggle("active", btn.dataset.days===currentQuickDate); }); }
+    function filterByStatus(status){ currentStatusFilter=status; highlightStatusCard(); filterDashboard(); }
+    function highlightStatusCard(){ document.querySelectorAll(".cards .card").forEach(c=>{ c.classList.toggle("active", c.dataset.status===currentStatusFilter); }); }
 
-    async function loadData() {
-      try {
-        allRequests = await getLateCalls();
-        filterDashboard();
-      } catch (e) {
-        console.error("Error loading data:", e);
-      }
-    }
-
-    function setQuickDate(option) {
-      currentQuickDate = option;
-      highlightQuickDate();
-      const startInput = document.getElementById("startDate");
-      const endInput = document.getElementById("endDate");
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      let start;
-      if (option === 'today') {
-        start = new Date(today);
-      } else {
-        start = new Date(today);
-        start.setDate(today.getDate() - (option - 1));
-      }
-      startInput.value = start.toISOString().split('T')[0];
-      endInput.value = today.toISOString().split('T')[0];
-      filterDashboard();
-    }
-
-    function highlightQuickDate() {
-      document.querySelectorAll(".quick-date button").forEach(btn => {
-        if (btn.dataset.days === currentQuickDate) btn.classList.add("active");
-        else btn.classList.remove("active");
-      });
-    }
-
-    function filterByStatus(status) {
-      currentStatusFilter = status;
-      highlightStatusCard();
-      filterDashboard();
-    }
-
-    function highlightStatusCard() {
-      document.querySelectorAll(".cards .card").forEach(c => {
-        if (c.dataset.status === currentStatusFilter) c.classList.add("active");
-        else c.classList.remove("active");
-      });
-    }
-
-    function filterDashboard() {
-      const hubSelect = document.getElementById("hubSelector").value;
-      const startDate = document.getElementById("startDate").value;
-      const endDate = document.getElementById("endDate").value;
-      const search = document.getElementById("staffSearch").value.toLowerCase();
-
-      let data = [...allRequests];
-
-      if (hubSelect) {
-        if (hubSelect === 'Others') {
-          const knownHubs = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"];
-          data = data.filter(r => !knownHubs.includes(r.hub));
-        } else {
-          data = data.filter(r => r.hub === hubSelect);
-        }
-      }
-
-      if (search) data = data.filter(r =>
-        (r.name || "").toLowerCase().includes(search) ||
-        (r.corp || "").toString().includes(search)
-      );
-      if (startDate) data = data.filter(r => new Date(r.dateSubmitted) >= new Date(startDate));
-      if (endDate) data = data.filter(r => new Date(r.dateSubmitted) <= new Date(endDate + "T23:59:59"));
-      if (currentStatusFilter) data = data.filter(r => (r.status || "").toLowerCase() === currentStatusFilter.toLowerCase());
-
+    function filterDashboard(){
+      const hubSelect=document.getElementById("hubSelector").value;
+      const startDate=document.getElementById("startDate").value;
+      const endDate=document.getElementById("endDate").value;
+      const search=document.getElementById("staffSearch").value.toLowerCase();
+      let data=[...allRequests];
+      if(hubSelect){ const knownHubs=["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"]; data=data.filter(r=>hubSelect==="Others"?!knownHubs.includes(r.hub):r.hub===hubSelect); }
+      if(search) data=data.filter(r=>(r.name||"").toLowerCase().includes(search)||(r.corp||"").toString().includes(search));
+      if(startDate) data=data.filter(r=>new Date(r.dateSubmitted)>=new Date(startDate));
+      if(endDate) data=data.filter(r=>new Date(r.dateSubmitted)<=new Date(endDate+"T23:59:59"));
+      if(currentStatusFilter) data=data.filter(r=>(r.status||"").toLowerCase()===currentStatusFilter.toLowerCase());
       updateDashboard(data);
     }
 
-    function updateDashboard(data) {
-      let approved = 0, pending = 0, rejected = 0;
-      let lateApproved = 0, latePending = 0, lateRejected = 0;
-      const hubs = {}, shifts = {}, dates = {};
-
-      data.forEach(r => {
-        const status = (r.status || "").toLowerCase();
-
-        if (status === "approved") approved++;
-        if (status === "pending") pending++;
-        if (status === "rejected") rejected++;
-
-        if (status === "approved") lateApproved += parseFloat(r.lateHours || 0);
-        if (status === "pending") latePending += parseFloat(r.lateHours || 0);
-        if (status === "rejected") lateRejected += parseFloat(r.lateHours || 0);
-
-        const hubName = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"].includes(r.hub) ? r.hub : "Others";
-        hubs[hubName] = (hubs[hubName] || 0) + 1;
-        shifts[r.shift] = (shifts[r.shift] || 0) + 1;
-        const d = formatDateOnly(r.dateSubmitted);
-        dates[d] = (dates[d] || 0) + 1;
+    function updateDashboard(data){
+      let approved=0, pending=0, rejected=0, lateApproved=0, latePending=0, lateRejected=0;
+      const hubs={}, shifts={}, dates={};
+      data.forEach(r=>{
+        const status=(r.status||"").toLowerCase();
+        if(status==="approved") approved++; if(status==="pending") pending++; if(status==="rejected") rejected++;
+        if(status==="approved") lateApproved+=parseFloat(r.lateHours||0);
+        if(status==="pending") latePending+=parseFloat(r.lateHours||0);
+        if(status==="rejected") lateRejected+=parseFloat(r.lateHours||0);
+        const hubName=["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"].includes(r.hub)?r.hub:"Others";
+        hubs[hubName]=(hubs[hubName]||0)+1; shifts[r.shift]=(shifts[r.shift]||0)+1; dates[formatDateOnly(r.dateSubmitted)]=(dates[formatDateOnly(r.dateSubmitted)]||0)+1;
       });
-
-      document.getElementById("total").innerText = data.length;
-      document.getElementById("approved").innerText = approved;
-      document.getElementById("pending").innerText = pending;
-      document.getElementById("rejected").innerText = rejected;
-
-      if (currentStatusFilter === "pending") {
-        document.getElementById("lateHours").innerText = latePending.toFixed(2);
-      } else if (currentStatusFilter === "rejected") {
-        document.getElementById("lateHours").innerText = lateRejected.toFixed(2);
-      } else {
-        document.getElementById("lateHours").innerText = lateApproved.toFixed(2);
-      }
-
-      createStatusChart(approved, pending, rejected);
+      document.getElementById("total").innerText=data.length;
+      document.getElementById("approved").innerText=approved;
+      document.getElementById("pending").innerText=pending;
+      document.getElementById("rejected").innerText=rejected;
+      if(currentStatusFilter==="pending") document.getElementById("lateHours").innerText=latePending.toFixed(2);
+      else if(currentStatusFilter==="rejected") document.getElementById("lateHours").innerText=lateRejected.toFixed(2);
+      else document.getElementById("lateHours").innerText=lateApproved.toFixed(2);
+      createStatusChart(approved,pending,rejected);
       createHubChart(hubs);
       createShiftChart(shifts);
       createTrendChart(dates);
       updateTable(data);
     }
 
-    function updateTable(data) {
-      const tbody = document.querySelector("#dataTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(r => {
-        const tr = document.createElement("tr");
-        let statusClass = "";
-        const status = (r.status || "").toLowerCase();
-        if (status === "approved") statusClass = "status-approved";
-        if (status === "pending") statusClass = "status-pending";
-        if (status === "rejected") statusClass = "status-rejected";
-        tr.innerHTML = `
-          <td>${formatDateTime(r.dateSubmitted)}</td>
-          <td>${r.lateCallDate ? formatDateOnly(r.lateCallDate) : ""}</td>
-          <td>${r.name}</td>
-          <td>${r.corp}</td>
-          <td>${r.hub}</td>
-          <td>${r.shift}</td>
-          <td>${r.lateHours || 0}</td>
-          <td class="${statusClass}">${r.status}</td>
-        `;
+    function updateTable(data){
+      const tbody=document.querySelector("#dataTable tbody"); tbody.innerHTML="";
+      data.forEach(r=>{
+        const tr=document.createElement("tr");
+        const status=(r.status||"").toLowerCase();
+        const statusClass=status==="approved"?"status-approved":status==="pending"?"status-pending":status==="rejected"?"status-rejected":"";
+        tr.innerHTML=`<td>${formatDateTime(r.dateSubmitted)}</td><td>${r.lateCallDate?formatDateOnly(r.lateCallDate):""}</td><td>${r.name}</td><td>${r.corp}</td><td>${r.hub}</td><td>${r.shift}</td><td>${r.lateHours||0}</td><td class="${statusClass}">${r.status}</td>`;
         tbody.appendChild(tr);
       });
     }
 
-    function createStatusChart(a, p, r) {
-      if (statusChart) statusChart.destroy();
-      statusChart = new Chart(document.getElementById("statusChart"), {
-        type: "doughnut",
-        data: {
-          labels: ["Approved", "Pending", "Rejected"],
-          datasets: [{
-            data: [a, p, r],
-            backgroundColor: ["#4CAF50", "#FFD700", "#f44336"]
-          }]
-        }
-      });
+    function createStatusChart(a,p,r){
+      if(statusChart) statusChart.destroy();
+      statusChart=new Chart(document.getElementById("statusChart"),{ type:"doughnut", data:{ labels:["Approved","Pending","Rejected"], datasets:[{ data:[a,p,r], backgroundColor:["#4CAF50","#FFD700","#f44336"] }] } });
     }
 
-    function createHubChart(data) {
-      if (hubChart) hubChart.destroy();
-      const labels = Object.keys(data).map(k => k ? k : "HUB");
-      const values = Object.values(data);
-      hubChart = new Chart(document.getElementById("hubChart"), {
-        type: "bar",
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: "#2196F3"
-          }]
-        },
-        options: {
-          onClick: (e, el) => {
-            if (el.length) {
-              const hub = labels[el[0].index];
-              document.getElementById("hubSelector").value = hub === "HUB" ? "" : hub;
-              filterDashboard();
-            }
-          }
-        }
-      });
+    function createHubChart(data){
+      if(hubChart) hubChart.destroy();
+      const labels=Object.keys(data), values=Object.values(data);
+      hubChart=new Chart(document.getElementById("hubChart"),{ type:"bar", data:{ labels, datasets:[{ data:values, backgroundColor:"#2196F3" }] }, options:{ onClick:(e,el)=>{ if(el.length){ const hub=labels[el[0].index]; document.getElementById("hubSelector").value=hub==="HUB"?"":hub; filterDashboard(); } } } });
     }
 
-    function createShiftChart(data) {
-      if (shiftChart) shiftChart.destroy();
-      shiftChart = new Chart(document.getElementById("shiftChart"), {
-        type: "pie",
-        data: {
-          labels: Object.keys(data),
-          datasets: [{
-            data: Object.values(data)
-          }]
-        }
-      });
+    function createShiftChart(data){
+      if(shiftChart) shiftChart.destroy();
+      shiftChart=new Chart(document.getElementById("shiftChart"),{ type:"pie", data:{ labels:Object.keys(data), datasets:[{ data:Object.values(data), backgroundColor:["#2196F3","#4CAF50","#FFD700","#f44336","#9C27B0","#FF5722"] }] } });
     }
 
-    function createTrendChart(data) {
-      if (trendChart) trendChart.destroy();
-      trendChart = new Chart(document.getElementById("trendChart"), {
-        type: "line",
-        data: {
-          labels: Object.keys(data),
-          datasets: [{
-            label: "Requests",
-            data: Object.values(data),
-            borderColor: "#4CAF50",
-            tension: 0.3
-          }]
-        }
-      });
+    function createTrendChart(data){
+      if(trendChart) trendChart.destroy();
+      const sortedDates=Object.keys(data).sort((a,b)=>new Date(a)-new Date(b));
+      trendChart=new Chart(document.getElementById("trendChart"),{ type:"line", data:{ labels:sortedDates, datasets:[{ label:"Requests", data:sortedDates.map(d=>data[d]), borderColor:"#2196F3", backgroundColor:"rgba(33,150,243,0.2)", fill:true }] } });
     }
 
-    // Function to export dashboard to PPT
-    async function exportDashboardPPT() {
-      const pptx = new PptxGenJS();
-      pptx.setLayout("LAYOUT_WIDE"); // You can change the layout if needed
-
-      const slide = pptx.addSlide();
-      
-      // Capture the content of the container as a canvas
-      const container = document.querySelector(".container");
-      const canvas = await html2canvas(container, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-
-      // Add the captured image to the slide
-      slide.addImage({
-        data: imgData,
-        x: 0,
-        y: 0,
-        w: "100%",
-        h: "100%",
-      });
-
-      // Save the PPT
-      pptx.writeFile({ fileName: "dashboard.pptx" });
-    }
-
-    // Event listeners
-    document.querySelectorAll(".cards .card").forEach(c => {
-      if (c.dataset.status !== undefined) c.addEventListener("click", () => filterByStatus(c.dataset.status));
-    });
-    document.querySelectorAll(".quick-date button").forEach(btn => {
-      btn.addEventListener("click", () => setQuickDate(btn.dataset.days));
-    });
-    document.getElementById("resetFilters").addEventListener("click", () => {
-      currentStatusFilter = "";
-      currentQuickDate = "";
-      document.getElementById("hubSelector").value = "";
-      document.getElementById("startDate").value = "";
-      document.getElementById("endDate").value = "";
-      document.getElementById("staffSearch").value = "";
-      highlightStatusCard();
-      highlightQuickDate();
-      filterDashboard();
-    });
     document.getElementById("hubSelector").addEventListener("change", filterDashboard);
-    document.getElementById("startDate").addEventListener("change", filterDashboard);
-    document.getElementById("endDate").addEventListener("change", filterDashboard);
+    document.getElementById("startDate").addEventListener("change",()=>{ currentQuickDate=""; highlightQuickDate(); filterDashboard(); });
+    document.getElementById("endDate").addEventListener("change",()=>{ currentQuickDate=""; highlightQuickDate(); filterDashboard(); });
     document.getElementById("staffSearch").addEventListener("input", filterDashboard);
+    document.getElementById("resetFilters").addEventListener("click",()=>{
+      document.getElementById("hubSelector").value=""; document.getElementById("startDate").value=""; document.getElementById("endDate").value=""; document.getElementById("staffSearch").value=""; currentStatusFilter=""; currentQuickDate=""; highlightQuickDate(); highlightStatusCard(); filterDashboard();
+    });
+    document.querySelectorAll(".quick-date button").forEach(btn=>btn.addEventListener("click",()=>setQuickDate(btn.dataset.days)));
+    document.querySelectorAll(".cards .card[data-status]").forEach(c=>c.addEventListener("click",()=>filterByStatus(c.dataset.status)));
+
+    async function exportDashboardPPT(){
+      const pptx=new PptxGenJS();
+      const slide=pptx.addSlide();
+      const container=document.querySelector(".container");
+      const canvas=await html2canvas(container); const imgData=canvas.toDataURL("image/png");
+      slide.addImage({ data:imgData, x:0.5, y:0.5, w:9, h:5 });
+      pptx.writeFile("Dashboard.pptx");
+    }
 
     loadData();
-
   </script>
-
 </body>
-
 </html>
