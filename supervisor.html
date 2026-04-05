@@ -4,43 +4,131 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Supervisor</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-body {font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(to right, #eef2f3, #ffffff); color: #333;}
-.header-logos {display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: linear-gradient(to right, #eef2f3, #ffffff);
+    color: #333;
+}
+.header-logos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 .header-logos img {height: 50px;}
-#loginPage {display: flex; justify-content: center; align-items: center; height: 100vh;}
-.login-container {background: #fff; padding: 50px 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 100%; max-width: 400px; text-align: center; display: flex; flex-direction: column; gap: 15px;}
+
+#loginPage {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.login-container {
+    background:#fff;
+    padding:50px 40px;
+    border-radius:12px;
+    width:100%;
+    max-width:400px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
 .login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
-.login-container input {width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; transition: border 0.2s ease;}
-.login-container input:focus {border-color: #4CAF50; outline: none;}
-.login-container button {width: 100%; padding: 14px; background: #4CAF50; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: background 0.2s ease;}
-.login-container button:hover {background: #45a049;}
-.login-container .error-message {color: red; margin-top: 10px; font-size: 14px;}
-.remember-me label {display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; margin: 0;}
+.login-container input {
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    font-size:16px;
+    transition:border 0.2s ease;
+}
+.login-container input:focus {border-color:#4CAF50;outline:none;}
+.login-container button {
+    width:100%;
+    padding:14px;
+    background:#4CAF50;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+    margin-top:10px;
+    transition:background 0.2s ease;
+}
+.login-container button:hover {background:#45a049;}
+.login-container .error-message {color:red;margin-top:10px;font-size:14px;}
+.remember-me label {
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:14px;
+    cursor:pointer;
+    margin:0;
+}
 .remember-me input {width:auto;height:auto;}
 .forgot-password {margin-top:15px;text-align:center;font-size:14px;}
 .forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
-#dashboardPage {display:none; padding:20px; padding-bottom:80px;}
-.top-bar {display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:20px;}
+
+#dashboardPage {
+    display:none;
+    padding:20px;
+    padding-bottom:80px;
+}
+.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
 .top-bar label {font-weight:600;}
 .top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
 .top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
-.clear-filters-btn {background-color: #f44336; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 14px;}
-.clear-filters-btn:hover {background-color: #e53935;}
-.table-container {overflow-x:auto; border-radius:8px; background:#fff; padding:10px;}
-table {width:100%; border-collapse:collapse; min-width:1200px;}
-th, td {padding:10px; text-align:center; border:1px solid #ddd;}
+.clear-filters-btn {
+    background-color:#f44336;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    padding:6px 10px;
+    cursor:pointer;
+    font-size:14px;
+}
+.clear-filters-btn:hover {background-color:#e53935;}
+
+.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
+table {width:100%;border-collapse:collapse;min-width:900px;}
+th,td {padding:10px;text-align:center;border:1px solid #ddd;}
 th {background:#f2f2f2;font-weight:600;}
 tr:nth-child(even) td {background:#fafafa;}
 .status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
 .status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
 .status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
-.action-btn {cursor:pointer; padding:5px 10px; border:none; border-radius:4px; margin:2px;}
-footer {position: fixed; bottom: 0; width: 100%; text-align: center; background: #fff; padding: 10px 0; font-size: 12px; color: #555; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);}
-@media(max-width:900px){table{min-width:900px;}}
-@media(max-width:600px){.top-bar{flex-direction:column; align-items:flex-start;}}
+.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
+
+footer {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    text-align:center;
+    background:#fff;
+    padding:10px 0;
+    font-size:12px;
+    color:#555;
+    box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+}
+
+@media(max-width:900px){table{min-width:600px;}}
+@media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </head>
 <body>
 
@@ -49,33 +137,32 @@ footer {position: fixed; bottom: 0; width: 100%; text-align: center; background:
     <img src="logo2.png" alt="Logo 2">
 </div>
 
-<!-- Login Page -->
+<!-- LOGIN -->
 <div id="loginPage">
-    <div class="login-container">
-        <h2>Supervisor Login</h2>
-        <input type="text" id="username" placeholder="Username">
+<div class="login-container">
+    <h2>Supervisor Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <div style="position:relative;">
         <input type="password" id="password" placeholder="Password">
-        <div class="remember-me">
-            <label>
-                Remember Me
-                <input type="checkbox" id="savePassword">
-            </label>
-        </div>
-        <button id="loginBtn">Login</button>
-        <div id="errorMessage" class="error-message"></div>
-        <div class="forgot-password">
-            <a onclick="forgotPassword()">Forgot Password?</a>
-        </div>
+        <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
     </div>
+    <div class="remember-me">
+        <label>Remember Me <input type="checkbox" id="savePassword"></label>
+    </div>
+    <button id="loginBtn">Login</button>
+    <div id="errorMessage" class="error-message"></div>
+    <div class="forgot-password"><a onclick="forgotPassword()">Forgot Password?</a></div>
+</div>
 </div>
 
-<!-- Dashboard Page -->
+<!-- DASHBOARD -->
 <div id="dashboardPage">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
         <h2 id="managerName"></h2>
         <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
     </div>
 
+    <!-- Filters -->
     <div class="top-bar">
         <div>
             <label>Date From:</label><input type="date" id="filterFrom">
@@ -95,11 +182,7 @@ footer {position: fixed; bottom: 0; width: 100%; text-align: center; background:
             </select>
             <label>Shift:</label>
             <select id="filterShift" onchange="loadTable()">
-                <option value="">All</option>
-                <option>Day</option>
-                <option>Peak</option>
-                <option>Night</option>
-                <option>Event</option>
+                <option value="">All</option><option>Day</option><option>Peak</option><option>Night</option><option>Event</option>
             </select>
             <label>Search:</label>
             <input type="text" id="filterSearch" placeholder="Name, Corp, Unit, Shift, Type of Duty, Trip" oninput="loadTable()">
@@ -135,7 +218,18 @@ footer {position: fixed; bottom: 0; width: 100%; text-align: center; background:
 </div>
 
 <script>
-// ✅ SUPERVISORS LIST
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 const supervisorsInit = [
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", email:"HKERKENI@hamad.qa", role:"Admin", password:"HMCAS1234"},
     {username:"hkhir", fullName:"Hicham Khir", corp:"22165", email:"HKHIR@hamad.qa", role:"Admin", password:"HMCAS1234"},
@@ -144,122 +238,112 @@ const supervisorsInit = [
     {username:"mjellali", fullName:"Mabrouk Jellali", corp:"12597", email:"MJELLALI@hamad.qa", role:"Admin", password:"HMCAS1234"},
     {username:"jcamins", fullName:"James Camins", corp:"45357", email:"JCAMINS@hamad.qa", role:"Admin", password:"HMCAS1234"}
 ];
-if(!localStorage.getItem('supervisors')) localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+
+if (!localStorage.getItem('supervisors')) localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+
+function togglePassword(){ const pwd=document.getElementById('password'); pwd.type=pwd.type==="password"?"text":"password"; }
 
 function login(){
-    const username = document.getElementById('username').value.trim().toLowerCase();
-    const password = document.getElementById('password').value.trim();
-    const supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const sup = supervisors.find(s => s.username.toLowerCase() === username && s.password === password);
+    const username=document.getElementById('username').value.trim().toLowerCase();
+    const password=document.getElementById('password').value.trim();
+    let supervisors=JSON.parse(localStorage.getItem('supervisors'))||[];
+    const sup=supervisors.find(s=>s.username.toLowerCase()===username && s.password===password);
+    if(sup){ localStorage.setItem('currentSupervisor',JSON.stringify(sup)); checkLogin(); } 
+    else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
+}
+
+function logout(){ localStorage.removeItem('currentSupervisor'); location.reload(); }
+
+function checkLogin(){
+    const sup=JSON.parse(localStorage.getItem('currentSupervisor'));
     if(sup){
-        localStorage.setItem('currentSupervisor', JSON.stringify(sup));
-        showDashboard();
-    } else {
-        document.getElementById('errorMessage').innerText = "Invalid username or password!";
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('dashboardPage').style.display='block';
+        document.getElementById('managerName').innerText=`${sup.fullName} CN ${sup.corp}`;
+        loadTable();
     }
 }
 
-function logout(){
-    localStorage.removeItem('currentSupervisor');
-    location.reload();
-}
-
-function showDashboard(){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    if(!sup) return;
-    document.getElementById('loginPage').style.display='none';
-    document.getElementById('dashboardPage').style.display='block';
-    document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
-    clearFilters();
+// FILTER & TABLE FUNCTIONS
+function clearFilters(){
+    document.getElementById('filterFrom').value='';
+    document.getElementById('filterTo').value='';
+    document.getElementById('filterHub').value='';
+    document.getElementById('filterStatus').value='';
+    document.getElementById('filterShift').value='';
+    document.getElementById('filterSearch').value='';
     loadTable();
 }
-
-// ====== TABLE DATA & FUNCTIONS ======
-let requests = [
-    {dateSubmitted:"2026-04-01", lateCallDate:"2026-04-01", name:"Ali", corp:"11111", type:"Duty A", hub:"Hub 1", unit:"Unit 1", shift:"Day", timeOut:"17:00", hours:"2", trip:"Trip001", status:"Pending", processedBy:""},
-    {dateSubmitted:"2026-04-02", lateCallDate:"2026-04-02", name:"Omar", corp:"22222", type:"Duty B", hub:"Hub 2", unit:"Unit 2", shift:"Night", timeOut:"22:00", hours:"3", trip:"Trip002", status:"Approved", processedBy:"Manager1"}
-];
 
 function loadTable(){
-    const tbody = document.querySelector('#requestsTable tbody');
-    tbody.innerHTML = "";
-    const from = document.getElementById('filterFrom').value;
-    const to = document.getElementById('filterTo').value;
-    const hub = document.getElementById('filterHub').value;
-    const status = document.getElementById('filterStatus').value;
-    const shift = document.getElementById('filterShift').value;
-    const search = document.getElementById('filterSearch').value.toLowerCase();
+    const tbody=document.querySelector('#requestsTable tbody');
+    tbody.innerHTML='';
+    db.ref('late_calls').once('value').then(snapshot=>{
+        const data=snapshot.val();
+        if(!data) return;
+        const arr=Object.values(data);
+        const from=document.getElementById('filterFrom').value;
+        const to=document.getElementById('filterTo').value;
+        const hub=document.getElementById('filterHub').value.toLowerCase();
+        const status=document.getElementById('filterStatus').value.toLowerCase();
+        const shift=document.getElementById('filterShift').value.toLowerCase();
+        const search=document.getElementById('filterSearch').value.toLowerCase();
 
-    requests.forEach(r=>{
-        if(from && r.lateCallDate < from) return;
-        if(to && r.lateCallDate > to) return;
-        if(hub && r.hub !== hub) return;
-        if(status && r.status !== status) return;
-        if(shift && r.shift !== shift) return;
-        if(search && !Object.values(r).some(v => v.toLowerCase().includes(search))) return;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${r.dateSubmitted}</td>
-            <td>${r.lateCallDate}</td>
-            <td>${r.name}</td>
-            <td>${r.corp}</td>
-            <td>${r.type}</td>
-            <td>${r.hub}</td>
-            <td>${r.unit}</td>
-            <td>${r.shift}</td>
-            <td>${r.timeOut}</td>
-            <td>${r.hours}</td>
-            <td>${r.trip}</td>
-            <td class="status-${r.status.toLowerCase()}">${r.status}</td>
-            <td>
-                ${r.status==="Pending"?`<button class="action-btn" onclick="approve('${r.corp}')">Approve</button>
-                <button class="action-btn" onclick="reject('${r.corp}')">Reject</button>`:``}
-            </td>
-            <td>${r.processedBy}</td>
-        `;
-        tbody.appendChild(tr);
+        arr.forEach(item=>{
+            let dateOk=(from?item.dateSubmitted>=from:true)&&(to?item.dateSubmitted<=to:true);
+            let hubOk=!hub||item.hub.toLowerCase()===hub;
+            let statusOk=!status||item.status.toLowerCase()===status;
+            let shiftOk=!shift||item.shift.toLowerCase()===shift;
+            let searchOk=!search||Object.values(item).some(v=>v&&v.toString().toLowerCase().includes(search));
+            if(dateOk && hubOk && statusOk && shiftOk && searchOk){
+                const tr=document.createElement('tr');
+                tr.innerHTML=`
+                    <td>${item.dateSubmitted||''}</td>
+                    <td>${item.lateCallDate||''}</td>
+                    <td>${item.name||''}</td>
+                    <td>${item.corp||''}</td>
+                    <td>${item.typeDuty||''}</td>
+                    <td>${item.hub||''}</td>
+                    <td>${item.unit||''}</td>
+                    <td>${item.shift||''}</td>
+                    <td>${item.timeOut||''}</td>
+                    <td>${item.lateCallHours||''}</td>
+                    <td>${item.tripReason||''}</td>
+                    <td class="status-${item.status.toLowerCase()}">${item.status||''}</td>
+                    <td>
+                        ${item.status==='Pending'?`<button class="action-btn" onclick="approve('${item.id}')">Approve</button>
+                        <button class="action-btn" onclick="reject('${item.id}')">Reject</button>`:''}
+                    </td>
+                    <td>${item.processedBy||''}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        });
     });
 }
 
-function approve(corp){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    requests.forEach(r=>{if(r.corp===corp){r.status="Approved"; r.processedBy=sup.fullName;}});
-    loadTable();
+function approve(id){
+    const sup=JSON.parse(localStorage.getItem('currentSupervisor'));
+    db.ref('late_calls/'+id).update({status:'Approved',processedBy:sup.fullName}).then(loadTable);
 }
-function reject(corp){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    requests.forEach(r=>{if(r.corp===corp){r.status="Rejected"; r.processedBy=sup.fullName;}});
-    loadTable();
+
+function reject(id){
+    const sup=JSON.parse(localStorage.getItem('currentSupervisor'));
+    db.ref('late_calls/'+id).update({status:'Rejected',processedBy:sup.fullName}).then(loadTable);
 }
-function clearFilters(){
-    document.getElementById('filterFrom').value="";
-    document.getElementById('filterTo').value="";
-    document.getElementById('filterHub').value="";
-    document.getElementById('filterStatus').value="";
-    document.getElementById('filterShift').value="";
-    document.getElementById('filterSearch').value="";
-    loadTable();
-}
+
 function exportToExcel(){
-    let csv = "Date Submitted,Late Call Date,Name,Corp Number,Type of Duty,Hub,Unit,Shift,Time Out,Late Call Hours,Trip Number / Reason for Late Call,Status,Processed By\n";
-    requests.forEach(r=>{
-        csv += `${r.dateSubmitted},${r.lateCallDate},${r.name},${r.corp},${r.type},${r.hub},${r.unit},${r.shift},${r.timeOut},${r.hours},${r.trip},${r.status},${r.processedBy}\n`;
-    });
-    const blob = new Blob([csv], {type:'text/csv'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'late_calls.csv';
-    link.click();
+    const wb=XLSX.utils.table_to_book(document.getElementById('requestsTable'),{sheet:"Late Calls"});
+    XLSX.writeFile(wb,'LateCalls.xlsx');
 }
 
-// Auto login check
-document.getElementById('loginBtn').onclick = login;
-if(localStorage.getItem('currentSupervisor')) showDashboard();
+checkLogin();
 </script>
 
 <footer>
-    © 2026 HMCAS Support Service Production. James Ross Camins. All rights reserved.
+© 2026 HMCAS Support Service Production.<br>
+James Ross Camins. All rights reserved.
 </footer>
+
 </body>
 </html>
