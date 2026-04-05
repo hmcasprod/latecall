@@ -219,14 +219,16 @@
 import { getLateCalls, updateRequestStatus } from './firebase.js';
 
 const supervisorsInit = [
-    {username:"Hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234", email:"HKERKENI@hamad.qa", Role:"Admin"}
-{username:"Hkhir", fullName:"Hicham Khir", corp:"22165", password:"HMCAS1234", email:"HKHIR@hamad.qa", Role:"Admin"}
-{username:"Mfarhat", fullName:"Mohamed Farhat", corp:"19306", password:"HMCAS1234", email:"MFARHAT@hamad.qa", Role:"Admin"}
-{username:"Mneji", fullName:"Mourad Neji", corp:"22179", password:"HMCAS1234", email:"MNEJI@hamad.qa", Role:"Admin"}
-{username:"Mjellali", fullName:"Mabrouk Jellali", corp:"12597", password:"HMCAS1234", email:"MJELLALI@hamad.qa", Role:"Admin"}
-{username:"Jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234", email:"JCAMINS@hamad.qa", Role:"Admin"}
+const supervisorsInit = [
+    {username:"Hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234", email:"HKERKENI@hamad.qa", Role:"Admin"},
+    {username:"Hkhir", fullName:"Hicham Khir", corp:"22165", password:"HMCAS1234", email:"HKHIR@hamad.qa", Role:"Admin"},
+    {username:"Mfarhat", fullName:"Mohamed Farhat", corp:"19306", password:"HMCAS1234", email:"MFARHAT@hamad.qa", Role:"Admin"},
+    {username:"Mneji", fullName:"Mourad Neji", corp:"22179", password:"HMCAS1234", email:"MNEJI@hamad.qa", Role:"Admin"},
+    {username:"Mjellali", fullName:"Mabrouk Jellali", corp:"12597", password:"HMCAS1234", email:"MJELLALI@hamad.qa", Role:"Admin"},
+    {username:"Jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234", email:"JCAMINS@hamad.qa", Role:"Admin"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+console.log("Supervisors:", supervisorsInit);
 
 function togglePassword(){
     const pwd = document.getElementById('password');
