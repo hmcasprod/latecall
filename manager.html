@@ -310,19 +310,25 @@
     function setQuickDate(option) {
       currentQuickDate = option;
       highlightQuickDate();
-      const startInput = document.getElementById("startDate");
-      const endInput = document.getElementById("endDate");
+
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      let start;
+      today.setHours(0,0,0,0);
+      let start, end;
+
       if (option === 'today') {
         start = new Date(today);
+        end = new Date(today);
+        end.setHours(23,59,59,999);
       } else {
         start = new Date(today);
-        start.setDate(today.getDate() - (option - 1));
+        start.setDate(today.getDate() - (option-1));
+        end = new Date(today);
+        end.setHours(23,59,59,999);
       }
-      startInput.value = start.toISOString().split('T')[0];
-      endInput.value = today.toISOString().split('T')[0];
+
+      document.getElementById("startDate").value = start.toISOString().split('T')[0];
+      document.getElementById("endDate").value = end.toISOString().split('T')[0];
+
       filterDashboard();
     }
 
@@ -348,15 +354,15 @@
 
     function filterDashboard() {
       const hubSelect = document.getElementById("hubSelector").value;
-      const startDate = document.getElementById("startDate").value;
-      const endDate = document.getElementById("endDate").value;
+      const startDateVal = document.getElementById("startDate").value;
+      const endDateVal = document.getElementById("endDate").value;
       const search = document.getElementById("staffSearch").value.toLowerCase();
 
       let data = [...allRequests];
 
       if (hubSelect) {
         if (hubSelect === 'Others') {
-          const knownHubs = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"];
+          const knownHubs = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"];
           data = data.filter(r => !knownHubs.includes(r.hub));
         } else {
           data = data.filter(r => r.hub === hubSelect);
@@ -367,9 +373,28 @@
         (r.name || "").toLowerCase().includes(search) ||
         (r.corp || "").toString().includes(search)
       );
-      if (startDate) data = data.filter(r => new Date(r.dateSubmitted) >= new Date(startDate));
-      if (endDate) data = data.filter(r => new Date(r.dateSubmitted) <= new Date(endDate + "T23:59:59"));
-      if (currentStatusFilter) data = data.filter(r => (r.status || "").toLowerCase() === currentStatusFilter.toLowerCase());
+
+      if (startDateVal) {
+        const startDate = new Date(startDateVal);
+        startDate.setHours(0,0,0,0);
+        data = data.filter(r => {
+          const d = new Date(r.dateSubmitted);
+          return d >= startDate;
+        });
+      }
+
+      if (endDateVal) {
+        const endDate = new Date(endDateVal);
+        endDate.setHours(23,59,59,999);
+        data = data.filter(r => {
+          const d = new Date(r.dateSubmitted);
+          return d <= endDate;
+        });
+      }
+
+      if (currentStatusFilter) {
+        data = data.filter(r => (r.status || "").toLowerCase() === currentStatusFilter.toLowerCase());
+      }
 
       updateDashboard(data);
     }
@@ -390,7 +415,7 @@
         if (status === "pending") latePending += parseFloat(r.lateHours || 0);
         if (status === "rejected") lateRejected += parseFloat(r.lateHours || 0);
 
-        const hubName = ["Hub 1", "Hub 2", "Hub 3", "Hub 4", "Hub 5", "Hub 6", "Hub 7", "Hub 8", "Events", "SAS", "Retrieval", "Life Flight"].includes(r.hub) ? r.hub : "Others";
+        const hubName = ["Hub 1","Hub 2","Hub 3","Hub 4","Hub 5","Hub 6","Hub 7","Hub 8","Events","SAS","Retrieval","Life Flight"].includes(r.hub) ? r.hub : "Others";
         hubs[hubName] = (hubs[hubName] || 0) + 1;
         shifts[r.shift] = (shifts[r.shift] || 0) + 1;
         const d = formatDateOnly(r.dateSubmitted);
@@ -447,10 +472,7 @@
         type: "doughnut",
         data: {
           labels: ["Approved", "Pending", "Rejected"],
-          datasets: [{
-            data: [a, p, r],
-            backgroundColor: ["#4CAF50", "#FFD700", "#f44336"]
-          }]
+          datasets: [{ data: [a, p, r], backgroundColor: ["#4CAF50","#FFD700","#f44336"] }]
         }
       });
     }
@@ -461,70 +483,55 @@
       const values = Object.values(data);
       hubChart = new Chart(document.getElementById("hubChart"), {
         type: "bar",
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: "#2196F3"
-          }]
-        },
-        options: {
-          onClick: (e, el) => {
-            if (el.length) {
-              const hub = labels[el[0].index];
-              document.getElementById("hubSelector").value = hub === "HUB" ? "" : hub;
-              filterDashboard();
-            }
-          }
-        }
+        data: { labels: labels, datasets: [{ data: values, backgroundColor: "#2196F3" }] },
+        options: { onClick: (e, el) => { if (el.length) { const hub = labels[el[0].index]; document.getElementById("hubSelector").value = hub; filterDashboard(); } } }
       });
     }
 
     function createShiftChart(data) {
       if (shiftChart) shiftChart.destroy();
+      const labels = Object.keys(data);
+      const values = Object.values(data);
       shiftChart = new Chart(document.getElementById("shiftChart"), {
-        type: "pie",
-        data: {
-          labels: Object.keys(data),
-          datasets: [{ data: Object.values(data), backgroundColor: ["#2196F3", "#FFC107", "#FF5722", "#8BC34A", "#9C27B0"] }]
-        }
+        type: "bar",
+        data: { labels: labels, datasets: [{ data: values, backgroundColor: "#FF9800" }] }
       });
     }
 
     function createTrendChart(data) {
       if (trendChart) trendChart.destroy();
+      const labels = Object.keys(data);
+      const values = Object.values(data);
       trendChart = new Chart(document.getElementById("trendChart"), {
         type: "line",
-        data: {
-          labels: Object.keys(data),
-          datasets: [{ data: Object.values(data), fill: false, borderColor: "#2196F3" }]
-        }
+        data: { labels: labels, datasets: [{ data: values, backgroundColor: "#9C27B0", borderColor: "#9C27B0" }] }
       });
     }
 
-    document.querySelectorAll(".quick-date button").forEach(btn => btn.addEventListener("click", () => setQuickDate(btn.dataset.days)));
-    document.querySelectorAll(".cards .card").forEach(c => {
-      if (c.dataset.status) c.addEventListener("click", () => filterByStatus(c.dataset.status));
+    function exportDashboardPPT() {
+      const pptx = new PptxGenJS();
+      const slide = pptx.addSlide();
+      slide.addText("Manager Dashboard", { x:1, y:1, fontSize:18, bold:true });
+      html2canvas(document.querySelector(".container")).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        slide.addImage({ data: imgData, x: 0.5, y: 1.5, w:9, h:5 });
+        pptx.writeFile("ManagerDashboard.pptx");
+      });
+    }
+
+    document.querySelectorAll(".quick-date button").forEach(btn => {
+      btn.addEventListener("click", () => setQuickDate(btn.dataset.days));
     });
 
     document.getElementById("hubSelector").addEventListener("change", filterDashboard);
-    document.getElementById("startDate").addEventListener("change", filterDashboard);
-    document.getElementById("endDate").addEventListener("change", filterDashboard);
+    document.getElementById("startDate").addEventListener("change", () => { currentQuickDate=""; highlightQuickDate(); filterDashboard(); });
+    document.getElementById("endDate").addEventListener("change", () => { currentQuickDate=""; highlightQuickDate(); filterDashboard(); });
     document.getElementById("staffSearch").addEventListener("input", filterDashboard);
-    document.getElementById("resetFilters").addEventListener("click", () => {
-      currentStatusFilter = "";
-      currentQuickDate = "";
-      document.getElementById("hubSelector").value = "";
-      document.getElementById("startDate").value = "";
-      document.getElementById("endDate").value = "";
-      document.getElementById("staffSearch").value = "";
-      highlightQuickDate();
-      highlightStatusCard();
-      filterDashboard();
-    });
+    document.getElementById("resetFilters").addEventListener("click", () => { document.getElementById("hubSelector").value=""; document.getElementById("startDate").value=""; document.getElementById("endDate").value=""; document.getElementById("staffSearch").value=""; currentQuickDate=""; highlightQuickDate(); filterDashboard(); });
 
     loadData();
   </script>
 
 </body>
+
 </html>
