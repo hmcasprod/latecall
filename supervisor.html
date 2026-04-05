@@ -3,55 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supervisor</title>
+<title>Supervisor Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* --- Styles are same as your original --- */
-body {font-family:'Inter',sans-serif;margin:0;background:linear-gradient(to right,#eef2f3,#ffffff);color:#333;}
-.header-logos{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background-color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.1);}
-.header-logos img{height:50px;}
-#loginPage{display:flex;justify-content:center;align-items:center;height:100vh;}
-.login-container{background:#fff;padding:50px 40px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.15);width:100%;max-width:400px;text-align:center;display:flex;flex-direction:column;gap:15px;}
-.login-container h2{margin-bottom:25px;color:#333;font-weight:700;}
-.login-container input{width:100%;padding:14px;border:1px solid #ddd;border-radius:6px;font-size:16px;transition:border 0.2s ease;}
-.login-container input:focus{border-color:#4CAF50;outline:none;}
-.login-container button{width:100%;padding:14px;background:#4CAF50;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:16px;margin-top:10px;transition:background 0.2s ease;}
-.login-container button:hover{background:#45a049;}
-.login-container .error-message{color:red;margin-top:10px;font-size:14px;}
-.remember-me label{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;margin:0;}
-.remember-me input{width:auto;height:auto;}
-.forgot-password{margin-top:15px;text-align:center;font-size:14px;}
-.forgot-password a{color:#007BFF;text-decoration:underline;cursor:pointer;}
-#dashboardPage{display:none;padding:20px;padding-bottom:80px;}
-.top-bar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.top-bar label{font-weight:600;}
-.top-bar input,.top-bar select,.top-bar button{padding:6px 10px;font-size:14px;}
-.top-bar button{background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
-.clear-filters-btn{background-color:#f44336;color:#fff;border:none;border-radius:4px;padding:6px 10px;cursor:pointer;font-size:14px;}
-.clear-filters-btn:hover{background-color:#e53935;}
-.table-container{overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
-table{width:100%;border-collapse:collapse;min-width:900px;}
-th,td{padding:10px;text-align:center;border:1px solid #ddd;}
-th{background:#f2f2f2;font-weight:600;}
-tr:nth-child(even) td{background:#fafafa;}
-.status-pending{background:#FFD700 !important;color:#000 !important;font-weight:600;}
-.status-approved{background:#4CAF50 !important;color:#fff !important;font-weight:600;}
-.status-rejected{background:#f44336 !important;color:#fff !important;font-weight:600;}
-.action-btn{cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
-footer{position:fixed;bottom:0;width:100%;text-align:center;background:#fff;padding:10px 0;font-size:12px;color:#555;box-shadow:0 -2px 5px rgba(0,0,0,0.1);}
+body { font-family:'Inter',sans-serif;margin:0;background:linear-gradient(to right,#eef2f3,#ffffff);color:#333;}
+.header-logos {display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background-color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+.header-logos img {height:50px;}
+#loginPage {display:flex;justify-content:center;align-items:center;height:100vh;}
+.login-container {background:#fff;padding:50px 40px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.15);width:100%;max-width:400px;text-align:center;display:flex;flex-direction:column;gap:15px;}
+.login-container h2 {margin-bottom:25px;color:#333;font-weight:700;}
+.login-container input {width:100%;padding:14px;border:1px solid #ddd;border-radius:6px;font-size:16px;transition:border 0.2s ease;}
+.login-container input:focus {border-color:#4CAF50;outline:none;}
+.login-container button {width:100%;padding:14px;background:#4CAF50;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:16px;margin-top:10px;transition:background 0.2s ease;}
+.login-container button:hover {background:#45a049;}
+.login-container .error-message {color:red;margin-top:10px;font-size:14px;}
+.remember-me label {display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;margin:0;}
+.remember-me input {width:auto;height:auto;}
+.forgot-password {margin-top:15px;text-align:center;font-size:14px;}
+.forgot-password a {color:#007BFF;text-decoration:underline;cursor:pointer;}
+#dashboardPage {display:none;padding:20px;padding-bottom:80px;}
+.top-bar {display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.top-bar label {font-weight:600;}
+.top-bar input, .top-bar select, .top-bar button {padding:6px 10px;font-size:14px;}
+.top-bar button {background:#4CAF50;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+.clear-filters-btn {background-color:#f44336;color:#fff;border:none;border-radius:4px;padding:6px 10px;cursor:pointer;font-size:14px;}
+.clear-filters-btn:hover {background-color:#e53935;}
+.table-container {overflow-x:auto;border-radius:8px;background:#fff;padding:10px;}
+table {width:100%;border-collapse:collapse;min-width:900px;}
+th, td {padding:10px;text-align:center;border:1px solid #ddd;}
+th {background:#f2f2f2;font-weight:600;cursor:pointer;}
+tr:nth-child(even) td {background:#fafafa;}
+.status-pending {background:#FFD700 !important;color:#000 !important;font-weight:600;}
+.status-approved {background:#4CAF50 !important;color:#fff !important;font-weight:600;}
+.status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
+.action-btn {cursor:pointer;padding:5px 10px;border:none;border-radius:4px;margin:2px;}
+footer {position:fixed;bottom:0;width:100%;text-align:center;background:#fff;padding:10px 0;font-size:12px;color:#555;box-shadow:0 -2px 5px rgba(0,0,0,0.1);}
 @media(max-width:900px){table{min-width:600px;}}
 @media(max-width:600px){.top-bar{flex-direction:column;align-items:flex-start;}}
-/* OTP Modal Styles */
-#otpResetModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
-#otpResetModal div{background:#fff;padding:20px;border-radius:8px;max-width:400px;width:90%;}
-#otpResetModal input{width:100%;margin:8px 0;padding:8px;}
-#otpResetModal button{width:100%;padding:10px;border:none;border-radius:6px;}
-#otpResetModal button:nth-child(3){margin-top:8px;background:#ccc;}
-#otpResetModal h3{margin-top:0;}
-#otpError{color:red;margin-top:6px;}
 </style>
 </head>
 <body>
+
 <div class="header-logos">
     <img src="logo1.png" alt="Logo 1">
     <img src="logo2.png" alt="Logo 2">
@@ -67,16 +59,11 @@ footer{position:fixed;bottom:0;width:100%;text-align:center;background:#fff;padd
             <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
         </div>
         <div class="remember-me">
-            <label>
-                Remember Me
-                <input type="checkbox" id="savePassword">
-            </label>
+            <label>Remember Me <input type="checkbox" id="savePassword"></label>
         </div>
         <button id="loginBtn">Login</button>
         <div id="errorMessage" class="error-message"></div>
-        <div class="forgot-password">
-            <a onclick="forgotPassword()">Forgot Password?</a>
-        </div>
+        <div class="forgot-password"><a onclick="forgotPassword()">Forgot Password?</a></div>
     </div>
 </div>
 
@@ -126,7 +113,7 @@ footer{position:fixed;bottom:0;width:100%;text-align:center;background:#fff;padd
             <thead>
                 <tr>
                     <th>Date Submitted</th>
-                    <th>Late Call Date</th>
+                    <th onclick="sortTableByLateCall()">Late Call Date ⬍</th>
                     <th>Name</th>
                     <th>Corp Number</th>
                     <th>Type of Duty</th>
@@ -146,228 +133,208 @@ footer{position:fixed;bottom:0;width:100%;text-align:center;background:#fff;padd
     </div>
 </div>
 
-<!-- OTP Reset Modal -->
-<div id="otpResetModal">
-  <div>
-    <h3>Enter OTP & New Password</h3>
-    <input type="text" id="otpInput" placeholder="OTP">
-    <input type="password" id="newPasswordInput" placeholder="New Password">
-    <button onclick="verifyOtpAndReset()">Submit</button>
-    <button onclick="closeOtpModal()">Cancel</button>
-    <div id="otpError"></div>
-  </div>
-</div>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-functions.js";
 import { getLateCalls, updateRequestStatus } from './firebase.js';
-import { getFirestore, doc, getDoc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_ID",
-  appId: "YOUR_APP_ID"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const functions = getFunctions(app);
-const firestore = getFirestore(app);
-
-// --- Supervisors Data ---
+// Users
 const supervisorsInit = [
-    {username:"jcamins", fullName:"James Camins", corp:"45357", email:"JCAMINS@hamad.qa", password:"HMCAS1234"},
-    {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", email:"HKERKENI@hamad.qa", password:"HMCAS1234"},
-    {username:"hkhir", fullName:"Hicham Khir", corp:"22165", email:"HKHIR@hamad.qa", password:"HMCAS1234"},
-    {username:"mfarhat", fullName:"Mohamed Farhat", corp:"19306", email:"MFARHAT@hamad.qa", password:"HMCAS1234"},
-    {username:"mneji", fullName:"Mourad Neji", corp:"22179", email:"MNEJI@hamad.qa", password:"HMCAS1234"},
-    {username:"mjellali", fullName:"Mabrouk Jellali", corp:"12597", email:"MJELLALI@hamad.qa", password:"HMCAS1234"}
+  {username:"Hkerkeni", fullName:"Habib Kerkeni", corp:"11748", password:"HMCAS1234", role:"Admin"},
+  {username:"Hkhir", fullName:"Hicham Khir", corp:"22165", password:"HMCAS1234", role:"Admin"},
+  {username:"Mfarhat", fullName:"Mohamed Farhat", corp:"19306", password:"HMCAS1234", role:"Admin"},
+  {username:"Mneji", fullName:"Mourad Neji", corp:"22179", password:"HMCAS1234", role:"Admin"},
+  {username:"Mjellali", fullName:"Mabrouk Jellali", corp:"12597", password:"HMCAS1234", role:"Admin"},
+  {username:"Jcamins", fullName:"James Camins", corp:"45357", password:"HMCAS1234", role:"Admin"}
 ];
 localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-// --- Login ---
+function togglePassword(){ const pwd = document.getElementById('password'); pwd.type = pwd.type==="password"?"text":"password"; }
+
 function login(){
-    const username = document.getElementById('username').value.trim().toLowerCase();
-    const password = document.getElementById('password').value.trim();
-    let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
-    const sup = supervisors.find(s=>s.username.toLowerCase()===username && s.password===password);
-    if(sup){
-        localStorage.setItem('currentSupervisor', JSON.stringify(sup));
-        if(document.getElementById('savePassword').checked){
-            localStorage.setItem('savedPassword', password);
-        } else { localStorage.removeItem('savedPassword'); }
-        checkLogin();
-    } else {
-        document.getElementById('errorMessage').innerText="Invalid username or password!";
-    }
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
+  const sup = supervisors.find(s => s.username.toLowerCase() === username.toLowerCase() && s.password === password);
+  if(sup){
+      localStorage.setItem('currentSupervisor', JSON.stringify(sup));
+      if(document.getElementById('savePassword').checked){ localStorage.setItem('savedPassword', password);}
+      else { localStorage.removeItem('savedPassword'); }
+      checkLogin();
+  } else { document.getElementById('errorMessage').innerText="Invalid username or password!"; }
 }
 
-// --- Toggle password ---
-function togglePassword(){
-    const pwd = document.getElementById('password');
-    pwd.type = pwd.type==="password"?"text":"password";
-}
-
-// --- Logout ---
-function logout(){
-    localStorage.removeItem('currentSupervisor');
-    document.getElementById('loginPage').style.display='flex';
-    document.getElementById('dashboardPage').style.display='none';
-    document.getElementById('username').value='';
-    document.getElementById('password').value='';
-    document.getElementById('errorMessage').innerText='';
-    document.querySelector('#requestsTable tbody').innerHTML='';
-}
-
-// --- Check login ---
-function checkLogin(){
-    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
-    if(sup){
-        document.getElementById('loginPage').style.display='none';
-        document.getElementById('dashboardPage').style.display='block';
-        document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
-        clearFilters();
-        loadTable();
-        startInactivityTimer();
-    }
-}
-
-// --- Forgot Password OTP Flow ---
-let currentResetUser = "";
 function forgotPassword(){
-    const username = prompt("Enter your username to reset password:");
-    if(!username) return;
-    const supervisors = JSON.parse(localStorage.getItem("supervisors")) || [];
-    const sup = supervisors.find(s => s.username.toLowerCase() === username.toLowerCase());
-    if(!sup){
-        alert("Username not found!");
-        return;
-    }
-    const sendOtp = httpsCallable(functions, "sendResetOtp");
-    sendOtp({ username: sup.username, email: sup.email })
-        .then(() => {
-            alert("OTP sent to your email!");
-            openOtpModal(sup.username);
-        })
-        .catch(err => alert("Error sending OTP: " + err.message));
+  const username = prompt("Enter your username to reset password:");
+  if(!username) return;
+  let supervisors = JSON.parse(localStorage.getItem('supervisors')) || [];
+  const supIndex = supervisors.findIndex(s=>s.username===username);
+  if(supIndex===-1){ alert("Username not found!"); return; }
+  const newPwd = prompt("Enter new password:"); if(!newPwd) return;
+  supervisors[supIndex].password=newPwd;
+  localStorage.setItem('supervisors', JSON.stringify(supervisors));
+  alert("Password reset successfully!");
 }
 
-function openOtpModal(username){
-    currentResetUser = username.toLowerCase();
-    document.getElementById("otpResetModal").style.display = "flex";
+function logout(){
+  localStorage.removeItem('currentSupervisor');
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('dashboardPage').style.display='none';
+  document.getElementById('username').value='';
+  document.getElementById('password').value='';
+  document.getElementById('errorMessage').innerText='';
+  document.querySelector('#requestsTable tbody').innerHTML='';
 }
 
-function closeOtpModal(){
-    document.getElementById("otpResetModal").style.display = "none";
-    document.getElementById("otpError").innerText = "";
+function checkLogin(){
+  const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+  if(sup){
+      document.getElementById('loginPage').style.display='none';
+      document.getElementById('dashboardPage').style.display='block';
+      document.getElementById('managerName').innerText = `${sup.fullName} CN ${sup.corp}`;
+      clearFilters();
+      loadTable();
+      startInactivityTimer();
+  }
 }
 
-async function verifyOtpAndReset(){
-    const otp = document.getElementById("otpInput").value.trim();
-    const newPwd = document.getElementById("newPasswordInput").value.trim();
-    if(!otp || !newPwd){ document.getElementById("otpError").innerText="Enter OTP and new password"; return; }
-    const otpDoc = await getDoc(doc(firestore,"passwordOtps",currentResetUser));
-    if(!otpDoc.exists){ document.getElementById("otpError").innerText="Invalid OTP"; return; }
-    const data = otpDoc.data();
-    if(data.otp!==otp || data.expiresAt.toDate()<new Date()){
-        document.getElementById("otpError").innerText="OTP expired or incorrect"; return;
-    }
-    let supervisors = JSON.parse(localStorage.getItem("supervisors")) || [];
-    const index = supervisors.findIndex(s => s.username.toLowerCase()===currentResetUser);
-    supervisors[index].password = newPwd;
-    localStorage.setItem("supervisors", JSON.stringify(supervisors));
-    alert("Password successfully reset. You may now log in.");
-    closeOtpModal();
+let lateCallSortAsc = false;
+function sortTableByLateCall(){
+  lateCallSortAsc = !lateCallSortAsc;
+  loadTable();
 }
 
-// --- Table Load ---
 async function loadTable(){
-    const data = await getLateCalls();
-    const tbody = document.querySelector('#requestsTable tbody');
-    tbody.innerHTML = '';
-    const from = document.getElementById('filterFrom').value;
-    const to = document.getElementById('filterTo').value;
-    const hub = document.getElementById('filterHub').value;
-    const statusFilter = document.getElementById('filterStatus').value;
-    const shiftFilter = document.getElementById('filterShift').value;
-    const search = document.getElementById('filterSearch').value.toLowerCase();
-    let rows = [];
-    data.sort((a,b)=>new Date(b.dateSubmitted)-new Date(a.dateSubmitted));
-    data.forEach(r=>{
-        const d = new Date(r.dateSubmitted);
-        const lateCallDate = new Date(r.lateCallDate);
-        if(isNaN(d.getTime()) || isNaN(lateCallDate.getTime())) return;
-        let include=true;
-        if(from && new Date(from) > lateCallDate) include=false;
-        if(to && new Date(to) < lateCallDate) include=false;
-        if(hub && r.hub!==hub) include=false;
-        if(statusFilter && r.status!==statusFilter) include=false;
-        if(shiftFilter && r.shift!==shiftFilter) include=false;
-        if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include=false;
-        if(include){
-            const statusNormalized=(r.status||"").trim().toLowerCase();
-            const statusClass=statusNormalized==="pending"?"status-pending":statusNormalized==="approved"?"status-approved":statusNormalized==="rejected"?"status-rejected":"";
-            const actionButtons=statusNormalized==="pending"?`<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button><button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>`:"";
-            const formattedDate=d.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
-            const formattedLateCallDate=lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
-            const tr=document.createElement('tr');
-            tr.innerHTML=`<td>${formattedDate}</td><td>${formattedLateCallDate}</td><td>${r.name}</td><td>${r.corp}</td><td>${r.typeOfDuty}</td><td>${r.hub}</td><td>${r.unit}</td><td>${r.shift}</td><td>${r.timeOut}</td><td>${r.lateCallHours}</td><td>${r.trip}</td><td class="${statusClass}">${r.status}</td><td>${actionButtons}</td><td>${r.processedBy||''}</td>`;
-            tbody.appendChild(tr);
-        }
-    });
+  const data = await getLateCalls();
+  const tbody = document.querySelector('#requestsTable tbody');
+  tbody.innerHTML = '';
+
+  // Sort by Late Call Date if toggled
+  let sortedData = [...data];
+  if(lateCallSortAsc){
+      sortedData.sort((a,b)=>new Date(a.lateCallDate) - new Date(b.lateCallDate));
+  } else {
+      sortedData.sort((a,b)=>new Date(b.dateSubmitted) - new Date(a.dateSubmitted));
+  }
+
+  const from = document.getElementById('filterFrom').value;
+  const to = document.getElementById('filterTo').value;
+  const hub = document.getElementById('filterHub').value;
+  const statusFilter = document.getElementById('filterStatus').value;
+  const shiftFilter = document.getElementById('filterShift').value;
+  const search = document.getElementById('filterSearch').value.toLowerCase();
+
+  sortedData.forEach(r => {
+    const d = new Date(r.dateSubmitted);
+    const lateCallDate = new Date(r.lateCallDate);
+    if(isNaN(d.getTime()) || isNaN(lateCallDate.getTime())) return;
+
+    let include = true;
+    if(from && new Date(from) > lateCallDate) include = false;
+    if(to && new Date(to) < lateCallDate) include = false;
+    if(hub && r.hub!==hub) include = false;
+    if(statusFilter && r.status!==statusFilter) include = false;
+    if(shiftFilter && r.shift!==shiftFilter) include = false;
+    if(search && !(`${r.name} ${r.corp} ${r.unit} ${r.shift} ${r.typeOfDuty} ${r.trip}`.toLowerCase().includes(search))) include = false;
+
+    if(include){
+        const statusNormalized = (r.status || "").trim().toLowerCase();
+        const statusClass = statusNormalized==="pending"?"status-pending":
+                            statusNormalized==="approved"?"status-approved":
+                            statusNormalized==="rejected"?"status-rejected":"";
+        const actionButtons = statusNormalized==="pending" ? 
+            `<button class="action-btn" style="background:#4CAF50;color:#fff;" onclick="approve('${r.id}')">✔</button>
+            <button class="action-btn" style="background:#f44336;color:#fff;" onclick="reject('${r.id}')">✖</button>` : "";
+
+        const formattedDate = d.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'}) +
+                              ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
+        const formattedLateCallDate = lateCallDate.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'2-digit'});
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+        <td>${formattedDate}</td>
+        <td>${formattedLateCallDate}</td>
+        <td>${r.name}</td>
+        <td>${r.corp}</td>
+        <td>${r.typeOfDuty}</td>
+        <td>${r.hub}</td>
+        <td>${r.unit}</td>
+        <td>${r.shift}</td>
+        <td>${r.timeout}</td>
+        <td>${r.lateCallHours}</td>
+        <td>${r.trip || r.reasonForLateCall || ''}</td>
+        <td class="${statusClass}">${r.status}</td>
+        <td>${actionButtons}</td>
+        <td>${r.processedBy || ''}</td>`;
+        tbody.appendChild(tr);
+    }
+  });
 }
 
-// --- Approve / Reject ---
-async function approve(id){
-    await updateRequestStatus(id,'Approved');
-    loadTable();
-}
-async function reject(id){
-    await updateRequestStatus(id,'Rejected');
-    loadTable();
-}
-
-// --- Filters ---
 function clearFilters(){
-    document.getElementById('filterFrom').value='';
-    document.getElementById('filterTo').value='';
-    document.getElementById('filterHub').value='';
-    document.getElementById('filterStatus').value='';
-    document.getElementById('filterShift').value='';
-    document.getElementById('filterSearch').value='';
-    loadTable();
+  document.getElementById('filterFrom').value='';
+  document.getElementById('filterTo').value='';
+  document.getElementById('filterHub').value='';
+  document.getElementById('filterStatus').value='';
+  document.getElementById('filterShift').value='';
+  document.getElementById('filterSearch').value='';
+  loadTable();
 }
 
-// --- Export to CSV ---
+async function approve(id){
+  const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+  const now = new Date();
+  const processedBy = `${sup.fullName} CN ${sup.corp} (${now.toLocaleDateString('en-GB')} ${now.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'})})`;
+  await updateRequestStatus(id,"Approved",processedBy);
+  loadTable();
+}
+
+async function reject(id){
+  const reason = prompt("Reason for rejection:"); if(!reason) return;
+  const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+  const now = new Date();
+  const processedBy = `${sup.fullName} CN ${sup.corp} (${now.toLocaleDateString('en-GB')} ${now.toLocaleTimeString('en-GB',{hour12:false,hour:'2-digit',minute:'2-digit'})}) - ${reason}`;
+  await updateRequestStatus(id,"Rejected",processedBy);
+  loadTable();
+}
+
 function exportToExcel(){
-    let csv='Date Submitted,Late Call Date,Name,Corp,Type of Duty,Hub,Unit,Shift,Time Out,Late Call Hours,Trip,Status,Processed By\n';
-    document.querySelectorAll('#requestsTable tbody tr').forEach(tr=>{
-        const cols=[...tr.querySelectorAll('td')].map(td=>`"${td.innerText}"`);
-        csv+=cols.join(',')+'\n';
-    });
-    const a=document.createElement('a');
-    a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-    a.download='late_calls.csv';
-    a.click();
+  const table=document.getElementById('requestsTable');
+  const rows=table.querySelectorAll('tr');
+  const csvContent = Array.from(rows).map(r=>Array.from(r.querySelectorAll('th,td')).map(c=>c.innerText).join(",")).join("\n");
+  const blob=new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
+  const link=document.createElement("a");
+  link.href=URL.createObjectURL(blob);
+  link.download="dashboard_export.csv";
+  link.click();
 }
 
-// --- Inactivity Logout ---
-let inactivityTimeout;
+let inactivityTimer;
 function startInactivityTimer(){
-    clearTimeout(inactivityTimeout);
-    ['mousemove','keydown','click'].forEach(evt=>document.addEventListener(evt,resetTimer));
-    resetTimer();
+  resetInactivityTimer();
+  document.onclick=resetInactivityTimer;
+  document.onmousemove=resetInactivityTimer;
+  document.onkeypress=resetInactivityTimer;
 }
-function resetTimer(){ clearTimeout(inactivityTimeout); inactivityTimeout=setTimeout(logout,10*60*1000); }
 
-// --- Init ---
-document.getElementById('loginBtn').addEventListener('click',login);
+function resetInactivityTimer(){
+  clearTimeout(inactivityTimer);
+  inactivityTimer=setTimeout(()=>{alert("Logged out due to inactivity");logout();},5*60*1000);
+}
+
+document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+document.getElementById('filterHub').addEventListener('change', loadTable);
+document.getElementById('filterStatus').addEventListener('change', loadTable);
+
 checkLogin();
+
+window.logout=logout;
+window.loadTable=loadTable;
+window.exportToExcel=exportToExcel;
+window.approve=approve;
+window.reject=reject;
+window.forgotPassword=forgotPassword;
+window.togglePassword=togglePassword;
+window.login=login;
+document.getElementById('loginBtn').onclick=login;
 </script>
 
 <footer>
