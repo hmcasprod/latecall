@@ -29,7 +29,7 @@ body {font-family: 'Inter', sans-serif; margin: 0; background: linear-gradient(t
 .clear-filters-btn {background-color: #f44336; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 14px;}
 .clear-filters-btn:hover {background-color: #e53935;}
 .table-container {overflow-x:auto; border-radius:8px; background:#fff; padding:10px;}
-table {width:100%; border-collapse:collapse; min-width:900px;}
+table {width:100%; border-collapse:collapse; min-width:1200px;}
 th, td {padding:10px; text-align:center; border:1px solid #ddd;}
 th {background:#f2f2f2;font-weight:600;}
 tr:nth-child(even) td {background:#fafafa;}
@@ -38,7 +38,7 @@ tr:nth-child(even) td {background:#fafafa;}
 .status-rejected {background:#f44336 !important;color:#fff !important;font-weight:600;}
 .action-btn {cursor:pointer; padding:5px 10px; border:none; border-radius:4px; margin:2px;}
 footer {position: fixed; bottom: 0; width: 100%; text-align: center; background: #fff; padding: 10px 0; font-size: 12px; color: #555; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);}
-@media(max-width:900px){table{min-width:600px;}}
+@media(max-width:900px){table{min-width:900px;}}
 @media(max-width:600px){.top-bar{flex-direction:column; align-items:flex-start;}}
 </style>
 </head>
@@ -54,10 +54,7 @@ footer {position: fixed; bottom: 0; width: 100%; text-align: center; background:
     <div class="login-container">
         <h2>Supervisor Login</h2>
         <input type="text" id="username" placeholder="Username">
-        <div style="position:relative;">
-            <input type="password" id="password" placeholder="Password">
-            <span style="position:absolute;right:10px;top:12px;cursor:pointer;" onclick="togglePassword()">👁️</span>
-        </div>
+        <input type="password" id="password" placeholder="Password">
         <div class="remember-me">
             <label>
                 Remember Me
@@ -79,7 +76,6 @@ footer {position: fixed; bottom: 0; width: 100%; text-align: center; background:
         <button onclick="logout()" style="background:#f44336;color:#fff;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">Logout</button>
     </div>
 
-    <!-- Filters -->
     <div class="top-bar">
         <div>
             <label>Date From:</label><input type="date" id="filterFrom">
@@ -138,8 +134,8 @@ footer {position: fixed; bottom: 0; width: 100%; text-align: center; background:
     </div>
 </div>
 
-<script type="module">
-// ✅ UPDATED USERS
+<script>
+// ✅ SUPERVISORS LIST
 const supervisorsInit = [
     {username:"hkerkeni", fullName:"Habib Kerkeni", corp:"11748", email:"HKERKENI@hamad.qa", role:"Admin", password:"HMCAS1234"},
     {username:"hkhir", fullName:"Hicham Khir", corp:"22165", email:"HKHIR@hamad.qa", role:"Admin", password:"HMCAS1234"},
@@ -148,9 +144,8 @@ const supervisorsInit = [
     {username:"mjellali", fullName:"Mabrouk Jellali", corp:"12597", email:"MJELLALI@hamad.qa", role:"Admin", password:"HMCAS1234"},
     {username:"jcamins", fullName:"James Camins", corp:"45357", email:"JCAMINS@hamad.qa", role:"Admin", password:"HMCAS1234"}
 ];
-if (!localStorage.getItem('supervisors')) localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
+if(!localStorage.getItem('supervisors')) localStorage.setItem('supervisors', JSON.stringify(supervisorsInit));
 
-// 🔑 Login
 function login(){
     const username = document.getElementById('username').value.trim().toLowerCase();
     const password = document.getElementById('password').value.trim();
@@ -163,14 +158,12 @@ function login(){
         document.getElementById('errorMessage').innerText = "Invalid username or password!";
     }
 }
-function togglePassword(){
-    const pwd = document.getElementById('password');
-    pwd.type = pwd.type==="password"?"text":"password";
-}
+
 function logout(){
     localStorage.removeItem('currentSupervisor');
     location.reload();
 }
+
 function showDashboard(){
     const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
     if(!sup) return;
@@ -181,18 +174,92 @@ function showDashboard(){
     loadTable();
 }
 
-// Add your original dashboard functions like loadTable(), approve(), reject(), exportToExcel(), clearFilters() here
-// You can reuse your existing functions
+// ====== TABLE DATA & FUNCTIONS ======
+let requests = [
+    {dateSubmitted:"2026-04-01", lateCallDate:"2026-04-01", name:"Ali", corp:"11111", type:"Duty A", hub:"Hub 1", unit:"Unit 1", shift:"Day", timeOut:"17:00", hours:"2", trip:"Trip001", status:"Pending", processedBy:""},
+    {dateSubmitted:"2026-04-02", lateCallDate:"2026-04-02", name:"Omar", corp:"22222", type:"Duty B", hub:"Hub 2", unit:"Unit 2", shift:"Night", timeOut:"22:00", hours:"3", trip:"Trip002", status:"Approved", processedBy:"Manager1"}
+];
 
+function loadTable(){
+    const tbody = document.querySelector('#requestsTable tbody');
+    tbody.innerHTML = "";
+    const from = document.getElementById('filterFrom').value;
+    const to = document.getElementById('filterTo').value;
+    const hub = document.getElementById('filterHub').value;
+    const status = document.getElementById('filterStatus').value;
+    const shift = document.getElementById('filterShift').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase();
+
+    requests.forEach(r=>{
+        if(from && r.lateCallDate < from) return;
+        if(to && r.lateCallDate > to) return;
+        if(hub && r.hub !== hub) return;
+        if(status && r.status !== status) return;
+        if(shift && r.shift !== shift) return;
+        if(search && !Object.values(r).some(v => v.toLowerCase().includes(search))) return;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${r.dateSubmitted}</td>
+            <td>${r.lateCallDate}</td>
+            <td>${r.name}</td>
+            <td>${r.corp}</td>
+            <td>${r.type}</td>
+            <td>${r.hub}</td>
+            <td>${r.unit}</td>
+            <td>${r.shift}</td>
+            <td>${r.timeOut}</td>
+            <td>${r.hours}</td>
+            <td>${r.trip}</td>
+            <td class="status-${r.status.toLowerCase()}">${r.status}</td>
+            <td>
+                ${r.status==="Pending"?`<button class="action-btn" onclick="approve('${r.corp}')">Approve</button>
+                <button class="action-btn" onclick="reject('${r.corp}')">Reject</button>`:``}
+            </td>
+            <td>${r.processedBy}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function approve(corp){
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    requests.forEach(r=>{if(r.corp===corp){r.status="Approved"; r.processedBy=sup.fullName;}});
+    loadTable();
+}
+function reject(corp){
+    const sup = JSON.parse(localStorage.getItem('currentSupervisor'));
+    requests.forEach(r=>{if(r.corp===corp){r.status="Rejected"; r.processedBy=sup.fullName;}});
+    loadTable();
+}
+function clearFilters(){
+    document.getElementById('filterFrom').value="";
+    document.getElementById('filterTo').value="";
+    document.getElementById('filterHub').value="";
+    document.getElementById('filterStatus').value="";
+    document.getElementById('filterShift').value="";
+    document.getElementById('filterSearch').value="";
+    loadTable();
+}
+function exportToExcel(){
+    let csv = "Date Submitted,Late Call Date,Name,Corp Number,Type of Duty,Hub,Unit,Shift,Time Out,Late Call Hours,Trip Number / Reason for Late Call,Status,Processed By\n";
+    requests.forEach(r=>{
+        csv += `${r.dateSubmitted},${r.lateCallDate},${r.name},${r.corp},${r.type},${r.hub},${r.unit},${r.shift},${r.timeOut},${r.hours},${r.trip},${r.status},${r.processedBy}\n`;
+    });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'late_calls.csv';
+    link.click();
+}
+
+// Auto login check
 document.getElementById('loginBtn').onclick = login;
 if(localStorage.getItem('currentSupervisor')) showDashboard();
-window.togglePassword = togglePassword;
-window.logout = logout;
 </script>
 
 <footer>
-    © 2026 HMCAS Support Service Production.<br>
-    James Ross Camins. All rights reserved.
+    © 2026 HMCAS Support Service Production. James Ross Camins. All rights reserved.
 </footer>
 </body>
 </html>
